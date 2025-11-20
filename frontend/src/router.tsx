@@ -1,4 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom';
+import { Activities } from './Activities/Activities';
+import { ActivityDetail } from './Activities/ActivityDetail';
+import { DesignSystem } from './DesignSystem/DesignSystem';
 
 export const router = createBrowserRouter([
   {
@@ -16,6 +19,10 @@ export const router = createBrowserRouter([
       {
         path: 'activities/:id',
         // element: <ActivityDetail />,
+      },
+      {
+        path: 'design-system',
+        element: <DesignSystem />,
       },
       {
         path: 'login',
