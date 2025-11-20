@@ -1,0 +1,88 @@
+
+services:
+  # Frontend React 18
+  zombieland-frontend:
+    container_name: zombieland-frontend
+    image: node:18-alpine
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - REACT_APP_API_URL=http://localhost:3001
+    command: sh -c "npm install && npm start"
+    networks:
+      - zombieland-network
+    depends_on:
+      - zombieland-api
+
+  # Backend NestJS 10
+  zombieland-api:
+    container_name: zombieland-api
+    image: node:18-alpine
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_USER=zombieland
+      - DATABASE_PASSWORD=zombieland_password
+      - DATABASE_NAME=zombieland_db
+    command: sh -c "npm install && npm run start:dev"
+    networks:
+      - zombieland-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # PostgreSQL avec healthcheck
+  postgres:
+    container_name: zombieland-postgres
+    image: postgres:15-alpine
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=zombieland
+      - POSTGRES_PASSWORD=zombieland_password
+      - POSTGRES_DB=zombieland_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - zombieland-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U zombieland -d zombieland_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # Adminer pour gérer la base de données
+  adminer:
+    container_name: zombieland-adminer
+    image: adminer:latest
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - ADMINER_DEFAULT_SERVER=postgres
+    networks:
+      - zombieland-network
+    depends_on:
+      - postgres
+
+networks:
+  zombieland-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
