@@ -1,4 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom';
+import { DesignSystem } from './DesignSystem/DesignSystem';
 import RootPage from "./page/rootPage.tsx";
 
 export const router = createBrowserRouter([
@@ -17,6 +18,10 @@ export const router = createBrowserRouter([
       {
         path: 'activities/:id',
         // element: <ActivityDetail />,
+      },
+      {
+        path: 'design-system',
+        element: <DesignSystem />,
       },
       {
         path: 'login',

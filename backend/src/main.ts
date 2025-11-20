@@ -1,8 +1,25 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { SwaggerModule, OpenAPIObject } from '@nestjs/swagger';
+import * as fs from 'fs';
+import * as yaml from 'js-yaml';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(process.env.PORT ?? 3000);
+
+  app.setGlobalPrefix('api/v1');
+
+  const apiSpec = yaml.load(
+    fs.readFileSync('./api-spec.yml', 'utf8'),
+  ) as OpenAPIObject;
+
+  SwaggerModule.setup('swagger-ui', app, apiSpec);
+
+  await app.listen(3000);
+  console.log('🚀 App démarrée sur le port 3000');
+  console.log(
+    '📚 Documentation (Swagger UI) : http://localhost:3000/swagger-ui',
+  );
+  console.log('🔗 Endpoints API : http://localhost:3000/api/v1');
 }
-bootstrap();
+void bootstrap();
