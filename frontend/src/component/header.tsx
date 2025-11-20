@@ -1,4 +1,85 @@
+import {AppBar, Box, Button, Container, IconButton, Toolbar, Typography} from "@mui/material";
+import {useNavigate} from "react-router";
+import MenuIcon from '@mui/icons-material/Menu';
 
 export default function Header() {
-    return ("Header")
+
+    // TODO ajouter ici les autres routes
+    const pages = [
+        { name : "Réservations", path : "/" },
+        { name : "Activités", path : "/activities" },
+        { name : "Infos", path : "/" },
+    ]
+
+    const navigate = useNavigate()
+
+
+    return (
+        <>
+            <AppBar position="static" sx={{ backgroundColor: 'transparent' }}>
+                <Container maxWidth="xl">
+                    <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
+                        {/* VUE DESKTOP */}
+                        {/* Pages à gauche */}
+                        <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1, pl: 3 }}>
+                            {pages.map((page) => (
+                                <Button
+                                    key={page.path}
+                                    sx={{ color: "white" }}
+                                    onClick={() => navigate(page.path)}
+                                >
+                                    {page.name}
+                                </Button>
+                            ))}
+                        </Box>
+
+                        {/* Titre au centre */}
+                        <Box sx={{
+                            position: 'absolute',
+                            left: '50%',
+                            transform: 'translateX(-50%)',
+                            display: { xs: 'none', md: 'block' }
+                        }}>
+                            <Typography variant="h6">
+                                <Box component="span" sx={{ color: '#6B9F2A', fontWeight: 'bold' }}>
+                                    ZOMBIE
+                                </Box>
+                                <Box component="span" sx={{ color: '#C62828', fontWeight: 'bold' }}>
+                                    LAND
+                                </Box>
+                            </Typography>
+                        </Box>
+
+                        {/* Menu burger à droite */}
+                        <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+                            <IconButton sx={{ color: 'white' }}>
+                                <MenuIcon />
+                            </IconButton>
+                        </Box>
+
+                        {/* VUE MOBILE */}
+                        <Box sx={{
+                            display: { xs: 'flex', md: 'none' },
+                            width: '100%',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                        }}>
+                            <Box sx={{ width: 40 }} />
+                            <Typography variant="h6">
+                                <Box component="span" sx={{ color: '#6B9F2A', fontWeight: 'bold' }}>
+                                    ZOMBIE
+                                </Box>
+                                <Box component="span" sx={{ color: '#C62828', fontWeight: 'bold' }}>
+                                    LAND
+                                </Box>
+                            </Typography>
+                            <IconButton sx={{ color: 'white' }}>
+                                <MenuIcon />
+                            </IconButton>
+                        </Box>
+                    </Toolbar>
+                </Container>
+            </AppBar>
+        </>
+    )
 }
