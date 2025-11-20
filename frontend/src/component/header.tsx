@@ -1,8 +1,12 @@
 import {AppBar, Box, Button, Container, IconButton, Toolbar, Typography} from "@mui/material";
 import {useNavigate} from "react-router";
 import MenuIcon from '@mui/icons-material/Menu';
+import {useState} from "react";
+import ModalBurgerMenu from "./modals/modalBurgerMenu.tsx";
 
 export default function Header() {
+
+    const [open, setOpen] = useState(false);
 
     // TODO ajouter ici les autres routes
     const pages = [
@@ -13,6 +17,8 @@ export default function Header() {
 
     const navigate = useNavigate()
 
+    const handleOpen = () => { setOpen(true) }
+    const handleClose = () => { setOpen(false) }
 
     return (
         <>
@@ -52,9 +58,16 @@ export default function Header() {
 
                         {/* Menu burger à droite */}
                         <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                            <IconButton sx={{ color: 'white' }}>
+                            <IconButton
+                                sx={{ color: 'white' }}
+                                onClick={handleOpen}
+                            >
                                 <MenuIcon />
                             </IconButton>
+                            <ModalBurgerMenu
+                                open={open}
+                                onClose={handleClose}
+                            />
                         </Box>
 
                         {/* VUE MOBILE */}
@@ -73,9 +86,16 @@ export default function Header() {
                                     LAND
                                 </Box>
                             </Typography>
-                            <IconButton sx={{ color: 'white' }}>
+                            <IconButton
+                                sx={{ color: 'white' }}
+                                onClick={handleOpen}
+                            >
                                 <MenuIcon />
                             </IconButton>
+                            <ModalBurgerMenu
+                                open={open}
+                                onClose={handleClose}
+                            />
                         </Box>
                     </Toolbar>
                 </Container>
