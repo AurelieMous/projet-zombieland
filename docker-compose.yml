@@ -1,28 +1,28 @@
 
 services:
-  # Frontend React 18
+  # Frontend React 19 + Vite 7
   zombieland-frontend:
     container_name: zombieland-frontend
-    image: node:18-alpine
+    image: node:22-alpine
     working_dir: /app
     volumes:
       - ./frontend:/app
       - /app/node_modules
     ports:
-      - "3000:3000"
+      - "5173:5173"
     environment:
       - NODE_ENV=development
-      - REACT_APP_API_URL=http://localhost:3001
-    command: sh -c "npm install && npm start"
+      - VITE_API_URL=http://localhost:3001
+    command: sh -c "npm install && npm run dev -- --host"
     networks:
       - zombieland-network
     depends_on:
       - zombieland-api
 
-  # Backend NestJS 10
+  # Backend NestJS 11
   zombieland-api:
     container_name: zombieland-api
-    image: node:18-alpine
+    image: node:22-alpine
     working_dir: /app
     volumes:
       - ./backend:/app
