@@ -11,7 +11,7 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        // element: <Home />,
+        // element: <Home />, // Page principale
       },
       {
         path: 'activities',
@@ -27,19 +27,31 @@ export const router = createBrowserRouter([
       },
       {
         path: 'login',
-        // element: <Login />,
+        // element: <Login />, // Connexion
       },
       {
         path: 'register',
-        // element: <Register />,
+        // element: <Register />, // Inscription
       },
       {
         path: 'account',
-        // element: <Account />,
+        // element: <Account />, // Compte utilisateur
       },
       {
         path: 'admin',
-        // element: <Admin />,
+        // element: <Admin />, // Back-office
+      },
+      {
+        path: 'reservations',
+        // element: <Reservations />, // Réservations
+      },
+      {
+        path: 'info',
+        // element: <GeneralInfo />, // Informations générales
+      },
+      {
+        path: 'static/:pageType',
+        // element: <StaticPage />, // Page statique (Gestion cookie, ML, RGPD, CGU, CGV...)
       },
     ],
   },
