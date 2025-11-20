@@ -40,14 +40,14 @@ export default function ModalBurgerMenu({ open, onClose }: ModalBurgerMenuProps)
                         src={logo}
                         alt="Logo"
                         sx={{
-                            height: { xs: 60, md: 60 },
+                            height: { xs: 50, md: 50 },
                             width: 'auto',
                             zIndex: 2,
                         }}
                     />
                     <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                         <IconButton
-                            sx={{ color: 'white', zIndex: 2 }}
+                            sx={{ color: 'white', zIndex: 2, pr: 4 }}
                             onClick={onClose}
                         >
                             <CloseIcon />
