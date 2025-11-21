@@ -1,5 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { DesignSystem } from './DesignSystem/DesignSystem';
+import { Activities } from './Activities/Activities';
+import { ActivityDetail } from './Activities/ActivityDetail';
 import RootPage from "./page/rootPage.tsx";
 
 export const router = createBrowserRouter([
@@ -9,15 +11,15 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        // element: <Home />,
+        // element: <Home />, // Page principale
       },
       {
         path: 'activities',
-        // element: <Activities />,
+        element: <Activities />,
       },
       {
         path: 'activities/:id',
-        // element: <ActivityDetail />,
+        element: <ActivityDetail />,
       },
       {
         path: 'design-system',
@@ -25,19 +27,31 @@ export const router = createBrowserRouter([
       },
       {
         path: 'login',
-        // element: <Login />,
+        // element: <Login />, // Connexion
       },
       {
         path: 'register',
-        // element: <Register />,
+        // element: <Register />, // Inscription
       },
       {
         path: 'account',
-        // element: <Account />,
+        // element: <Account />, // Compte utilisateur
       },
       {
         path: 'admin',
-        // element: <Admin />,
+        // element: <Admin />, // Back-office
+      },
+      {
+        path: 'reservations',
+        // element: <Reservations />, // Réservations
+      },
+      {
+        path: 'info',
+        // element: <GeneralInfo />, // Informations générales
+      },
+      {
+        path: 'static/:pageType',
+        // element: <StaticPage />, // Page statique (Gestion cookie, ML, RGPD, CGU, CGV...)
       },
     ],
   },
