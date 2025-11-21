@@ -13,7 +13,7 @@ export default function ImageBanniere() {
             sx={{
                 position: 'relative',
                 width: '100%',
-                height: '500px',
+                height: '400px',
                 backgroundColor: 'black'
             }}
         >
