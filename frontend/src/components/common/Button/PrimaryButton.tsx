@@ -8,6 +8,7 @@ interface PrimaryButtonProps {
   onClick?: () => void;
   href?: string;
   fullWidth?: boolean;
+  disabled?: boolean;
 }
 
 export const PrimaryButton = ({
@@ -17,6 +18,7 @@ export const PrimaryButton = ({
   onClick,
   href,
   fullWidth = true,
+  disabled = false,
 }: PrimaryButtonProps) => {
   const navigate = useNavigate();
   const isMobile = variant === 'mobile';
@@ -36,6 +38,7 @@ export const PrimaryButton = ({
       color="primary"
       size="large"
       onClick={handleClick}
+      disabled={disabled}
       sx={{
         width: fullWidth ? '100%' : 'auto',
         fontSize: isMobile ? '1.3rem' : '1.2rem',

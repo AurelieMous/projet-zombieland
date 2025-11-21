@@ -3,6 +3,7 @@ import { DesignSystem } from './DesignSystem/DesignSystem';
 import { Activities } from './pages/Activities';
 import { ActivityDetail } from './pages/ActivityDetail';
 import RootPage from './pages/RootPage/RootPage';
+import { ReservationProcessusPage } from './pages/ReservationProcessus/ReservationProcessusPage';
 
 export const router = createBrowserRouter([
   {
@@ -43,7 +44,7 @@ export const router = createBrowserRouter([
       },
       {
         path: 'reservations',
-        // element: <Reservations />, // Réservations
+        element: <ReservationProcessusPage />, // Réservations
       },
       {
         path: 'contact',

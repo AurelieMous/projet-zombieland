@@ -1,0 +1,172 @@
+import { useState } from 'react';
+import { Box, Container, Typography } from '@mui/material';
+import { CustomBreadcrumbs, BackButton, PrimaryButton } from '../../components/common';
+import { Step1SelectTicket } from './Steps';
+import { colors } from '../../theme/theme';
+
+interface ReservationData {
+  tickets: Array<{ ticketId: number; quantity: number }>;
+  total: number;
+  date?: string;
+  time?: string;
+  customerInfo?: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+  };
+}
+
+const steps = [
+  'Choix des billets',
+  'Quelle date ?',
+  'Récapitulatif',
+  'Vos informations',
+  'Adresse',
+  'Paiement',
+  'Réservation confirmée'
+];
+
+export const ReservationProcessusPage = () => {
+  const [activeStep, setActiveStep] = useState(0);
+  const [reservationData, setReservationData] = useState<ReservationData>({
+    tickets: [],
+    total: 0,
+  });
+  const [step1View, setStep1View] = useState<'list' | 'quantity'>('list');
+
+  const handleNext = () => {
+    if (activeStep < steps.length - 1) {
+      setActiveStep((prev) => prev + 1);
+    }
+  };
+
+  const handleBack = () => {
+    if (activeStep > 0) {
+      setActiveStep((prev) => prev - 1);
+    }
+  };
+
+  const handleStep1Change = (data: { tickets: Array<{ ticketId: number; quantity: number }>; total: number }) => {
+    setReservationData((prev) => ({
+      ...prev,
+      tickets: data.tickets,
+      total: data.total,
+    }));
+  };
+
+  const canProceed = () => {
+    switch (activeStep) {
+      case 0:
+        return reservationData.tickets.length > 0;
+      default:
+        return true;
+    }
+  };
+
+  const renderStepContent = (step: number) => {
+    switch (step) {
+      case 0:
+        return <Step1SelectTicket onDataChange={handleStep1Change} onViewChange={setStep1View} />;
+      case 1:
+        return <Box sx={{ padding: 4, textAlign: 'center' }}>Étape 2 - Quelle date ? (à venir)</Box>;
+      case 2:
+        return <Box sx={{ padding: 4, textAlign: 'center' }}>Étape 3 - Récapitulatif (à venir)</Box>;
+      case 3:
+        return <Box sx={{ padding: 4, textAlign: 'center' }}>Étape 4 - Vos informations (à venir)</Box>;
+      case 4:
+        return <Box sx={{ padding: 4, textAlign: 'center' }}>Étape 5 - Adresse de facturation (à venir)</Box>;
+      case 5:
+        return <Box sx={{ padding: 4, textAlign: 'center' }}>Étape 6 - Paiement (à venir)</Box>;
+      case 6:
+        return <Box sx={{ padding: 4, textAlign: 'center' }}>Étape 7 - Réservation confirmée (à venir)</Box>;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <Box sx={{ minHeight: '100vh', backgroundColor: colors.secondaryDark, paddingTop: '80px' }}>
+      <Container maxWidth="lg" sx={{ paddingY: 4 }}>
+        {/* Breadcrumbs */}
+        <CustomBreadcrumbs
+          items={[
+            { label: 'Accueil', path: '/' },
+            { label: 'Réservation' },
+          ]}
+        />
+
+        {/* Barre de progression */}
+        <Box sx={{ mb: 4, mt: 3 }}>
+          {/* Texte ÉTAPE X SUR Y */}
+          <Typography
+            sx={{
+              textAlign: 'center',
+              fontFamily: "'Lexend Deca', sans-serif",
+              fontSize: { xs: '0.85rem', md: '1rem' },
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              color: colors.primaryGreen,
+              letterSpacing: '0.1em',
+              mb: 2,
+            }}
+          >
+            ÉTAPE {activeStep + 1} SUR {steps.length}
+          </Typography>
+
+          {/* Barre de progression */}
+          <Box
+            sx={{
+              width: '100%',
+              height: '8px',
+              backgroundColor: colors.secondaryGrey,
+              borderRadius: '4px',
+              overflow: 'hidden',
+            }}
+          >
+            <Box
+              sx={{
+                width: `${((activeStep + 1) / steps.length) * 100}%`,
+                height: '100%',
+                backgroundColor: colors.primaryGreen,
+                transition: 'width 0.3s ease',
+              }}
+            />
+          </Box>
+        </Box>
+
+        {/* Contenu de l'étape */}
+        <Box sx={{ mb: 4 }}>{renderStepContent(activeStep)}</Box>
+
+        {/* Boutons de navigation - masqués pendant la sélection de quantité */}
+        {!(activeStep === 0 && step1View === 'quantity') && (
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              mt: 4,
+              gap: 2,
+              flexDirection: { xs: 'column', md: 'row' },
+            }}
+          >
+            <Box sx={{ width: { xs: '100%', md: 'auto' } }}>
+              {activeStep > 0 && (
+                <BackButton text="Retour" onClick={handleBack} />
+              )}
+            </Box>
+
+            <Box sx={{ width: '100%' }}>
+              <PrimaryButton
+                text={activeStep === steps.length - 1 ? 'Confirmer' : 'CONTINUER →'}
+                onClick={handleNext}
+                fullWidth={true}
+                disabled={!canProceed()}
+              />
+            </Box>
+          </Box>
+        )}
+      </Container>
+    </Box>
+  );
+};
