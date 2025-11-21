@@ -88,18 +88,17 @@ export default function Header() {
                     </Box>
 
                     {/* Menu burger à droite */}
-                    <Box sx={{ display: { xs: 'none', md: 'flex' }, pr: 5 }}>
-                        <IconButton
-                            sx={{ color: 'white' }}
-                            onClick={handleOpen}
-                        >
-                            <MenuIcon />
-                        </IconButton>
-                        <ModalBurgerMenu
-                            open={open}
-                            onClose={handleClose}
-                        />
-                    </Box>
+                    <IconButton
+                        sx={{
+                            color: 'white',
+                            position: 'absolute',
+                            right: 40,
+                            display: { xs: 'none', md: 'flex' }
+                        }}
+                        onClick={handleOpen}
+                    >
+                        <MenuIcon />
+                    </IconButton>
 
                     {/* VUE MOBILE */}
                     <Box sx={{
