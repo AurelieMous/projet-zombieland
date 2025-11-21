@@ -15,11 +15,11 @@ async function bootstrap() {
 
   SwaggerModule.setup('swagger-ui', app, apiSpec);
 
-  await app.listen(3000);
-  console.log('🚀 App démarrée sur le port 3000');
+  await app.listen(process.env.PORT || 3001);
+  console.log(`🚀 App démarrée sur le port ${process.env.PORT || 3001}`);
   console.log(
-    '📚 Documentation (Swagger UI) : http://localhost:3000/swagger-ui',
+    `📚 Documentation (Swagger UI) : http://localhost:${process.env.PORT || 3001}/swagger-ui`,
   );
-  console.log('🔗 Endpoints API : http://localhost:3000/api/v1');
+  console.log(`🔗 Endpoints API : http://localhost:${process.env.PORT || 3001}/api/v1`);
 }
 void bootstrap();

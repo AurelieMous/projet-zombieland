@@ -1,0 +1,138 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ===== ENUMS =====
+enum Role {
+  ADMIN
+  CLIENT
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+enum PriceType {
+  ETUDIANT
+  ADULTE
+  GROUPE
+  PASS_2J
+}
+
+// ===== MODELS =====
+
+model User {
+  id           Int           @id @default(autoincrement())
+  email        String        @unique
+  pseudo       String        @unique
+  password     String
+  role         Role          @default(CLIENT)
+  reservations Reservation[]
+  created_at   DateTime      @default(now())
+  updated_at   DateTime      @updatedAt
+
+  @@map("users")
+}
+
+model Category {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  description String
+  attractions Attraction[]
+  activities  Activity[]
+  created_at  DateTime     @default(now())
+  updated_at  DateTime     @updatedAt
+
+  @@map("categories")
+}
+
+model Attraction {
+  id          Int               @id @default(autoincrement())
+  name        String
+  description String
+  category_id Int
+  category    Category          @relation(fields: [category_id], references: [id], onDelete: Cascade)
+  images      AttractionImage[]
+  activities  Activity[]
+  created_at  DateTime          @default(now())
+  updated_at  DateTime          @updatedAt
+
+  @@map("attractions")
+}
+
+model AttractionImage {
+  id            Int        @id @default(autoincrement())
+  attraction_id Int
+  url           String
+  alt_text      String?
+  attraction    Attraction @relation(fields: [attraction_id], references: [id], onDelete: Cascade)
+  created_at    DateTime   @default(now())
+
+  @@map("attraction_images")
+}
+
+model Activity {
+  id            Int         @id @default(autoincrement())
+  name          String
+  description   String
+  category_id   Int
+  attraction_id Int?
+  category      Category    @relation(fields: [category_id], references: [id], onDelete: Cascade)
+  attraction    Attraction? @relation(fields: [attraction_id], references: [id], onDelete: SetNull)
+  created_at    DateTime    @default(now())
+  updated_at    DateTime    @updatedAt
+
+  @@map("activities")
+}
+
+model ParkDate {
+  id           Int           @id @default(autoincrement())
+  jour         DateTime      @unique @db.Date
+  is_open      Boolean       @default(true)
+  notes        String?
+  reservations Reservation[]
+  created_at   DateTime      @default(now())
+
+  @@map("park_dates")
+}
+
+model Price {
+  id            Int           @id @default(autoincrement())
+  label         String
+  type          PriceType
+  amount        Decimal       @db.Decimal(10, 2)
+  duration_days Int           @default(1)
+  reservations  Reservation[]
+  created_at    DateTime      @default(now())
+  updated_at    DateTime      @updatedAt
+
+  @@map("prices")
+}
+
+model Reservation {
+  id                 Int               @id @default(autoincrement())
+  reservation_number String            @unique
+  user_id            Int
+  date_id            Int
+  price_id           Int
+  tickets_count      Int
+  total_amount       Decimal           @db.Decimal(10, 2)
+  status             ReservationStatus @default(PENDING)
+  user               User              @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  date               ParkDate          @relation(fields: [date_id], references: [id], onDelete: Restrict)
+  price              Price             @relation(fields: [price_id], references: [id], onDelete: Restrict)
+  created_at         DateTime          @default(now())
+  updated_at         DateTime          @updatedAt
+
+  @@map("reservations")
+}
