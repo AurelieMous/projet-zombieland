@@ -7,6 +7,7 @@ import ActivityCardHome from "../../components/cards/ActivityCardHome.tsx";
 import {Carousel} from "../../components/carousel";
 import PriceCard from "../../components/cards/PriceCard.tsx";
 import {pricesData} from "../../mocks/prices.ts";
+import SocialNetwork from "../../components/home/socialNetwork.tsx";
 
 
 export default function HomePage() {
@@ -50,6 +51,7 @@ export default function HomePage() {
                         <PriceCard price={price} key={price.id} />
                     ))}
                 </Box>
+                <SocialNetwork/>
             </Box>
         </>
     )
