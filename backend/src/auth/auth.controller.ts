@@ -18,13 +18,13 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async login(@Body() loginDto: LoginDto): Promise<Login200Response> {
     const { email, password } = loginDto;
-    
+
     // Valider les credentials
     const user = await this.authService.validateUser(email, password);
-    
+
     // Générer le JWT
-    const { access_token, expires_in } = await this.authService.generateJwt(user);
-    
+    const { access_token } = await this.authService.generateJwt(user);
+
     return {
       user: {
         ...user,
@@ -32,7 +32,6 @@ export class AuthController {
         updated_at: user.updated_at.toISOString(),
       },
       access_token,
-      expires_in,
     };
   }
 
