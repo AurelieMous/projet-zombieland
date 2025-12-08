@@ -1,9 +1,9 @@
 import { Box, Typography } from "@mui/material";
 import { colors } from "../../../theme";
 import { InformationCard } from "../../../components/cards";
-import { Input } from "../../../components/common/Input/Input";
 import EmailIcon from '@mui/icons-material/Email';
 import { useState, useEffect } from "react";
+import { Input } from "../../../components/common";
 
 interface Step4CustomerInfoProps {
   onDataChange: (data: { firstName: string; lastName: string; email: string; phone: string }) => void;
