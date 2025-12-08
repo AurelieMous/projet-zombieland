@@ -1,7 +1,6 @@
 import { Box, Typography } from "@mui/material";
 import { colors } from "../../../theme";
-import { Input } from "../../../components/common/Input/Input";
-import { Select } from "../../../components/common/Select/Select";
+import { Input, Select } from "../../../components/common";
 import { useState, useEffect } from "react";
 import { countries } from "../../../utils/countries";
 
