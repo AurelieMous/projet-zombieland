@@ -2,12 +2,12 @@ import {Box, Card, CardActions, CardContent, Chip, Typography} from "@mui/materi
 import type {IDateParc} from "../../@types/datesParc";
 import {PrimaryButton} from "../common/Button";
 
-// TODO création des horaires : filtrer sur la date du jour
+
 interface HorairesCardProps {
     horaire: IDateParc
 }
 
-export function HorairesCard({horaire}: HorairesCardProps) {
+export function SchedulesCard({horaire}: HorairesCardProps) {
 
     const formatJour = (date: Date | string) => {
         const dateObj = typeof date === "string" ? new Date(date) : date;

@@ -1,11 +1,11 @@
 import {Box, Typography} from "@mui/material";
 import CircleIcon from '@mui/icons-material/Circle';
 import {colors} from "../../theme";
-import getHoraireDuJour from "../../functions/getHoraireJour.ts";
+import getTodaySchedule from "../../functions/getTodaySchedule.ts";
 
 export default function ImageBanniere() {
 
-    const horaireDuJour = getHoraireDuJour()
+    const horaireDuJour = getTodaySchedule()
     const isOpen = horaireDuJour.is_open
 
     return (

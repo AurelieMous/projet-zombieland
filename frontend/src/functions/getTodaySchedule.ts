@@ -1,6 +1,6 @@
 import {horaires} from "../mocks/horaires.ts";
 
-const getHoraireDuJour = () => {
+const getTodaySchedule = () => {
     const today = new Date();
 
     // Fonction pour comparer uniquement les dates (sans l'heure)
@@ -11,13 +11,13 @@ const getHoraireDuJour = () => {
     };
 
     // Chercher l'horaire correspondant au jour d'aujourd'hui
-    const horaireTrouve = horaires.horaires.find((horaire) => {
+    const foundSchedule = horaires.horaires.find((horaire) => {
         return isSameDay(new Date(horaire.jour), today);
     });
 
     // Si trouvé, retourner l'horaire, sinon retourner une donnée par défaut
-    if (horaireTrouve) {
-        return horaireTrouve;
+    if (foundSchedule) {
+        return foundSchedule;
     }
 
     // Donnée banale pour aujourd'hui si aucun horaire n'existe
@@ -32,4 +32,4 @@ const getHoraireDuJour = () => {
     };
 };
 
-export default getHoraireDuJour;
+export default getTodaySchedule;

@@ -1,7 +1,8 @@
-import {HorairesCard} from "../cards/HorairesCard.tsx";
+import {SchedulesCard} from "../cards/SchedulesCard.tsx";
 import {Box, Typography} from "@mui/material";
 import AccessCard from "../cards/AccessCard.tsx";
-import getHoraireDuJour from "../../functions/getHoraireJour.ts";
+import getTodaySchedule from "../../functions/getTodaySchedule.ts";
+
 
 export default function InformationsMain() {
 
@@ -35,7 +36,7 @@ export default function InformationsMain() {
                     gap: { xs: 2, sm: 3, md: 4 },
                     width: '100%'
                 }}>
-                    <HorairesCard horaire={getHoraireDuJour()} />
+                    <SchedulesCard horaire={getTodaySchedule()} />
                     <AccessCard />
                 </Box>
             </Box>
