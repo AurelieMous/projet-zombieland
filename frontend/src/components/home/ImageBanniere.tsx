@@ -5,8 +5,8 @@ import getTodaySchedule from "../../functions/getTodaySchedule.ts";
 
 export default function ImageBanniere() {
 
-    const horaireDuJour = getTodaySchedule()
-    const isOpen = horaireDuJour.is_open
+    const todaySchedule = getTodaySchedule()
+    const isOpen = todaySchedule.is_open
 
     return (
         <Box
