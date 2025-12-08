@@ -1,5 +1,6 @@
-import {Button, Card, CardActions, CardContent, Typography} from "@mui/material";
+import {Box, Card, CardActions, CardContent, Chip, Typography} from "@mui/material";
 import type {IDateParc} from "../../@types/datesParc";
+import {PrimaryButton} from "../common/Button";
 
 // TODO création des horaires : filtrer sur la date du jour
 interface HorairesCardProps {
@@ -20,28 +21,70 @@ export function HorairesCard({horaire}: HorairesCardProps) {
 
     return (
         <>
-            <Card sx={{minWidth: 275}}>
+            <Card sx={{minWidth: 275, borderRadius: 5, backgroundColor: 'colors.secondaryDark', color: 'white'}}>
                 <CardContent>
-                    <Typography gutterBottom sx={{color: 'text.secondary', fontSize: 14}}>
-                        Aujourd'hui, {formatJour(horaire.jour)}, le parc est {horaire.is_open ? "ouvert" : "fermé"} :
-                    </Typography>
-                    {horaire.is_open ? (
-                        <>
-                            <Typography variant="body2">
-                                Heure d'ouverture : {formatHeure(horaire.open_hour)}
-                            </Typography>
-                            <Typography variant="body2">
-                                Heure de fermeture : {formatHeure(horaire.close_hour)}
-                            </Typography>
-                        </>
-                    ) : (
-                        <Typography variant="h5" component="div">
-                            Pas d'horaires disponibles.
+                    <Box sx={{
+                        paddingBottom: 5,
+                        textAlign: 'center'
+                    }}>
+                        <Typography variant="h5">
+                            Aujourd'hui, {formatJour(horaire.jour)}, le parc est{' '}
+                            <Box
+                                component="span"
+                                sx={{
+                                    color: horaire.is_open ? "primary.main" : "error.main",
+                                    fontWeight: 'bold'
+                                }}
+                            >
+                                {horaire.is_open ? "ouvert" : "fermé"}
+                            </Box>
                         </Typography>
+                    </Box>
+
+                    {horaire.is_open ? (
+                        <Box sx={{
+                            display: "flex",
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            gap: 4,
+                            paddingBottom: 5
+                        }}>
+                            <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3}}>
+                                <Typography variant="body1">
+                                    Heure d'ouverture
+                                </Typography>
+                                <Chip
+                                    label={formatHeure(horaire.open_hour)}
+                                    variant="outlined"
+                                    sx={{fontWeight: 'bold', fontSize: '1.5rem', padding: 1, borderRadius: 3}}
+                                />
+                            </Box>
+
+                            <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3}}>
+                                <Typography variant="body1">
+                                    Heure de fermeture
+                                </Typography>
+                                <Chip
+                                    label={formatHeure(horaire.close_hour)}
+                                    variant="outlined"
+                                    sx={{fontWeight: 'bold', fontSize: '1.5rem', padding: 1, borderRadius: 3}}
+                                />
+                            </Box>
+                        </Box>
+                    ) : (
+                        <Box sx={{
+                            display: "flex",
+                            alignItems: 'center',
+                            paddingBottom: 5
+                        }}>
+                            <Typography variant="h5">
+                                Pas d'horaires disponibles.
+                            </Typography>
+                        </Box>
                     )}
                 </CardContent>
-                <CardActions>
-                    <Button size="small">Plus d'information</Button>
+                <CardActions sx={{ justifyContent: 'center', paddingBottom: 5 }}>
+                    <PrimaryButton text={"Plus d'horaires"} href={"/informations"} fullWidth={false}/>
                 </CardActions>
             </Card>
         </>

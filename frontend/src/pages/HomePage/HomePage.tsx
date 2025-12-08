@@ -8,7 +8,8 @@ import {Carousel} from "../../components/carousel";
 import PriceCard from "../../components/cards/PriceCard.tsx";
 import {pricesData} from "../../mocks/prices.ts";
 import SocialNetwork from "../../components/home/SocialNetwork.tsx";
-import Informations from "../../components/home/Informations.tsx";
+import InformationsMain from "../../components/home/InformationsMain.tsx";
+
 
 
 export default function HomePage() {
@@ -53,7 +54,10 @@ export default function HomePage() {
                     ))}
                 </Box>
                 <SocialNetwork/>
-                <Informations/>
+                <Box sx={{ paddingTop: 20 }}>
+                    <InformationsMain/>
+                </Box>
+
             </Box>
         </>
     )

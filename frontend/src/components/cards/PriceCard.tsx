@@ -3,6 +3,7 @@ import {Card, CardContent, Typography} from "@mui/material";
 import type {IPrice} from "../../@types/price";
 import {theme} from "../../theme";
 import {motion} from "framer-motion";
+import {useNavigate} from "react-router";
 
 interface PriceCardProps {
     price: IPrice;
@@ -10,6 +11,8 @@ interface PriceCardProps {
 }
 // TODO Ajouter le lien vers la reservation au passage de la souris sur le card
 export default function PriceCard({price}: PriceCardProps) {
+
+    const navigate = useNavigate();
 
     const formatPriceTitle = (price: IPrice) => {
         if (price.type === "PASS_2J") {
@@ -37,6 +40,7 @@ export default function PriceCard({price}: PriceCardProps) {
                     borderRadius: 5,
                     cursor: 'pointer'
                 }}
+                onClick={() => navigate(`/reservations`)}
             >
                 <CardContent sx={{paddingLeft: 5}}>
                     <Typography variant={"h4"}>

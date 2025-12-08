@@ -52,7 +52,7 @@ export const router = createBrowserRouter([
       },
       {
         path: 'info',
-        // element: <GeneralInfo />, // Informations générales
+        // element: <GeneralInfo />, // InformationsMain générales
       },
       {
         path: 'static/:pageType',

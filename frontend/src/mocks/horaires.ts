@@ -89,6 +89,15 @@ export const horaires = {
             "is_open": false,
             "notes": "Fermé pour le Nouvel An",
             "created_at": new Date("2024-03-15T10:30:00Z")
+        },
+        {
+            "id": 11,
+            "jour": new Date("2025-12-08T00:00:00Z"),
+            "open_hour": new Date("2025-12-08T09:30:00Z"),
+            "close_hour": new Date("2025-12-08T19:00:00Z"),
+            "is_open": true,
+            "notes": "Horaires d'hiver - Spectacle de Noël à 15h",
+            "created_at": new Date("2025-12-01T10:00:00Z")
         }
     ]
 }
