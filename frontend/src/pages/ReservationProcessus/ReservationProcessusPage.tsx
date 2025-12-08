@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Box, Container, Typography } from '@mui/material';
 import { CustomBreadcrumbs, BackButton, PrimaryButton } from '../../components/common';
-import { Step1SelectTicket, Step2SelectDate, Step3Summary, Step4CustomerInfo } from './Steps';
+import { Step1SelectTicket, Step2SelectDate, Step3Summary, Step4CustomerInfo, Step6PaymentInfo } from './Steps';
 import { colors } from '../../theme/theme';
 
 interface ReservationData {
@@ -78,6 +78,13 @@ export const ReservationProcessusPage = () => {
     }));
   };
 
+  const handleStep6Change = (data: { cardNumber: string; month: string; year: string; cvv: string }) => {
+    setReservationData((prev) => ({
+      ...prev,
+      paymentInfo: data,
+    }));
+  };
+
   const canProceed = () => {
     switch (activeStep) {
       case 0:
@@ -137,7 +144,7 @@ export const ReservationProcessusPage = () => {
       case 4:
         return <Box sx={{ padding: 4, textAlign: 'center' }}>Étape 5 - Adresse de facturation (à venir)</Box>;
       case 5:
-        return <Box sx={{ padding: 4, textAlign: 'center' }}>Étape 6 - Paiement (à venir)</Box>;
+        return <Step6PaymentInfo />;
       case 6:
         return <Box sx={{ padding: 4, textAlign: 'center' }}>Étape 7 - Réservation confirmée (à venir)</Box>;
       default:
