@@ -2,25 +2,34 @@ import {colors} from "../../theme";
 import {Alert, Box, Container, Typography, Link} from "@mui/material";
 import {CustomBreadcrumbs, Input, PrimaryButton} from "../../components/common";
 import {LoginContext} from "../../context/UserLoginContext.tsx";
-import {useContext, useState} from "react";
-import {login} from "../../services/auth.ts";
-import {useNavigate} from "react-router";
+import {type FormEvent, useContext, useState} from "react";
+import {register} from "../../services/auth.ts";
+import {useNavigate} from "react-router-dom";
 
-export default function LoginPage() {
+export default function RegisterPage() {
 
     // On récupère le context
     const { setIsLogged, setRole, setPseudo, setToken} = useContext(LoginContext)
     const [isLoading, setIsLoading] = useState(false);
-    const [loginError, setLoginError] = useState("");
+    const [registerError, setRegisterError] = useState(""); // ✅ Renommé
 
     // champs du formulaire
     const [email, setEmail] = useState('');
+    const [newPseudo, setNewPseudo] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
 
     // état validation
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
-    const [touched, setTouched] = useState({email: false, password: false});
+    const [newPseudoError, setNewPseudoError] = useState('');
+    const [confirmPasswordError, setConfirmPasswordError] = useState('');
+    const [touched, setTouched] = useState({
+        email: false,
+        password: false,
+        confirmPassword: false, // ✅ Ajouté
+        newPseudo: false // ✅ Ajouté
+    });
 
     const navigate = useNavigate();
 
@@ -39,31 +48,64 @@ export default function LoginPage() {
         return "";
     };
 
+    // validation second mot de passe
+    const validateConfirmPassword = (confirmPassword: string): string => {
+        if (!confirmPassword) return "La confirmation du mot de passe est requise";
+        if (confirmPassword !== password) return "Les mots de passe ne correspondent pas";
+        return "";
+    }
+
+    // validation nouveau pseudo
+    const validateNewPseudo = (newPseudo: string): string => {
+        if(!newPseudo) return "Le pseudo est requis";
+        if (newPseudo.length < 3) return "Le pseudo doit contenir au moins 3 caractères";
+        if (newPseudo.length > 10) return "Le pseudo est trop long (max 10 caractères)";
+        const pseudoRegex = /^[a-zA-Z0-9]+$/;
+        if (!pseudoRegex.test(newPseudo)) return "Le pseudo ne peut contenir que des lettres et des chiffres";
+        return "";
+    }
+
     // validation formulaire
     const isFormValid = () => {
-        return email && password && !validateEmail(email) && !validatePassword(password);
+        return email &&
+            password &&
+            confirmPassword &&
+            newPseudo &&
+            !validateEmail(email) &&
+            !validatePassword(password) &&
+            !validateConfirmPassword(confirmPassword) &&
+            !validateNewPseudo(newPseudo);
     };
 
     // soumission formulaire
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
 
         //validation finale
         const emailErr = validateEmail(email);
+        const newPseudoErr = validateNewPseudo(newPseudo);
         const passwordErr = validatePassword(password);
+        const confirmPasswordErr = validateConfirmPassword(confirmPassword);
 
         setEmailError(emailErr);
         setPasswordError(passwordErr);
-        setTouched({email: true, password: true});
+        setConfirmPasswordError(confirmPasswordErr);
+        setNewPseudoError(newPseudoErr);
+        setTouched({
+            email: true,
+            password: true,
+            confirmPassword: true,
+            newPseudo: true
+        });
 
-        if (emailErr || passwordErr) return;
+        if (emailErr || passwordErr || confirmPasswordErr || newPseudoErr) return;
 
         setIsLoading(true);
-        setLoginError("");
+        setRegisterError("");
 
         try {
             // Appel API
-            const data = await login(email, password)
+            const data = await register(email, newPseudo, password, confirmPassword)
 
             // Stocker dans le context
             setIsLogged(true);
@@ -76,10 +118,11 @@ export default function LoginPage() {
             localStorage.setItem("role", data.user.role)
             localStorage.setItem("pseudo", data.user.pseudo)
 
-            navigate('/register/success');
+            navigate('/account');
 
         } catch (error) {
-            setLoginError("Email ou mot de passe incorrect");
+            setRegisterError("Erreur lors de l'inscription. Email déjà utilisé ?");
+            console.error("Erreur d'inscription:", error);
         } finally {
             setIsLoading(false);
         }
@@ -92,11 +135,12 @@ export default function LoginPage() {
                 <CustomBreadcrumbs
                     items={[
                         { label: 'Accueil', path: '/' },
-                        { label: 'Se connecter'},
+                        { label: 'Se connecter', path: '/login'},
+                        { label: "S'inscrire"},
                     ]}
                 />
 
-                {/* Formulaire de connexion */}
+                {/* Formulaire d'inscription */}
                 <Box
                     component="form"
                     onSubmit={handleSubmit}
@@ -125,18 +169,18 @@ export default function LoginPage() {
                             mb: 2,
                         }}
                     >
-                        CONNEXION
+                        INSCRIPTION
                     </Typography>
 
                     {/* Message d'erreur global */}
-                    {loginError && (
-                        <Alert severity="error" sx={{ mb: 2 }}>
-                            {loginError}
+                    {registerError && (
+                        <Alert severity="error" sx={{ mb: 2, width: '100%' }}>
+                            {registerError}
                         </Alert>
                     )}
 
-                    {/* Champ Email */}
                     <Box sx={{ width: '100%'}}>
+                        {/* Champ Email */}
                         <Input
                             label="Email"
                             type="email"
@@ -157,6 +201,27 @@ export default function LoginPage() {
                             required
                         />
 
+                        {/* Champ Pseudo */}
+                        <Input
+                            label="Pseudo"
+                            type="text"
+                            placeholder="Votre pseudo"
+                            value={newPseudo}
+                            onChange={(e) => {
+                                setNewPseudo(e.target.value);
+                                if (touched.newPseudo) {
+                                    setNewPseudoError(validateNewPseudo(e.target.value));
+                                }
+                            }}
+                            onBlur={() => {
+                                setTouched({ ...touched, newPseudo: true });
+                                setNewPseudoError(validateNewPseudo(newPseudo));
+                            }}
+                            error={touched.newPseudo && !!newPseudoError}
+                            helperText={touched.newPseudo ? newPseudoError : ''}
+                            required
+                        />
+
                         {/* Champ Mot de passe */}
                         <Input
                             label="Mot de passe"
@@ -168,6 +233,10 @@ export default function LoginPage() {
                                 if (touched.password) {
                                     setPasswordError(validatePassword(e.target.value));
                                 }
+                                // ✅ Revalider confirmPassword si déjà touché
+                                if (touched.confirmPassword && confirmPassword) {
+                                    setConfirmPasswordError(validateConfirmPassword(confirmPassword));
+                                }
                             }}
                             onBlur={() => {
                                 setTouched({ ...touched, password: true });
@@ -178,33 +247,46 @@ export default function LoginPage() {
                             required
                         />
 
+                        {/* Champ confirmation de Mot de passe */}
+                        <Input
+                            label="Confirmation du mot de passe"
+                            type="password"
+                            placeholder="Confirmer votre mot de passe"
+                            value={confirmPassword}
+                            onChange={(e) => {
+                                setConfirmPassword(e.target.value);
+                                if (touched.confirmPassword) {
+                                    setConfirmPasswordError(validateConfirmPassword(e.target.value));
+                                }
+                            }}
+                            onBlur={() => {
+                                setTouched({ ...touched, confirmPassword: true });
+                                setConfirmPasswordError(validateConfirmPassword(confirmPassword))
+                            }}
+                            error={touched.confirmPassword && !!confirmPasswordError}
+                            helperText={touched.confirmPassword ? confirmPasswordError : ''}
+                            required
+                        />
+
                         {/* Bouton de soumission */}
                         <PrimaryButton
                             type="submit"
                             disabled={!isFormValid() || isLoading}
-                            text={isLoading ? "Connexion en cours..." : "Se connecter"}
+                            text={isLoading ? "Inscription en cours..." : "S'inscrire"}
                         />
                     </Box>
 
-                    {/* Lien mot de passe oublié
-                    <Box sx={{ textAlign: 'center', mt: 2 }}>
-                        <Typography variant="body2">
-                            <a href="/forgot-password" style={{ textDecoration: 'none' }}>
-                                Mot de passe oublié ?
-                            </a>
-                        </Typography>
-                    </Box>*/}
-
-                    {/* Lien vers inscription */}
+                    {/* Lien vers connexion */}
                     <Box sx={{ textAlign: 'center', mt: 2 }}>
                         <Typography variant="body1">
-                            Pas encore de compte ?{' '}
-                            <Link href="/register"
-                               style={{
-                                   fontWeight: 'bold',
-                                   color: colors.primaryGreen,
-                               }}>
-                                S'inscrire
+                            Déjà un compte ?{' '}
+                            <Link href="/login"
+                                  style={{
+                                      fontWeight: 'bold',
+                                      color: colors.primaryGreen,
+                                      textDecoration: 'none'
+                                  }}>
+                                Se connecter
                             </Link>
                         </Typography>
                     </Box>
