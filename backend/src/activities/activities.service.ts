@@ -113,7 +113,6 @@ export class ActivitiesService {
       );
     }
 
-    // Vérifier que la catégorie existe
     const categoryExists = await this.prisma.category.findUnique({
       where: { id: category_id },
     });
@@ -137,7 +136,6 @@ export class ActivitiesService {
       }
     }
 
-    // Créer l'activité
     const activity = await this.prisma.activity.create({
       data: {
         name,
@@ -176,7 +174,6 @@ export class ActivitiesService {
       throw new BadRequestException('ID invalide');
     }
 
-    // Vérifier que l'activité existe
     const activityExists = await this.prisma.activity.findUnique({
       where: { id },
     });
@@ -220,7 +217,6 @@ export class ActivitiesService {
     if (category_id !== undefined) dataToUpdate.category_id = category_id;
     if (attraction_id !== undefined) dataToUpdate.attraction_id = attraction_id;
 
-    // Mettre à jour l'activité
     const updatedActivity = await this.prisma.activity.update({
       where: { id },
       data: dataToUpdate,
@@ -255,7 +251,6 @@ export class ActivitiesService {
       throw new BadRequestException('ID invalide');
     }
 
-    // Vérifier que l'activité existe
     const activityExists = await this.prisma.activity.findUnique({
       where: { id },
     });
@@ -264,7 +259,6 @@ export class ActivitiesService {
       throw new NotFoundException(`Activité avec l'ID ${id} non trouvée`);
     }
 
-    // Supprimer l'activité
     await this.prisma.activity.delete({
       where: { id },
     });
