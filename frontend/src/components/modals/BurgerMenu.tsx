@@ -29,13 +29,13 @@ export default function ModalBurgerMenu({ open, onClose }: ModalBurgerMenuProps)
 
     const navigateLoginPage = () => {
         navigate('/login');
-        onClose();
+        setTimeout(onClose, 50);
     }
 
     const navigateAfterLogout = () => {
         logout();
         navigate('/');
-        onClose();
+        setTimeout(onClose, 50);
     }
 
     return (
