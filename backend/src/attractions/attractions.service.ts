@@ -110,7 +110,6 @@ export class AttractionsService {
       );
     }
 
-    // Vérifier que la catégorie existe
     const categoryExists = await this.prisma.category.findUnique({
       where: { id: category_id },
     });
@@ -121,7 +120,6 @@ export class AttractionsService {
       );
     }
 
-    // Créer l'attraction
     const attraction = await this.prisma.attraction.create({
       data: {
         name,
@@ -162,7 +160,6 @@ export class AttractionsService {
       throw new BadRequestException('ID invalide');
     }
 
-    // Vérifier que l'attraction existe
     const attractionExists = await this.prisma.attraction.findUnique({
       where: { id },
     });
@@ -192,7 +189,6 @@ export class AttractionsService {
     if (description !== undefined) dataToUpdate.description = description;
     if (category_id !== undefined) dataToUpdate.category_id = category_id;
 
-    // Mettre à jour l'attraction
     const updatedAttraction = await this.prisma.attraction.update({
       where: { id },
       data: dataToUpdate,
@@ -230,7 +226,6 @@ export class AttractionsService {
       throw new BadRequestException('ID invalide');
     }
 
-    // Vérifier que l'attraction existe
     const attractionExists = await this.prisma.attraction.findUnique({
       where: { id },
     });
@@ -239,7 +234,6 @@ export class AttractionsService {
       throw new NotFoundException(`Attraction avec l'ID ${id} non trouvée`);
     }
 
-    // Supprimer l'attraction
     await this.prisma.attraction.delete({
       where: { id },
     });

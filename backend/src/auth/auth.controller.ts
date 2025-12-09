@@ -19,10 +19,7 @@ export class AuthController {
   async login(@Body() loginDto: LoginDto): Promise<Login200Response> {
     const { email, password } = loginDto;
 
-    // Valider les credentials
     const user = await this.authService.validateUser(email, password);
-
-    // Générer le JWT
     const { access_token } = await this.authService.generateJwt(user);
 
     return {

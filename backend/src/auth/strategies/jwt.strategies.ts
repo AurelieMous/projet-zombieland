@@ -24,14 +24,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   // Appelé automatiquement si le token est valide
   async validate(payload: any) {
-    // payload = { sub: 5, email: "test@zombieland.com", role: "CLIENT", iat: 1733..., exp: 1733... }
-    
-    // Récupérer l'utilisateur depuis la DB avec l'ID (payload.sub)
     const user = await this.prisma.user.findUnique({
       where: { id: payload.sub },
     });
 
-    // Si l'utilisateur n'existe plus (supprimé entre-temps)
     if (!user) {
       throw new UnauthorizedException('Utilisateur introuvable');
     }
