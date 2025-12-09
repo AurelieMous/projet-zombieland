@@ -441,7 +441,7 @@ export const Activities = () => {
               <Box key={item.id} sx={{ display: 'flex' }}>
                 <Card
                   component={Link}
-                  to={tabValue === 0 ? `/activities/${item.id}` : `#`}
+                  to={tabValue === 0 ? `/activities/${item.id}` : `/attractions/${item.id}`}
                   sx={{
                     backgroundColor: colors.secondaryDark,
                     border: `1px solid ${colors.secondaryGrey}`,
