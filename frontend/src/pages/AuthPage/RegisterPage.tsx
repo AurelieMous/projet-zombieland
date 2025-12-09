@@ -1,17 +1,14 @@
 import {colors} from "../../theme";
 import {Alert, Box, Container, Typography, Link} from "@mui/material";
 import {CustomBreadcrumbs, Input, PrimaryButton} from "../../components/common";
-import {LoginContext} from "../../context/UserLoginContext.tsx";
-import {type FormEvent, useContext, useState} from "react";
+import {type FormEvent, useState} from "react";
 import {register} from "../../services/auth.ts";
 import {useNavigate} from "react-router-dom";
 
 export default function RegisterPage() {
 
-    // On récupère le context
-    const { setIsLogged, setRole, setPseudo, setToken} = useContext(LoginContext)
     const [isLoading, setIsLoading] = useState(false);
-    const [registerError, setRegisterError] = useState(""); // ✅ Renommé
+    const [registerError, setRegisterError] = useState("");
 
     // champs du formulaire
     const [email, setEmail] = useState('');
@@ -27,8 +24,8 @@ export default function RegisterPage() {
     const [touched, setTouched] = useState({
         email: false,
         password: false,
-        confirmPassword: false, // ✅ Ajouté
-        newPseudo: false // ✅ Ajouté
+        confirmPassword: false,
+        newPseudo: false
     });
 
     const navigate = useNavigate();
@@ -104,25 +101,20 @@ export default function RegisterPage() {
         setRegisterError("");
 
         try {
-            // Appel API
-            const data = await register(email, newPseudo, password, confirmPassword)
+            // Appel API - Le backend retourne status 201 si succès
+            await register(email, newPseudo, password, confirmPassword);
 
-            // Stocker dans le context
-            setIsLogged(true);
-            setRole(data.user.role)
-            setPseudo(data.user.pseudo)
-            setToken(data.token)
+            // ✅ Inscription réussie (status 201) → Redirection vers page de succès
+            navigate('/register/success');
 
-            // Stocker dans localStorage pour persistance
-            localStorage.setItem("token", data.token);
-            localStorage.setItem("role", data.user.role)
-            localStorage.setItem("pseudo", data.user.pseudo)
-
-            navigate('/account');
-
-        } catch (error) {
-            setRegisterError("Erreur lors de l'inscription. Email déjà utilisé ?");
+        } catch (error: any) {
             console.error("Erreur d'inscription:", error);
+
+            // Afficher le message d'erreur du backend
+            const errorMessage = error.response?.data?.message ||
+                "Erreur lors de l'inscription. Email déjà utilisé ?";
+
+            setRegisterError(errorMessage);
         } finally {
             setIsLoading(false);
         }
@@ -233,7 +225,6 @@ export default function RegisterPage() {
                                 if (touched.password) {
                                     setPasswordError(validatePassword(e.target.value));
                                 }
-                                // ✅ Revalider confirmPassword si déjà touché
                                 if (touched.confirmPassword && confirmPassword) {
                                     setConfirmPasswordError(validateConfirmPassword(confirmPassword));
                                 }
@@ -280,7 +271,8 @@ export default function RegisterPage() {
                     <Box sx={{ textAlign: 'center', mt: 2 }}>
                         <Typography variant="body1">
                             Déjà un compte ?{' '}
-                            <Link href="/login"
+                            <Link
+                                onClick={() => navigate('/login')   }
                                   style={{
                                       fontWeight: 'bold',
                                       color: colors.primaryGreen,

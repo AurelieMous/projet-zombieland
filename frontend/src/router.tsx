@@ -8,6 +8,7 @@ import { ReservationProcessusPage } from './pages/ReservationProcessus';
 import LoginPage from "./pages/AuthPage/LoginPage.tsx";
 import AccountPage from "./pages/AuthPage/AccountPage.tsx";
 import RegisterPage from "./pages/AuthPage/RegisterPage.tsx";
+import SuccesAuthPage from "./pages/AuthPage/SuccesAuthPage.tsx";
 
 export const router = createBrowserRouter([
   {
@@ -37,6 +38,10 @@ export const router = createBrowserRouter([
       {
         path: 'register',
         element: <RegisterPage />, // Inscription
+      },
+      {
+        path: 'register/success',
+        element: <SuccesAuthPage/>,
       },
       {
         path: 'account',
