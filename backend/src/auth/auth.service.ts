@@ -65,7 +65,6 @@ export class AuthService {
       );
     }
 
-    // Vérifier si l'email existe déjà
     const existingUserByEmail = await this.prisma.user.findUnique({
       where: { email },
     });
@@ -74,7 +73,6 @@ export class AuthService {
       throw new ConflictException('Cet email est déjà utilisé');
     }
 
-    // Vérifier si le pseudo existe déjà
     const existingUserByPseudo = await this.prisma.user.findUnique({
       where: { pseudo },
     });
@@ -83,10 +81,8 @@ export class AuthService {
       throw new ConflictException('Ce pseudo est déjà utilisé');
     }
 
-    // Hash du mot de passe avec bcrypt (10 rounds)
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Création de l'utilisateur
     const user = await this.prisma.user.create({
       data: {
         email,
@@ -152,10 +148,7 @@ export class AuthService {
       role: user.role,
     };
 
-    // Récupérer la config depuis .env
     const expiresIn = this.configService.get<number>('JWT_EXPIRATION') || 3600;
-
-    // Signer le token
     const token = this.jwtService.sign(payload);
 
     // Retourner token + expiration
@@ -176,7 +169,6 @@ export class AuthService {
         throw new BadRequestException('Email invalide');
       }
 
-      // Vérifier si l'email est déjà utilisé par un autre user
       const existingUser = await this.prisma.user.findUnique({
         where: { email },
       });
