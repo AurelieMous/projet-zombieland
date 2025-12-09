@@ -24,16 +24,6 @@ import { HeroSection } from '../../components/hero/HeroSection';
 import type { Activity } from '../../@types/activity';
 import type { Attraction } from '../../@types/attraction';
 
-const activityImageMap: Record<string, string> = {
-  'escape game zombie': '/activities-images/abandoned-lab.jpg',
-  'laser game zombie': '/activities-images/laser-tag-arena.jpg',
-  'atelier maquillage zombie': '/activities-images/zombie.jpg',
-  'spectacle survie': '/activities-images/haunted-hospital.jpg',
-  'restaurant le bunker': '/activities-images/post-apocalyptic-camp.jpg',
-};
-
-const fallbackImage = '/activities-images/zombie-2.jpg';
-
 export const Activities = () => {
   const [tabValue, setTabValue] = useState<number>(0);
   const [activities, setActivities] = useState<Activity[]>([]);
@@ -55,10 +45,6 @@ export const Activities = () => {
         setActivities(Array.isArray(activitiesData) ? (activitiesData as Activity[]) : []);
         setAttractions(Array.isArray(attractionsData) ? (attractionsData as Attraction[]) : []);
         
-        // Debug temporaire pour voir les images des attractions
-        if (Array.isArray(attractionsData) && attractionsData.length > 0) {
-          console.log('Images attractions:', attractionsData[0]?.images);
-        }
       } catch (err) {
         const message =
           err instanceof Error ? err.message : 'Impossible de charger les données.';
@@ -74,8 +60,12 @@ export const Activities = () => {
 
   const enrichedActivities = useMemo(() => {
     const withMeta = activities.map((activity) => {
-      const key = activity.name.toLowerCase();
-      const image = activityImageMap[key] ?? fallbackImage;
+      const apiImage = activity.image_url?.trim();
+      // Accepter les URLs HTTP/HTTPS et les chemins relatifs qui commencent par /
+      const isValidHttp = apiImage?.startsWith('http://') || apiImage?.startsWith('https://');
+      const isValidPath = apiImage?.startsWith('/');
+      const image = (isValidHttp || isValidPath) ? apiImage : undefined;
+      
       // Valeurs par défaut car ces champs n'existent pas en BDD
       const thrill = 3;
       const duration = '45 min';
@@ -98,26 +88,9 @@ export const Activities = () => {
 
   const enrichedAttractions = useMemo(() => {
     const withMeta = attractions.map((attraction) => {
-      const key = attraction.name.toLowerCase();
-      // Normaliser l'URL de l'image : si c'est une URL complète, l'utiliser, sinon utiliser le fallback
-      let image = fallbackImage;
-      if (attraction.images?.[0]?.url) {
-        const imageUrl = attraction.images[0].url;
-        const isHttp = imageUrl.startsWith('http://') || imageUrl.startsWith('https://');
-        const isBadCdn = imageUrl.includes('cdn.zombieland.com');
-
-        if (isHttp && !isBadCdn) {
-          image = imageUrl;
-        } else if (imageUrl.startsWith('/') && !isBadCdn) {
-          image = imageUrl;
-        } else {
-          // URL non résolue ou domaine CDN invalide : fallback local
-          console.warn(`URL d'image non résolue pour "${attraction.name}": ${imageUrl}`);
-          image = activityImageMap[key] ?? fallbackImage;
-        }
-      } else {
-        image = activityImageMap[key] ?? fallbackImage;
-      }
+      const imageUrl = attraction.images?.[0]?.url?.trim();
+      const isValidHttp = imageUrl?.startsWith('http://') || imageUrl?.startsWith('https://');
+      const image = isValidHttp ? imageUrl : undefined;
       const thrill = 3;
       const duration = '45 min';
       const categoryLabel = attraction.category?.name ?? 'Attraction';
@@ -487,13 +460,15 @@ export const Activities = () => {
                     },
                   }}
                 >
-                  <CardMedia
-                    component="img"
-                    height="200"
-                    image={item.image}
-                    alt={item.name}
-                    sx={{ objectFit: 'cover', filter: 'brightness(0.7)' }}
-                  />
+                  {item.image && (
+                    <CardMedia
+                      component="img"
+                      height="200"
+                      image={item.image}
+                      alt={item.name}
+                      sx={{ objectFit: 'cover', filter: 'brightness(0.7)' }}
+                    />
+                  )}
                   <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
                     <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap>
                       <Chip
