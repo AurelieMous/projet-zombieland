@@ -79,7 +79,7 @@ export default function LoginPage() {
             localStorage.setItem("role", data.user.role)
             localStorage.setItem("pseudo", data.user.pseudo)
 
-            navigate(data.user.role === "ADMIN" ? "/admin" : "/");
+            navigate('/account');
 
         } catch (error) {
             setLoginError("Email ou mot de passe incorrect");
