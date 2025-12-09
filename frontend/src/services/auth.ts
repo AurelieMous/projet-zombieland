@@ -1,0 +1,17 @@
+// fonction de connexion login et register
+
+import axiosInstance from "./getApi.ts";
+import type {User} from "../@types/users";
+
+interface LoginResponse {
+    user: User;
+    token: string;
+}
+
+export const login = async (email: string, password: string): Promise<LoginResponse> => {
+    const response = await axiosInstance.post<LoginResponse>('/login', {
+        email,
+        password
+    });
+    return response.data;
+};

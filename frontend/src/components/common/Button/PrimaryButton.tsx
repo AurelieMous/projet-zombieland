@@ -9,6 +9,7 @@ interface PrimaryButtonProps {
   href?: string;
   fullWidth?: boolean;
   disabled?: boolean;
+  type?: string;
 }
 
 export const PrimaryButton = ({
