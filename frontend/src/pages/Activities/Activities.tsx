@@ -1,81 +1,225 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Box,
+  Card,
+  CardContent,
+  CardMedia,
   Chip,
   Container,
   Divider,
-  Grid,
+  LinearProgress,
   Slider,
   Stack,
+  Tab,
+  Tabs,
+  TextField,
   Typography,
 } from '@mui/material';
-import { activitiesData } from '../../mocks';
-import { ActivityCard } from '../../components/cards/ActivityCard';
-import { HeroSection } from '../../components/hero/HeroSection';
-import { CustomBreadcrumbs, PrimaryButton } from '../../components/common';
+import { Link } from 'react-router-dom';
+import { getActivities } from '../../services/activities';
+import { getAttractions } from '../../services/attractions';
 import { colors } from '../../theme';
+import { CustomBreadcrumbs } from '../../components/common';
+import { HeroSection } from '../../components/hero/HeroSection';
+import type { Activity } from '../../@types/activity';
+import type { Attraction } from '../../@types/attraction';
+
+const activityImageMap: Record<string, string> = {
+  'escape game zombie': '/activities-images/abandoned-lab.jpg',
+  'laser game zombie': '/activities-images/laser-tag-arena.jpg',
+  'atelier maquillage zombie': '/activities-images/zombie.jpg',
+  'spectacle survie': '/activities-images/haunted-hospital.jpg',
+  'restaurant le bunker': '/activities-images/post-apocalyptic-camp.jpg',
+};
+
+const fallbackImage = '/activities-images/zombie-2.jpg';
 
 export const Activities = () => {
+  const [tabValue, setTabValue] = useState<number>(0);
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [attractions, setAttractions] = useState<Attraction[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('Toutes');
   const [minThrill, setMinThrill] = useState<number>(0);
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
-  const heroImages = useMemo(
-    () =>
-      activitiesData.activities
-        .map((activity) => activity.images?.[0])
-        .filter(Boolean)
-        .slice(0, 5) as string[],
-    []
-  );
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const [activitiesData, attractionsData] = await Promise.all([
+          getActivities(),
+          getAttractions(),
+        ]);
+        setActivities(Array.isArray(activitiesData) ? (activitiesData as Activity[]) : []);
+        setAttractions(Array.isArray(attractionsData) ? (attractionsData as Attraction[]) : []);
+        
+        // Debug temporaire pour voir les images des attractions
+        if (Array.isArray(attractionsData) && attractionsData.length > 0) {
+          console.log('Images attractions:', attractionsData[0]?.images);
+        }
+      } catch (err) {
+        const message =
+          err instanceof Error ? err.message : 'Impossible de charger les données.';
+        setError(message);
+        setActivities([]);
+        setAttractions([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
-  const categories = useMemo(
-    () => ['Toutes', ...Array.from(new Set(activitiesData.activities.map((a) => a.category)))],
-    []
-  );
+  const enrichedActivities = useMemo(() => {
+    const withMeta = activities.map((activity) => {
+      const key = activity.name.toLowerCase();
+      const image = activityImageMap[key] ?? fallbackImage;
+      // Valeurs par défaut car ces champs n'existent pas en BDD
+      const thrill = 3;
+      const duration = '45 min';
+      const categoryLabel = activity.category?.name ?? 'Activité';
+      return { ...activity, image, thrill, duration, categoryLabel };
+    });
 
-  const filteredActivities = useMemo(
-    () =>
-      activitiesData.activities.filter(
-        (activity) =>
-          (selectedCategory === 'Toutes' || activity.category === selectedCategory) &&
-          (!minThrill || activity.thrill_level >= minThrill)
-      ),
-    [selectedCategory, minThrill]
-  );
+    const queryLower = searchQuery.toLowerCase().trim();
+    const filtered = withMeta.filter(
+      (a) =>
+        (selectedCategory === 'Toutes' || a.categoryLabel === selectedCategory) &&
+        (!minThrill || a.thrill >= minThrill) &&
+        (!queryLower ||
+          a.name.toLowerCase().includes(queryLower) ||
+          a.description?.toLowerCase().includes(queryLower)),
+    );
+
+    return filtered;
+  }, [activities, selectedCategory, minThrill, searchQuery]);
+
+  const enrichedAttractions = useMemo(() => {
+    const withMeta = attractions.map((attraction) => {
+      const key = attraction.name.toLowerCase();
+      // Normaliser l'URL de l'image : si c'est une URL complète, l'utiliser, sinon utiliser le fallback
+      let image = fallbackImage;
+      if (attraction.images?.[0]?.url) {
+        const imageUrl = attraction.images[0].url;
+        const isHttp = imageUrl.startsWith('http://') || imageUrl.startsWith('https://');
+        const isBadCdn = imageUrl.includes('cdn.zombieland.com');
+
+        if (isHttp && !isBadCdn) {
+          image = imageUrl;
+        } else if (imageUrl.startsWith('/') && !isBadCdn) {
+          image = imageUrl;
+        } else {
+          // URL non résolue ou domaine CDN invalide : fallback local
+          console.warn(`URL d'image non résolue pour "${attraction.name}": ${imageUrl}`);
+          image = activityImageMap[key] ?? fallbackImage;
+        }
+      } else {
+        image = activityImageMap[key] ?? fallbackImage;
+      }
+      const thrill = 3;
+      const duration = '45 min';
+      const categoryLabel = attraction.category?.name ?? 'Attraction';
+      return { ...attraction, image, thrill, duration, categoryLabel };
+    });
+
+    const queryLower = searchQuery.toLowerCase().trim();
+    const filtered = withMeta.filter(
+      (a) =>
+        (selectedCategory === 'Toutes' || a.categoryLabel === selectedCategory) &&
+        (!minThrill || a.thrill >= minThrill) &&
+        (!queryLower ||
+          a.name.toLowerCase().includes(queryLower) ||
+          a.description?.toLowerCase().includes(queryLower)),
+    );
+
+    return filtered;
+  }, [attractions, selectedCategory, minThrill, searchQuery]);
+
+  const categories = useMemo(() => {
+    const allLabels = [
+      ...activities.map((a) => a.category?.name),
+      ...attractions.map((a) => a.category?.name),
+    ].filter((c): c is string => Boolean(c));
+    return ['Toutes', ...Array.from(new Set(allLabels))];
+  }, [activities, attractions]);
+
+  const currentItems = tabValue === 0 ? enrichedActivities : enrichedAttractions;
+
+  const heroImages = useMemo(() => {
+    // Images par défaut car les activités n'ont pas d'images en BDD
+    return [
+      '/activities-images/abandoned-lab-2.jpg',
+      '/activities-images/post-apocalyptic-street.jpg',
+      '/activities-images/zombie.jpg',
+      '/activities-images/abandoned-lab.jpg',
+      '/activities-images/haunted-hospital.jpg',
+    ].slice(0, 5);
+  }, []);
 
   return (
-    <Box
-      sx={{
-        backgroundColor: colors.secondaryDark,
-        minHeight: '100vh',
-        color: colors.white,
-      }}
-    >
+    <Box sx={{ backgroundColor: colors.secondaryDark, minHeight: '100vh', color: colors.white }}>
       <HeroSection images={heroImages}>
-        <Box sx={{ pt: { xs: 5, md: 8 } }}>
-          <CustomBreadcrumbs
-            items={[
-              { label: 'Accueil', path: '/', showOnMobile: true },
-              { label: 'Attractions', showOnMobile: true },
-            ]}
-          />
+        <Box>
+          <Box sx={{ pt: { xs: 2, md: 2 }, mb: { xs: 1, md: 1 } }}>
+            <CustomBreadcrumbs
+              items={[
+                { label: 'Accueil', path: '/', showOnMobile: true },
+                { label: 'Activités', showOnMobile: true },
+              ]}
+            />
+          </Box>
+
+          <Tabs
+            value={tabValue}
+            onChange={(_, newValue) => setTabValue(newValue)}
+            sx={{
+              mb: { xs: 1.5, md: 3 },
+              '& .MuiTabs-indicator': {
+                backgroundColor: colors.primaryGreen,
+                height: 3,
+              },
+              '& .MuiTab-root': {
+                color: colors.white,
+                opacity: 0.6,
+                fontSize: { xs: '0.85rem', md: '1.1rem' },
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                minHeight: { xs: 40, md: 48 },
+                padding: { xs: '8px 12px', md: '12px 24px' },
+                '&.Mui-selected': {
+                  color: colors.primaryGreen,
+                  opacity: 1,
+                },
+                '&:hover': {
+                  color: colors.primaryGreen,
+                  opacity: 0.9,
+                },
+              },
+            }}
+          >
+            <Tab label="Activités" />
+            <Tab label="Attractions" />
+          </Tabs>
 
           <Typography
             variant="h1"
             sx={{
-              fontSize: { xs: '2.6rem', md: '4rem' },
+              fontSize: { xs: '1.8rem', md: '4rem' },
               color: colors.white,
               textShadow: `
               0 0 20px rgba(198, 38, 40, 0.8),
               0 0 40px rgba(58, 239, 48, 0.4),
               3px 3px 0 ${colors.primaryRed}
             `,
-              marginBottom: '12px',
+              marginBottom: { xs: '8px', md: '12px' },
               lineHeight: 1,
               letterSpacing: '2px',
             }}
           >
-            Attractions & expériences
+            {tabValue === 0 ? 'Activités du parc' : 'Attractions du parc'}
           </Typography>
 
           <Typography
@@ -83,28 +227,31 @@ export const Activities = () => {
             sx={{
               maxWidth: { xs: '100%', md: '560px' },
               color: colors.white,
-              fontSize: { xs: '1rem', md: '1.1rem' },
-              mb: 3,
+              fontSize: { xs: '0.85rem', md: '1.1rem' },
+              mb: { xs: 1.5, md: 3 },
             }}
           >
-            Frissons, immersions ou défis en équipe : explore toutes nos expériences
-            thématiques avant de réserver ta place pour survivre à Zombieland.
+            {tabValue === 0
+              ? 'Frissons, immersions ou ateliers : découvre toutes les activités disponibles avant de réserver.'
+              : 'Parcours immersifs, expériences à sensations fortes : explore toutes nos attractions thématiques.'}
           </Typography>
 
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 3 }}>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 1, sm: 2 }} sx={{ mb: { xs: 1.5, md: 3 } }}>
             <Box
               sx={{
                 backgroundColor: `${colors.secondaryDarkAlt}90`,
                 border: `1px solid ${colors.secondaryGrey}`,
-                padding: '12px 16px',
-                minWidth: '170px',
+                padding: { xs: '8px 12px', md: '12px 16px' },
+                minWidth: { xs: 'auto', sm: '170px' },
               }}
             >
               <Typography variant="h6" sx={{ color: colors.primaryGreen }}>
-                {activitiesData.activities.length} activités
+                {currentItems.length} {tabValue === 0 ? 'activités' : 'attractions'}
               </Typography>
               <Typography variant="body2" sx={{ color: colors.white }}>
-                Zones immersives, attractions, VR, ateliers
+                {tabValue === 0
+                  ? 'Zones immersives, ateliers, spectacles'
+                  : 'Parcours, expériences, sensations fortes'}
               </Typography>
             </Box>
             <Box
@@ -131,17 +278,13 @@ export const Activities = () => {
               }}
             >
               <Typography variant="h6" sx={{ color: colors.primaryGreen }}>
-                Réserve en ligne
+                Réservation en ligne
               </Typography>
               <Typography variant="body2" sx={{ color: colors.white }}>
                 Places limitées par session
               </Typography>
             </Box>
           </Stack>
-
-          <Box sx={{ maxWidth: { xs: '100%', md: '300px' } }}>
-            <PrimaryButton text="RÉSERVER MAINTENANT" href="/reservations" />
-          </Box>
         </Box>
       </HeroSection>
 
@@ -149,8 +292,8 @@ export const Activities = () => {
         maxWidth={false}
         sx={{
           width: '100%',
-          mt: { xs: 4, md: 6 },
-          pt: { xs: 5, md: 7 },
+          mt: { xs: 2, md: 3 },
+          pt: { xs: 3, md: 4 },
           pb: { xs: 5, md: 7 },
           pl: { xs: 2, sm: 4, md: '150px', lg: '170px' },
           pr: { xs: 2, sm: 4, md: '60px', lg: '90px' },
@@ -158,17 +301,36 @@ export const Activities = () => {
       >
         <Stack spacing={3}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-            <Typography variant="h2" sx={{ fontSize: { xs: '2rem', md: '2.6rem' } }}>
-              Toutes les attractions
+            <Typography variant="h2" sx={{ fontSize: { xs: '1rem', md: '2rem' } }}>
+              Toutes les activités
             </Typography>
-            <Typography
-              variant="body2"
-              sx={{ color: colors.secondaryGrey, maxWidth: { md: '720px' } }}
-            >
-              Parcours, VR, spectacles ou ateliers : découvre l'ensemble du parc et filtre par
-              catégorie ou niveau de frisson pour trouver l'expérience parfaite.
+            <Typography variant="body2" sx={{ color: colors.secondaryGrey, maxWidth: { md: '720px' } }}>
+              Parcours, VR, spectacles ou ateliers : découvre l'ensemble du parc et filtre par catégorie ou niveau de frisson.
             </Typography>
           </Box>
+
+          {loading && (
+            <LinearProgress
+              sx={{
+                backgroundColor: colors.secondaryGrey,
+                '& .MuiLinearProgress-bar': { backgroundColor: colors.primaryGreen },
+              }}
+            />
+          )}
+
+          {error && (
+            <Box
+              sx={{
+                border: `1px solid ${colors.primaryRed}`,
+                backgroundColor: `${colors.primaryRed}10`,
+                color: colors.white,
+                p: 2,
+                borderRadius: '8px',
+              }}
+            >
+              <Typography variant="body2">Erreur : {error}</Typography>
+            </Box>
+          )}
 
           <Box
             sx={{
@@ -186,14 +348,49 @@ export const Activities = () => {
                 alignItems={{ xs: 'flex-start', md: 'center' }}
               >
                 <Typography variant="h6" sx={{ textTransform: 'uppercase' }}>
-                  Filtrer les expériences
+                  Filtrer les {tabValue === 0 ? 'activités' : 'attractions'}
                 </Typography>
                 <Typography variant="body2" sx={{ color: colors.secondaryGrey }}>
-                  {filteredActivities.length} expérience(s) affichée(s)
+                  {currentItems.length} {tabValue === 0 ? 'activité(s)' : 'attraction(s)'} affichée(s)
                 </Typography>
               </Stack>
 
               <Divider sx={{ borderColor: colors.secondaryGrey }} />
+
+              <Stack spacing={2}>
+                <Typography variant="body2" sx={{ color: colors.secondaryGrey }}>
+                  Recherche
+                </Typography>
+                <TextField
+                  placeholder="Rechercher par nom ou description..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  variant="outlined"
+                  fullWidth
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      backgroundColor: colors.secondaryDark,
+                      color: colors.white,
+                      '& fieldset': {
+                        borderColor: colors.secondaryGrey,
+                      },
+                      '&:hover fieldset': {
+                        borderColor: colors.primaryGreen,
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: colors.primaryGreen,
+                      },
+                    },
+                    '& .MuiInputBase-input': {
+                      color: colors.white,
+                      '&::placeholder': {
+                        color: colors.secondaryGrey,
+                        opacity: 1,
+                      },
+                    },
+                  }}
+                />
+              </Stack>
 
               <Stack spacing={2}>
                 <Typography variant="body2" sx={{ color: colors.secondaryGrey }}>
@@ -242,7 +439,8 @@ export const Activities = () => {
                     ]}
                     sx={{
                       color: colors.primaryGreen,
-                      maxWidth: 420,
+                      flex: 1,
+                      width: '100%',
                       mt: 1,
                       '& .MuiSlider-markLabel': {
                         color: colors.secondaryGrey,
@@ -254,33 +452,115 @@ export const Activities = () => {
             </Stack>
           </Box>
 
-          <Grid container spacing={{ xs: 2, sm: 3 }}>
-            {filteredActivities.map((activity) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={activity.id} sx={{ display: 'flex' }}>
-                <ActivityCard
-                  id={activity.id}
-                  name={activity.name}
-                  category={activity.category}
-                  image={activity.images?.[0]}
-                />
-              </Grid>
-            ))}
-          </Grid>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: '1fr',
+                sm: 'repeat(2, 1fr)',
+                md: 'repeat(3, 1fr)',
+                lg: 'repeat(4, 1fr)',
+              },
+              gap: { xs: 2, sm: 3 },
+            }}
+          >
+            {currentItems.map((item) => (
+              <Box key={item.id} sx={{ display: 'flex' }}>
+                <Card
+                  component={Link}
+                  to={tabValue === 0 ? `/activities/${item.id}` : `#`}
+                  sx={{
+                    backgroundColor: colors.secondaryDark,
+                    border: `1px solid ${colors.secondaryGrey}`,
+                    width: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    textDecoration: 'none',
+                    color: 'inherit',
+                    transition: 'all 0.3s ease',
+                    height: '100%',
+                    opacity: tabValue === 0 ? 1 : 0.95,
+                    '&:hover': {
+                      borderColor: colors.primaryGreen,
+                      transform: 'translateY(-5px)',
+                      boxShadow: `0 5px 20px ${colors.primaryGreen}40`,
+                    },
+                  }}
+                >
+                  <CardMedia
+                    component="img"
+                    height="200"
+                    image={item.image}
+                    alt={item.name}
+                    sx={{ objectFit: 'cover', filter: 'brightness(0.7)' }}
+                  />
+                  <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
+                    <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap>
+                      <Chip
+                        label={item.categoryLabel.toUpperCase()}
+                        size="small"
+                        sx={{
+                          backgroundColor: colors.secondaryGrey,
+                          color: colors.white,
+                          fontWeight: 700,
+                          letterSpacing: '0.03em',
+                        }}
+                      />
+                      <Chip
+                        label={`Frisson ${item.thrill}/5`}
+                        size="small"
+                        sx={{
+                          backgroundColor: colors.primaryRed,
+                          color: colors.white,
+                          fontWeight: 700,
+                        }}
+                      />
+                      <Chip
+                        label={item.duration}
+                        size="small"
+                        sx={{
+                          backgroundColor: colors.secondaryGrey,
+                          color: colors.white,
+                          fontWeight: 700,
+                        }}
+                      />
+                    </Stack>
 
-          {filteredActivities.length === 0 && (
+                    <Typography
+                      variant="h5"
+                      sx={{ fontSize: { xs: '1.15rem', md: '1.35rem' }, lineHeight: 1.2 }}
+                    >
+                      {item.name}
+                    </Typography>
+                    {item.description && (
+                      <Typography
+                        variant="body2"
+                        sx={{ color: colors.secondaryGrey, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
+                      >
+                        {item.description}
+                      </Typography>
+                    )}
+                  </CardContent>
+                </Card>
+              </Box>
+            ))}
+          </Box>
+
+          {!loading && !error && enrichedActivities.length === 0 && (
             <Box
               sx={{
                 border: `1px dashed ${colors.secondaryGrey}`,
                 p: 4,
                 textAlign: 'center',
                 color: colors.secondaryGrey,
+                borderRadius: '12px',
               }}
             >
               <Typography variant="h6" sx={{ mb: 1 }}>
-                Aucune attraction ne correspond à ces filtres
+                Aucune {tabValue === 0 ? 'activité' : 'attraction'} trouvée
               </Typography>
               <Typography variant="body2">
-                Essaye une autre catégorie ou réduis l'intensité minimale.
+                Réessaie plus tard ou contacte le support si le problème persiste.
               </Typography>
             </Box>
           )}
