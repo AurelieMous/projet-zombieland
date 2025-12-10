@@ -1,14 +1,42 @@
 import { Box, Typography } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
 import { colors } from "../../../theme";
 import { InformationCard } from "../../../components/cards";
 import EmailIcon from '@mui/icons-material/Email';
 import { ticketsMock } from "../../../mocks";
 import { useReservationStore } from "../../../stores/reservationStore";
+import { getMyReservations } from "../../../services/reservations";
 
 export const Step7OrderConfirmed = () => {
-  const { tickets, total, date } = useReservationStore();
-  // Générer un numéro de réservation aléatoire
-  const reservationNumber = `ZL${Date.now().toString().slice(-8)}`;
+  const { tickets, total, date, createdReservations } = useReservationStore();
+  const [reservationNumbers, setReservationNumbers] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (createdReservations && createdReservations.length > 0) {
+      setReservationNumbers(createdReservations.map(r => r.reservation_number));
+    }
+  }, [createdReservations]);
+
+  useEffect(() => {
+    const fetchReservations = async () => {
+      if (reservationNumbers.length > 0) return;
+      try {
+        const myReservations = await getMyReservations();
+        const numbers = myReservations
+          .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+          .map(r => r.reservation_number);
+        setReservationNumbers(numbers);
+      } catch (error) {
+        console.error("Impossible de récupérer vos réservations:", error);
+      }
+    };
+    fetchReservations();
+  }, [reservationNumbers.length]);
+
+  const mainReservationNumber = useMemo(
+    () => (reservationNumbers.length > 0 ? reservationNumbers[0] : null),
+    [reservationNumbers]
+  );
 
   // Fonction pour formater la date
   const formatDateShort = (dateString: string): string => {
@@ -70,16 +98,28 @@ export const Step7OrderConfirmed = () => {
                 >
                     Numéro de commande
                 </Typography>
-                <Typography
-                    sx={{
-                      fontFamily: "'Lexend Deca', sans-serif",
-                      fontSize: { xs: '1.5rem', md: '1.8rem' },
-                      fontWeight: 700,
-                      color: colors.white,
-                    }}
-                >
-                    {reservationNumber}
-                </Typography>
+                {mainReservationNumber ? (
+                  <Typography
+                      sx={{
+                        fontFamily: "'Lexend Deca', sans-serif",
+                        fontSize: { xs: '1.5rem', md: '1.8rem' },
+                        fontWeight: 700,
+                        color: colors.white,
+                      }}
+                  >
+                      {mainReservationNumber}
+                  </Typography>
+                ) : (
+                  <Typography
+                      sx={{
+                        fontFamily: "'Lexend Deca', sans-serif",
+                        fontSize: { xs: '0.9rem', md: '1rem' },
+                        color: colors.secondaryGrey,
+                      }}
+                  >
+                      Numéro non disponible
+                  </Typography>
+                )}
             </Box>
         </InformationCard>
 
