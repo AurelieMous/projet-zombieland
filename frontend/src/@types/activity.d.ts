@@ -6,6 +6,8 @@ export interface Activity {
     id: number;
     name: string;
     description: string;
+    thrill_level?: number | null;
+    duration?: number | null;
     image_url?: string | null;
     category_id: number;
     attraction_id?: number | null;

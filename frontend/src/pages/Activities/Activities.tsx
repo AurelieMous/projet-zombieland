@@ -64,8 +64,8 @@ export const Activities = () => {
       const image = (isValidHttp || isValidPath) ? apiImage : undefined;
       
       // Valeurs par défaut car ces champs n'existent pas en BDD
-      const thrill = 3;
-      const duration = '45 min';
+      const thrill = activity.thrill_level ?? 3;
+      const duration = activity.duration ?? 45;
       const categoryLabel = activity.category?.name ?? 'Activité';
       return { ...activity, image, thrill, duration, categoryLabel };
     });
@@ -85,11 +85,13 @@ export const Activities = () => {
 
   const enrichedAttractions = useMemo(() => {
     const withMeta = attractions.map((attraction) => {
-      const imageUrl = attraction.images?.[0]?.url?.trim();
-      const isValidHttp = imageUrl?.startsWith('http://') || imageUrl?.startsWith('https://');
-      const image = isValidHttp ? imageUrl : undefined;
-      const thrill = 3;
-      const duration = '45 min';
+      const apiImage = attraction.image_url?.trim();
+      // Accepter les URLs HTTP/HTTPS et les chemins relatifs qui commencent par /
+      const isValidHttp = apiImage?.startsWith('http://') || apiImage?.startsWith('https://');
+      const isValidPath = apiImage?.startsWith('/');
+      const image = (isValidHttp || isValidPath) ? apiImage : undefined;
+      const thrill = attraction.thrill_level ?? 3;
+      const duration = attraction.duration ?? 45;
       const categoryLabel = attraction.category?.name ?? 'Attraction';
       return { ...attraction, image, thrill, duration, categoryLabel };
     });

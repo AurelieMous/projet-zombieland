@@ -5,6 +5,9 @@ export interface Attraction {
     id: number;
     name: string;
     description: string;
+    thrill_level?: number | null;
+    duration?: number | null;
+    image_url?: string | null;
     category_id: number;
     created_at: string;
     updated_at: string;
