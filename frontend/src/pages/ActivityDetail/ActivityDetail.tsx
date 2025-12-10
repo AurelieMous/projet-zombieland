@@ -120,8 +120,8 @@ export const ActivityDetail = () => {
   }
 
   // Valeurs par défaut
-  const thrillLevel = 3;
-  const durationMinutes = 45;
+  const thrillLevel = 'thrill_level' in entity ? entity.thrill_level : 3;
+  const durationMinutes = 'duration' in entity ? entity.duration : 45;
   const minAge = 12;
   const accessibility = "Accessible PMR";
   const defaultHeroImages = [
@@ -147,7 +147,7 @@ export const ActivityDetail = () => {
         id: att.id,
         name: att.name,
         category: att.category?.name || 'Attraction',
-        images: att.images?.[0]?.url ? [att.images[0].url] : [],
+        images: att.image_url ? [att.image_url] : [],
       }))
     : relatedActivities.map((act) => ({
         id: act.id,
