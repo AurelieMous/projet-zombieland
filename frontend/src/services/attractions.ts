@@ -23,4 +23,20 @@ export const getAttractions = async (): Promise<Attraction[]> => {
   }
 };
 
+export const getAttractionById = async (id: number): Promise<Attraction | undefined> => {
+  try {
+    const res = await axiosInstance.get(`/attractions/${id}`);
+    const payload = res.data;
 
+    if (payload) return payload;
+
+    throw new Error("Réponse inattendue du serveur pour l'attraction.");
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message ?? "Impossible de récupérer l'attraction.",
+      );
+    }
+    throw new Error("Une erreur inattendue est survenue en récupérant l'attraction.");
+  }
+};
