@@ -34,12 +34,28 @@ export const Step2SelectDate = () => {
     }
   }, [date]);
 
+  // Re-vérifier le dateId si une date est sélectionnée mais que dateId est undefined
+  // et que les parkDates sont maintenant chargées
+  useEffect(() => {
+    if (date && !dateId && parkDates.length > 0) {
+      const dateString = new Date(date).toISOString().split('T')[0];
+      const matchingParkDate = parkDates.find(
+        parkDate => parkDate.jour === dateString && parkDate.is_open
+      );
+      
+      if (matchingParkDate) {
+        setDate(date, matchingParkDate.id);
+      }
+    }
+  }, [date, dateId, parkDates, setDate]);
+
   const handleDateSelect = (date: Date) => {
     setSelectedDate(date);
     
     // Trouver le dateId correspondant à la date sélectionnée
     // Format de la date pour comparaison : "YYYY-MM-DD"
     const dateString = date.toISOString().split('T')[0];
+    
     const matchingParkDate = parkDates.find(
       parkDate => parkDate.jour === dateString && parkDate.is_open
     );

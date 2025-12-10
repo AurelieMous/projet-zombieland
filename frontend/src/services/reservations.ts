@@ -7,8 +7,10 @@ import type { Reservation } from '../@types/reservation';
 // On la définit côté frontend pour avoir le typage TypeScript
 export interface CreateReservationDto {
   date_id: number;
-  price_id: number;
-  tickets_count: number;
+  tickets: Array<{
+    price_id: number;
+    quantity: number;
+  }>;
 }
 
 // Fonction pour créer une réservation

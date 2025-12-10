@@ -71,8 +71,13 @@ export const ReservationProcessusPage = () => {
 
   // Fonction pour créer la réservation quand on clique sur "PAYER" à l'étape 5
   const handlePayment = async () => {
-    if (!date || tickets.length === 0) {
-      setPaymentError('Données de réservation manquantes');
+    if (tickets.length === 0) {
+      setPaymentError('Aucun billet sélectionné');
+      return;
+    }
+
+    if (!dateId) {
+      setPaymentError('Veuillez sélectionner une date de visite');
       return;
     }
 
@@ -105,37 +110,25 @@ export const ReservationProcessusPage = () => {
     setPaymentError(null);
 
     try {
-      if (tickets.length === 0) {
-        setPaymentError('Aucun billet sélectionné');
-        return;
-      }
-
-      if (!dateId) {
-        setPaymentError('Veuillez sélectionner une date de visite');
-        return;
-      }
-
-      // Créer une réservation pour chaque type de price sélectionné
-      const reservationPromises = tickets.map(ticket => {
-        const reservationData = {
-          date_id: dateId,
+      // Créer une seule réservation avec tous les types de prices sélectionnés
+      const reservationData = {
+        date_id: dateId,
+        tickets: tickets.map(ticket => ({
           price_id: ticket.ticketId, 
-          tickets_count: ticket.quantity,
-        };
-        return createReservation(reservationData);
-      });
+          quantity: ticket.quantity,
+        })),
+      };
 
-      // Attendre que toutes les réservations soient créées
-      const createdReservations = await Promise.all(reservationPromises);
+      const createdReservation = await createReservation(reservationData);
 
-      // Stocker les numéros de réservation pour l'affichage dans Step7OrderConfirmed
-      setCreatedReservations(
-        createdReservations.map(res => ({
-          reservation_number: res.reservation_number,
-          price_id: res.price_id,
-          tickets_count: res.tickets_count,
-        }))
-      );
+      // Stocker le numéro de réservation pour l'affichage dans Step7OrderConfirmed
+      setCreatedReservations([
+        {
+          reservation_number: createdReservation.reservation_number,
+          price_id: 0, // Plus besoin car une seule réservation
+          tickets_count: tickets.reduce((sum, t) => sum + t.quantity, 0),
+        }
+      ]);
 
       // Si tout s'est bien passé, passer à l'étape 7 (OrderConfirmed - Réservation confirmée)
       const newStep = 6; // Index 6 = étape 7 (Réservation confirmée)

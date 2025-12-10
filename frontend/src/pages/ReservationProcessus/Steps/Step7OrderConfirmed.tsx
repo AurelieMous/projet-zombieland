@@ -3,13 +3,28 @@ import { useEffect, useMemo, useState } from "react";
 import { colors } from "../../../theme";
 import { InformationCard } from "../../../components/cards";
 import EmailIcon from '@mui/icons-material/Email';
-import { ticketsMock } from "../../../mocks";
 import { useReservationStore } from "../../../stores/reservationStore";
 import { getMyReservations } from "../../../services/reservations";
+import { getPrices } from "../../../services/prices";
+import type { Price } from "../../../@types/price";
 
 export const Step7OrderConfirmed = () => {
   const { tickets, total, date, createdReservations } = useReservationStore();
   const [reservationNumbers, setReservationNumbers] = useState<string[]>([]);
+  const [prices, setPrices] = useState<Price[]>([]);
+
+  // Charger les prices pour afficher les détails
+  useEffect(() => {
+    const fetchPrices = async () => {
+      try {
+        const pricesData = await getPrices();
+        setPrices(pricesData);
+      } catch (error) {
+        console.error("Impossible de récupérer les prices:", error);
+      }
+    };
+    fetchPrices();
+  }, []);
 
   useEffect(() => {
     if (createdReservations && createdReservations.length > 0) {
@@ -49,17 +64,19 @@ export const Step7OrderConfirmed = () => {
     return `${day} ${monthName} ${year}`;
   };
 
-  // Récupérer tous les billets sélectionnés avec leurs informations
-  const selectedTicketsWithDetails = tickets
-    .map(ticketSelection => {
-      const ticket = ticketsMock.find(t => t.id === ticketSelection.ticketId);
-      if (!ticket) return null;
-      return {
-        ...ticketSelection,
-        ticket,
-      };
-    })
-    .filter((item): item is { ticketId: number; quantity: number; ticket: typeof ticketsMock[0] } => item !== null);
+  // Récupérer tous les billets sélectionnés avec leurs informations depuis les prices
+  const selectedTicketsWithDetails = useMemo(() => {
+    return tickets
+      .map(ticketSelection => {
+        const price = prices.find(p => p.id === ticketSelection.ticketId);
+        if (!price) return null;
+        return {
+          ...ticketSelection,
+          price,
+        };
+      })
+      .filter((item): item is { ticketId: number; quantity: number; price: Price } => item !== null);
+  }, [tickets, prices]);
 
   return (
     <Box>
@@ -134,8 +151,8 @@ export const Step7OrderConfirmed = () => {
           >
             {/* Affichage de tous les billets sélectionnés */}
             {selectedTicketsWithDetails.length > 0 && selectedTicketsWithDetails.map((item, index) => {
-              const ticket = item.ticket;
-              const subtotal = ticket.price * item.quantity;
+              const price = item.price;
+              const subtotal = price.amount * item.quantity;
 
               return (
                 <Box key={item.ticketId}>
@@ -148,7 +165,7 @@ export const Step7OrderConfirmed = () => {
                         color: colors.white,
                       }}
                     >
-                      {ticket.type}
+                      {price.type} - {price.duration_days} jour{price.duration_days > 1 ? 's' : ''}
                     </Typography>
                     <Typography
                       sx={{
@@ -157,7 +174,7 @@ export const Step7OrderConfirmed = () => {
                         color: colors.white,
                       }}
                     >
-                      {ticket.price.toFixed(2).replace('.', ',')} €
+                      {price.amount.toFixed(2).replace('.', ',')} €
                     </Typography>
                   </Box>
 
