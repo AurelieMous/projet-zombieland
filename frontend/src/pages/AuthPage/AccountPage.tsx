@@ -14,6 +14,11 @@ export default function AccountPage() {
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
+    // TODO Comment gérer la modification d'email et MDP ?
+    // Est ce que je fais un formulaire et je trie si email a changé ?
+    // Le mot de passe doit être modifié que si il est modifié
+    // J'ouve une modale email et une autre password ??
+
     // États pour les champs modifiables
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
