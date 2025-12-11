@@ -5,6 +5,8 @@ import {LoginContext} from "../../context/UserLoginContext.tsx";
 import {useContext, useState} from "react";
 import {login} from "../../services/auth.ts";
 import {useNavigate, useLocation} from "react-router-dom";
+import {getValidateEmail} from "../../functions/validateEmail.ts";
+import {getValidatePassword} from "../../functions/validatePassword.ts";
 
 export default function LoginPage() {
 
@@ -27,23 +29,14 @@ export default function LoginPage() {
     const redirectMessage = (location.state as { message?: string } | null)?.message;
 
     // validation email
-    const validateEmail = (emailValue: string): string => {
-        if (!emailValue) return "L'email est requis";
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(emailValue)) return "Email invalide";
-        return "";
-    };
+    const validateEmail = getValidateEmail(emailInput)
 
     // validation mot de passe
-    const validatePassword = (password: string): string => {
-        if (!password) return "Le mot de passe est requis";
-        if (password.length < 6) return "Le mot de passe doit contenir au moins 6 caractères";
-        return "";
-    };
+    const validatePassword = getValidatePassword(password)
 
     // validation formulaire
     const isFormValid = () => {
-        return emailInput && password && !validateEmail(emailInput) && !validatePassword(password);
+        return emailInput && password && !validateEmail && !validatePassword;
     };
 
     // soumission formulaire
@@ -51,8 +44,8 @@ export default function LoginPage() {
         e.preventDefault();
 
         //validation finale
-        const emailErr = validateEmail(emailInput);
-        const passwordErr = validatePassword(password);
+        const emailErr = validateEmail;
+        const passwordErr = validatePassword;
 
         setEmailError(emailErr);
         setPasswordError(passwordErr);
@@ -81,13 +74,13 @@ export default function LoginPage() {
             localStorage.setItem("email", data.user.email)
 
             // Redirection selon le rôle ou retour à la page précédente
-            const from = (location.state as { from?: string } | null)?.from;
-            navigate(from || (data.user.role === "ADMIN" ? "/admin" : "/"));
+            //const from = (location.state as { from?: string } | null)?.from;
+            //navigate(from || (data.user.role === "ADMIN" ? "/admin" : "/"));
+            // Redirection selon le rôle
+            navigate("/account");
 
         } catch (error: any) {
-            console.error("Erreur de connexion:", error);
 
-            // Message d'erreur plus précis
             const errorMessage = error.response?.data?.message ||
                 "Email ou mot de passe incorrect";
 
@@ -235,12 +228,12 @@ export default function LoginPage() {
                                 onChange={(e) => {
                                     setEmailInput(e.target.value);
                                     if (touched.email) {
-                                        setEmailError(validateEmail(e.target.value));
+                                        setEmailError(getValidateEmail(e.target.value));
                                     }
                                 }}
                                 onBlur={() => {
                                     setTouched({ ...touched, email: true });
-                                    setEmailError(validateEmail(emailInput));
+                                    setEmailError(getValidateEmail(emailInput));
                                 }}
                                 error={touched.email && !!emailError}
                                 helperText={touched.email ? emailError : ''}
@@ -256,12 +249,12 @@ export default function LoginPage() {
                                 onChange={(e) => {
                                     setPassword(e.target.value);
                                     if (touched.password) {
-                                        setPasswordError(validatePassword(e.target.value));
+                                        setPasswordError(getValidatePassword(e.target.value));
                                     }
                                 }}
                                 onBlur={() => {
                                     setTouched({ ...touched, password: true });
-                                    setPasswordError(validatePassword(password))
+                                    setPasswordError(getValidatePassword(password))
                                 }}
                                 error={touched.password && !!passwordError}
                                 helperText={touched.password ? passwordError : ''}
