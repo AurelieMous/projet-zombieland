@@ -73,9 +73,7 @@ export default function LoginPage() {
             navigate("/account");
 
         } catch (error: any) {
-            console.error("Erreur de connexion:", error);
 
-            // Message d'erreur plus précis
             const errorMessage = error.response?.data?.message ||
                 "Email ou mot de passe incorrect";
 

@@ -11,7 +11,7 @@ interface UserCardProps {
     onUpdate: () => void;
 }
 
-export default function UserCard({user} : UserCardProps) {
+export default function UserCard({user, onUpdate} : UserCardProps) {
     const [open, setOpen] = useState(false);
     const [modalType, setModalType] = useState<"email" | "password">("email");
 

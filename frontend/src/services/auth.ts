@@ -42,10 +42,12 @@ export const getProfile = async (): Promise<User> => {
 }
 
 // Mettre à jour le profil
-export const updateProfile = async (email: string, password: string): Promise<LoginResponse> => {
-    const response = await axiosInstance.put<LoginResponse>('auth/me', {
-        email,
-        password
-    });
+export interface UpdateProfileData {
+    email?: string;
+    password?: string;
+}
+
+export const updateProfile = async (data: UpdateProfileData): Promise<LoginResponse> => {
+    const response = await axiosInstance.patch<LoginResponse>('auth/me', data);
     return response.data;
 }

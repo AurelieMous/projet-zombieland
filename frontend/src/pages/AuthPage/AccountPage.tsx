@@ -44,6 +44,12 @@ export default function AccountPage() {
         }
     }
 
+    // Fonction de rafraîchissement pour la modale
+    const handleUserUpdate = async () => {
+        console.log('Rafraîchissement du profil après modification...');
+        await getUserAuth();
+    };
+
     useEffect(() => {
         if (isLogged) {
             getUserAuth();
@@ -103,7 +109,7 @@ export default function AccountPage() {
                         ) : user ? (
                             <>
                                 {/* Carte - Afficher seulement si user n'est pas null */}
-                                <UserCard user={user} />
+                                <UserCard user={user}  onUpdate={handleUserUpdate}/>
                                 {user.role == "CLIENT" ? <PrimaryButton text={"Mes réservations"} /> : ""}
                                 {user.role == "ADMIN" ? <PrimaryButton text={"Back-Office"} /> : ""}
                             </>
