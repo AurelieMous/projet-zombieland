@@ -20,9 +20,9 @@ export default function AccountPage() {
     // J'ouve une modale email et une autre password ??
 
     // États pour les champs modifiables
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [pseudo, setPseudo] = useState('');
+    //const [email, setEmail] = useState('');
+    //const [password, setPassword] = useState('');
+    //const [pseudo, setPseudo] = useState('');
 
     const navigate = useNavigate();
 
@@ -31,9 +31,10 @@ export default function AccountPage() {
         setIsLoading(true);
         try {
             const response = await getProfile()
+            console.log(`response : ${response}`);
             setUser(response)
             // Initialiser les champs avec les données user
-            setEmail(response.email || '');
+            //setEmail(response.email || '');
 
         } catch (error) {
             setError(`Une erreur est survenue : ${error}`)
@@ -61,6 +62,7 @@ export default function AccountPage() {
     useEffect(() => {
         if (isLogged) {
             getUserAuth();
+            console.log(user);
         }
     }, [isLogged]);
 
@@ -116,6 +118,7 @@ export default function AccountPage() {
                             type="text"
                             placeholder={user?.pseudo}
                             value={user?.pseudo}
+
                         />
 
                         <Box
@@ -127,21 +130,8 @@ export default function AccountPage() {
                             <Input
                                 label="Email"
                                 type="email"
-                                placeholder="votre@email.com"
-                                value={email}
-                                onChange={(e) => {
-                                    setEmail(e.target.value);
-                                    if (touched.email) {
-                                        setEmailError(validateEmail(e.target.value));
-                                    }
-                                }}
-                                onBlur={() => {
-                                    setTouched({ ...touched, email: true });
-                                    setEmailError(validateEmail(email));
-                                }}
-                                error={touched.email && !!emailError}
-                                helperText={touched.email ? emailError : ''}
-                                required
+                                placeholder={user?.email}
+                                value={user?.email}
                             />
 
                             {/* Bouton de soumission */}

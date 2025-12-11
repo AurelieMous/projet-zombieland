@@ -13,6 +13,7 @@ interface InputProps {
   required?: boolean;
   error?: boolean;
   helperText?: string;
+  disabled?: boolean;
 }
 
 export const Input = ({
@@ -26,7 +27,8 @@ export const Input = ({
   fullWidth = true,
   required = false,
   error = false,
-  helperText
+  helperText,
+    disabled = false
 }: InputProps) => {
   return (
     <Box sx={{ mb: 2 }}>
@@ -56,6 +58,7 @@ export const Input = ({
         required={required}
         error={error}
         helperText={helperText}
+        disabled={disabled}
         sx={{
           '& .MuiOutlinedInput-root': {
             backgroundColor: colors.secondaryDarkAlt,

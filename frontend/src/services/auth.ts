@@ -5,7 +5,7 @@ import type {User} from "../@types/users";
 
 interface LoginResponse {
     user: User;
-    access_token: string;
+    token: string;
 }
 
 
@@ -37,8 +37,8 @@ export const register = async (
 
 // récupérer le profil
 export const getProfile = async (): Promise<User> => {
-    const response = await axiosInstance.get<LoginResponse>('auth/me');
-    return response.data.user;
+    const response = await axiosInstance.get<User>('auth/me');
+    return response.data;
 }
 
 // Mettre à jour le profil
