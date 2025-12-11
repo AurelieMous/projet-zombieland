@@ -5,6 +5,8 @@ import {LoginContext} from "../../context/UserLoginContext.tsx";
 import {useContext, useState} from "react";
 import {login} from "../../services/auth.ts";
 import {useNavigate} from "react-router-dom";
+import {getValidateEmail} from "../../functions/validateEmail.ts";
+import {getValidatePassword} from "../../functions/validatePassword.ts";
 
 export default function LoginPage() {
 
@@ -25,23 +27,14 @@ export default function LoginPage() {
     const navigate = useNavigate();
 
     // validation email
-    const validateEmail = (email: string): string => {
-        if (!email) return "L'email est requis";
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) return "Email invalide";
-        return "";
-    };
+    const validateEmail = getValidateEmail(email)
 
     // validation mot de passe
-    const validatePassword = (password: string): string => {
-        if (!password) return "Le mot de passe est requis";
-        if (password.length < 6) return "Le mot de passe doit contenir au moins 6 caractères";
-        return "";
-    };
+    const validatePassword = getValidatePassword(password)
 
     // validation formulaire
     const isFormValid = () => {
-        return email && password && !validateEmail(email) && !validatePassword(password);
+        return email && password && !validateEmail && !validatePassword;
     };
 
     // soumission formulaire
@@ -49,8 +42,8 @@ export default function LoginPage() {
         e.preventDefault();
 
         //validation finale
-        const emailErr = validateEmail(email);
-        const passwordErr = validatePassword(password);
+        const emailErr = validateEmail;
+        const passwordErr = validatePassword;
 
         setEmailError(emailErr);
         setPasswordError(passwordErr);
@@ -225,12 +218,12 @@ export default function LoginPage() {
                                 onChange={(e) => {
                                     setEmail(e.target.value);
                                     if (touched.email) {
-                                        setEmailError(validateEmail(e.target.value));
+                                        setEmailError(getValidateEmail(e.target.value));
                                     }
                                 }}
                                 onBlur={() => {
                                     setTouched({ ...touched, email: true });
-                                    setEmailError(validateEmail(email));
+                                    setEmailError(getValidateEmail(email));
                                 }}
                                 error={touched.email && !!emailError}
                                 helperText={touched.email ? emailError : ''}
@@ -246,12 +239,12 @@ export default function LoginPage() {
                                 onChange={(e) => {
                                     setPassword(e.target.value);
                                     if (touched.password) {
-                                        setPasswordError(validatePassword(e.target.value));
+                                        setPasswordError(getValidatePassword(e.target.value));
                                     }
                                 }}
                                 onBlur={() => {
                                     setTouched({ ...touched, password: true });
-                                    setPasswordError(validatePassword(password))
+                                    setPasswordError(getValidatePassword(password))
                                 }}
                                 error={touched.password && !!passwordError}
                                 helperText={touched.password ? passwordError : ''}
