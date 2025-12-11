@@ -3,12 +3,24 @@ export interface Reservation{
     reservation_number: string;
     user_id: number;
     date_id: number;
-    price_id: number;
-    tickets_count: number;
+    price_id?: number;
+    tickets_count?: number;
     total_amount: number;
     status: ReservationStatus;
     created_at: string;
     updated_at: string;
+    user?: {
+        id: number;
+        email: string;
+        pseudo: string;
+        role: string;
+    };
+    date?: {
+        id: number;
+        jour: string;
+        is_open: boolean;
+        notes?: string;
+    };
 }
 
 export type ReservationStatus = 'PENDING' | 'CONFIRMED' | 'CANCELED';

@@ -40,3 +40,17 @@ export const getMyReservations = async (): Promise<Reservation[]> => {
     throw new Error("Une erreur inattendue est survenue en récupérant vos réservations.");
   }
 };
+
+// Récupérer toutes les réservations
+export const getAllReservations = async (): Promise<Reservation[]> => {
+  try {
+    const res = await axiosInstance.get<Reservation[]>('/reservations');
+    return res.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const errorMessage = error.response?.data?.message || error.response?.data?.error || "Impossible de récupérer les réservations.";
+      throw new Error(errorMessage);
+    }
+    throw new Error("Une erreur inattendue est survenue en récupérant les réservations.");
+  }
+};

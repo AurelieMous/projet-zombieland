@@ -11,13 +11,41 @@ import AccountPage from "./pages/AuthPage/AccountPage.tsx";
 import RegisterPage from "./pages/AuthPage/RegisterPage.tsx";
 import SuccesAuthPage from "./pages/AuthPage/SuccesAuthPage.tsx";
 import { LoginContext } from './context/UserLoginContext.tsx';
+import { AdminDashboard } from './pages/Admin/AdminDashboard';
 
 const ProtectedRoute = ({ children }: { children: ReactElement }) => {
-  const { isLogged } = useContext(LoginContext);
+  const { isLogged, isLoading } = useContext(LoginContext);
   const location = useLocation();
+
+  // Attendre la fin du chargement initial avant de vérifier les permissions
+  if (isLoading) {
+    return null; // ou un composant de chargement si vous en avez un
+  }
 
   if (!isLogged) {
     return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+  }
+
+  return children;
+};
+
+const AdminProtectedRoute = ({ children }: { children: ReactElement }) => {
+  const { isLogged, role, isLoading } = useContext(LoginContext);
+  const location = useLocation();
+
+  // Attendre la fin du chargement initial avant de vérifier les permissions
+  if (isLoading) {
+    return null; // ou un composant de chargement si vous en avez un
+  }
+
+  // Redirige vers la connexion si l'utilisateur n'est pas authentifié
+  if (!isLogged) {
+    return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+  }
+
+  // Bloque l'accès si le rôle n'est pas ADMIN
+  if (role !== 'ADMIN') {
+    return <Navigate to="/" replace />;
   }
 
   return children;
@@ -66,7 +94,11 @@ export const router = createBrowserRouter([
       },
       {
         path: 'admin',
-        // element: <Admin />, // Back-office
+        element: (
+          <AdminProtectedRoute>
+            <AdminDashboard />
+          </AdminProtectedRoute>
+        ),
       },
       {
         path: 'reservations',

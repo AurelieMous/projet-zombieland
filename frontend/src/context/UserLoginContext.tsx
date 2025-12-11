@@ -16,6 +16,7 @@ interface ILoginUSer {
     token: string | null;
     setToken: React.Dispatch<React.SetStateAction<string | null>>;
     logout: () => void;
+    isLoading: boolean;
 }
 
 export const LoginContext = createContext<ILoginUSer>({
@@ -27,16 +28,31 @@ export const LoginContext = createContext<ILoginUSer>({
     setPseudo: () => {},
     token: null,
     setToken: () => {},
-    logout: () => {}
+    logout: () => {},
+    isLoading: true
 })
 
 export function LoginProvider({ children }: LoginProviderProps) {
-    const [isLogged, setIsLogged] = useState(false);
-    const [role, setRole] = useState<"CLIENT" | "ADMIN" | null>(null);
-    const [pseudo, setPseudo] = useState("");
-    const [token, setToken] = useState<string | null>(null);
+    // Initialisation depuis localStorage pour éviter un flash de redirection
+    const [isLogged, setIsLogged] = useState(() => {
+        const savedToken = localStorage.getItem("token");
+        const savedRole = localStorage.getItem("role");
+        const savedPseudo = localStorage.getItem("pseudo");
+        return !!(savedToken && savedRole && savedPseudo);
+    });
+    const [role, setRole] = useState<"CLIENT" | "ADMIN" | null>(() => {
+        return localStorage.getItem("role") as "CLIENT" | "ADMIN" | null;
+    });
+    const [pseudo, setPseudo] = useState(() => {
+        return localStorage.getItem("pseudo") || "";
+    });
+    const [token, setToken] = useState<string | null>(() => {
+        return localStorage.getItem("token");
+    });
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        // Vérifier et synchroniser avec localStorage au montage
         const savedToken = localStorage.getItem("token");
         const savedRole = localStorage.getItem("role") as "CLIENT" | "ADMIN" | null;
         const savedPseudo = localStorage.getItem("pseudo");
@@ -46,7 +62,13 @@ export function LoginProvider({ children }: LoginProviderProps) {
             setRole(savedRole);
             setPseudo(savedPseudo);
             setIsLogged(true);
+        } else {
+            setIsLogged(false);
+            setRole(null);
+            setPseudo("");
+            setToken(null);
         }
+        setIsLoading(false);
     }, []);
 
     const logout = () => {
@@ -69,7 +91,8 @@ export function LoginProvider({ children }: LoginProviderProps) {
             setPseudo,
             token,
             setToken,
-            logout
+            logout,
+            isLoading
         }}>
             {children}
         </LoginContext.Provider>
