@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# Couleurs pour les messages
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+echo -e "${BLUE}=== Démarrage de l'environnement Docker ===${NC}"
+
+# Démarrer les containers Docker Compose
+echo -e "${GREEN}Lancement de Docker Compose...${NC}"
+docker compose up -d
+
+# Attendre que les containers soient prêts
+echo -e "${GREEN}Attente du démarrage des containers...${NC}"
+sleep 5
+
+# Vérifier que le container zombieland-api est en cours d'exécution
+if ! docker ps | grep -q "zombieland-api"; then
+    echo -e "${RED}Erreur: Le container zombieland-api n'est pas en cours d'exécution${NC}"
+    exit 1
+fi
+
+echo -e "${BLUE}=== Génération de l'API ===${NC}"
+docker exec zombieland-api npm run generate:api
+
+echo -e "${BLUE}=== Génération du client Prisma ===${NC}"
+docker exec zombieland-api npx prisma generate
+
+echo -e "${BLUE}=== Déploiement des migrations ===${NC}"
+docker exec zombieland-api npx prisma migrate deploy
+
+echo -e "${BLUE}=== Exécution du seed ===${NC}"
+docker exec zombieland-api npx prisma db seed
+
+echo -e "${GREEN}=== Setup terminé avec succès! ===${NC}"
