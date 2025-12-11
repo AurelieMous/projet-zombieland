@@ -22,7 +22,6 @@ export default function AccountPage() {
         setIsLoading(true);
         try {
             const response = await getProfile()
-            console.log(`response : ${response}`);
             setUser(response)
             // Initialiser les champs avec les données user
             //setEmail(response.email || '');
@@ -36,7 +35,6 @@ export default function AccountPage() {
 
     // Fonction de rafraîchissement pour la modale
     const handleUserUpdate = async () => {
-        console.log('Rafraîchissement du profil après modification...');
         await getUserAuth();
     };
 
@@ -48,7 +46,6 @@ export default function AccountPage() {
     useEffect(() => {
         if (isLogged) {
             getUserAuth();
-            console.log(user);
         }
     }, [isLogged]);
 
