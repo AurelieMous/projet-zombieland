@@ -6,6 +6,15 @@ BLUE='\033[0;34m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
+echo -e "${BLUE}=== Nettoyage de l'environnement Docker ===${NC}"
+
+# Arrêter et supprimer tous les containers, réseaux, images et volumes
+echo -e "${GREEN}Arrêt des containers existants...${NC}"
+docker compose down -v --remove-orphans
+
+echo -e "${GREEN}Nettoyage complet effectué${NC}"
+echo ""
+
 echo -e "${BLUE}=== Démarrage de l'environnement Docker ===${NC}"
 
 # Démarrer les containers Docker Compose
