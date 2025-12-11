@@ -38,6 +38,22 @@ export default function ModalBurgerMenu({ open, onClose }: ModalBurgerMenuProps)
         setTimeout(onClose, 50);
     }
 
+    const navigateActivitiesPage = () => {
+        navigate('/activities');
+        setTimeout(onClose, 50);
+    }
+
+    const navigateReservationPage = () => {
+        navigate('/reservations');
+        setTimeout(onClose, 50);
+    }
+
+    const navigateInfoPage = () => {
+        navigate('/info');
+        setTimeout(onClose, 50);
+    }
+
+
     return (
         <Modal
             open={open}
@@ -159,7 +175,7 @@ export default function ModalBurgerMenu({ open, onClose }: ModalBurgerMenuProps)
                         <Typography variant="h3" color="white" sx={{ mb: 2, fontWeight: 'bold' }}>
                             ACTIVITÉS
                         </Typography>
-                        <Button sx={{ color: "white" }}>
+                        <Button sx={{ color: "white" }} onClick={() => navigate('/activities')}>
                             Attractions
                         </Button>
                         <Button sx={{ color: "white" }}>
@@ -207,6 +223,20 @@ export default function ModalBurgerMenu({ open, onClose }: ModalBurgerMenuProps)
                 </Box>
 
                 {/* Contenu de la modal Mobile */}
+                {/* Croix Mobile uniquement */}
+                <IconButton
+                    sx={{
+                        color: 'white',
+                        zIndex: 2,
+                        position: 'absolute',
+                        top: 16,
+                        right: 16,
+                        display: { xs: 'flex', md: 'none' }
+                    }}
+                    onClick={onClose}
+                >
+                    <CloseIcon />
+                </IconButton>
                 <Box sx={{
                     display: { xs: 'flex', md: 'none' },
                     alignItems: 'center',
@@ -221,7 +251,9 @@ export default function ModalBurgerMenu({ open, onClose }: ModalBurgerMenuProps)
                         fontSize: '1.2rem',
                         fontWeight: 'bold',
                         zIndex: 2
-                    }}>
+                    }}
+                        onClick={navigateActivitiesPage}
+                    >
                         ACTIVITÉS
                     </Button>
 
@@ -230,8 +262,10 @@ export default function ModalBurgerMenu({ open, onClose }: ModalBurgerMenuProps)
                         fontSize: '1.2rem',
                         fontWeight: 'bold',
                         zIndex: 2
-                    }}>
-                        BILLETTERIE
+                    }}
+                            onClick={navigateReservationPage}
+                    >
+                        RESERVATION
                     </Button>
 
                     <Button sx={{
@@ -239,10 +273,12 @@ export default function ModalBurgerMenu({ open, onClose }: ModalBurgerMenuProps)
                         fontSize: '1.2rem',
                         fontWeight: 'bold',
                         zIndex: 2
-                    }}>
+                    }}
+                            onClick={navigateInfoPage}
+                    >
                         INFORMATIONS
                     </Button>
-                    <Box sx={{ mt: 4, display: {xs: 'flex', md: 'none'}}}>
+                    <Box sx={{ mt: 4, display: {xs: 'flex', md: 'none', zIndex: 2}}}>
                         <PrimaryButton
                             text={isLogged ? "Se deconnecter" : "Connexion"}
                             textMobile={isLogged ? "Se deconnecter" : "Connexion"}
