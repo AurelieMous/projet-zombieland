@@ -37,7 +37,17 @@ export const register = async (
 
 // récupérer le profil
 export const getProfile = async (): Promise<User> => {
-    const response = await axiosInstance.get<LoginResponse>('auth/me');
-    return response.data.user;
+    const response = await axiosInstance.get<User>('auth/me');
+    return response.data;
 }
 
+// Mettre à jour le profil
+export interface UpdateProfileData {
+    email?: string;
+    password?: string;
+}
+
+export const updateProfile = async (data: UpdateProfileData): Promise<LoginResponse> => {
+    const response = await axiosInstance.patch<LoginResponse>('auth/me', data);
+    return response.data;
+}

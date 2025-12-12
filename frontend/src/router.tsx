@@ -23,7 +23,16 @@ const ProtectedRoute = ({ children }: { children: ReactElement }) => {
   }
 
   if (!isLogged) {
-    return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+    return (
+      <Navigate
+        to="/login"
+        replace
+        state={{
+          from: location.pathname,
+          message: 'Veuillez vous connecter pour accéder à la réservation.',
+        }}
+      />
+    );
   }
 
   return children;

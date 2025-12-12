@@ -13,6 +13,8 @@ interface ILoginUSer {
     setRole: Dispatch<SetStateAction<"CLIENT" | "ADMIN" | null>>;
     pseudo: string,
     setPseudo: React.Dispatch<React.SetStateAction<string>>;
+    email: string;
+    setEmail: React.Dispatch<React.SetStateAction<string>>;
     token: string | null;
     setToken: React.Dispatch<React.SetStateAction<string | null>>;
     logout: () => void;
@@ -26,6 +28,8 @@ export const LoginContext = createContext<ILoginUSer>({
     setRole: () => {},
     pseudo: "",
     setPseudo: () => {},
+    email: "",
+    setEmail: () => {},
     token: null,
     setToken: () => {},
     logout: () => {},
@@ -56,11 +60,13 @@ export function LoginProvider({ children }: LoginProviderProps) {
         const savedToken = localStorage.getItem("token");
         const savedRole = localStorage.getItem("role") as "CLIENT" | "ADMIN" | null;
         const savedPseudo = localStorage.getItem("pseudo");
+        const savedEmail = localStorage.getItem("email");
 
         if (savedToken && savedRole && savedPseudo) {
             setToken(savedToken);
             setRole(savedRole);
             setPseudo(savedPseudo);
+            if (savedEmail) setEmail(savedEmail);
             setIsLogged(true);
         } else {
             setIsLogged(false);
@@ -75,10 +81,12 @@ export function LoginProvider({ children }: LoginProviderProps) {
         setIsLogged(false);
         setRole(null);
         setPseudo("");
+        setEmail("");
         setToken(null);
         localStorage.removeItem("token");
         localStorage.removeItem("role");
         localStorage.removeItem("pseudo");
+        localStorage.removeItem("email");
     };
 
     return (
@@ -89,6 +97,8 @@ export function LoginProvider({ children }: LoginProviderProps) {
             setRole,
             pseudo,
             setPseudo,
+            email,
+            setEmail,
             token,
             setToken,
             logout,
