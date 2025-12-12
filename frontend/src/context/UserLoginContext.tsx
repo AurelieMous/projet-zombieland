@@ -1,4 +1,4 @@
-import {createContext, type Dispatch, type ReactNode, type SetStateAction, useEffect, useState} from "react";
+import {createContext, type Dispatch, type ReactNode, type SetStateAction, useState} from "react";
 
 // Gère l'état global de l'authentification de l'application
 // Il permet de partager les informations de connexion (statut, rôle, nom d'utilisateur)
@@ -18,6 +18,7 @@ interface ILoginUSer {
     token: string | null;
     setToken: React.Dispatch<React.SetStateAction<string | null>>;
     logout: () => void;
+    isLoading: boolean;
 }
 
 export const LoginContext = createContext<ILoginUSer>({
@@ -31,30 +32,31 @@ export const LoginContext = createContext<ILoginUSer>({
     setEmail: () => {},
     token: null,
     setToken: () => {},
-    logout: () => {}
+    logout: () => {},
+    isLoading: true
 })
 
 export function LoginProvider({ children }: LoginProviderProps) {
-    const [isLogged, setIsLogged] = useState(false);
-    const [role, setRole] = useState<"CLIENT" | "ADMIN" | null>(null);
-    const [pseudo, setPseudo] = useState("");
-    const [email, setEmail] = useState("");
-    const [token, setToken] = useState<string | null>(null);
-
-    useEffect(() => {
+    // Initialisation depuis localStorage pour éviter un flash de redirection
+    const [isLogged, setIsLogged] = useState(() => {
         const savedToken = localStorage.getItem("token");
-        const savedRole = localStorage.getItem("role") as "CLIENT" | "ADMIN" | null;
+        const savedRole = localStorage.getItem("role");
         const savedPseudo = localStorage.getItem("pseudo");
-        const savedEmail = localStorage.getItem("email");
-
-        if (savedToken && savedRole && savedPseudo) {
-            setToken(savedToken);
-            setRole(savedRole);
-            setPseudo(savedPseudo);
-            if (savedEmail) setEmail(savedEmail);
-            setIsLogged(true);
-        }
-    }, []);
+        return !!(savedToken && savedRole && savedPseudo);
+    });
+    const [role, setRole] = useState<"CLIENT" | "ADMIN" | null>(() => {
+        return localStorage.getItem("role") as "CLIENT" | "ADMIN" | null;
+    });
+    const [pseudo, setPseudo] = useState(() => {
+        return localStorage.getItem("pseudo") || "";
+    });
+    const [email, setEmail] = useState(() => {
+        return localStorage.getItem("email") || "";
+    });
+    const [token, setToken] = useState<string | null>(() => {
+        return localStorage.getItem("token");
+    });
+    const [isLoading, setIsLoading] = useState(false);
 
     const logout = () => {
         setIsLogged(false);
@@ -80,7 +82,8 @@ export function LoginProvider({ children }: LoginProviderProps) {
             setEmail,
             token,
             setToken,
-            logout
+            logout,
+            isLoading
         }}>
             {children}
         </LoginContext.Provider>

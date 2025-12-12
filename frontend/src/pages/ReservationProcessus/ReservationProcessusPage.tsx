@@ -42,20 +42,19 @@ export const ReservationProcessusPage = () => {
   } = useReservationStore();
 
   // Lire l'étape depuis l'URL au montage et quand l'URL change
+  // On ne dépend QUE des searchParams pour éviter un aller-retour qui provoquait un clignotement
   useEffect(() => {
     const stepFromUrl = parseInt(searchParams.get('step') || '0', 10);
     if (stepFromUrl >= 0 && stepFromUrl < steps.length && stepFromUrl !== activeStep) {
       setActiveStep(stepFromUrl);
     }
-  }, [searchParams, activeStep]);
+  }, [searchParams]); // activeStep volontairement omis pour éviter le flash visuel
 
   const handleNext = () => {
     if (activeStep < steps.length - 1) {
       const newStep = activeStep + 1;
       setActiveStep(newStep);
       setSearchParams({ step: newStep.toString() }, { replace: true });
-      // Scroll vers le haut de la page
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -64,8 +63,6 @@ export const ReservationProcessusPage = () => {
       const newStep = activeStep - 1;
       setActiveStep(newStep);
       setSearchParams({ step: newStep.toString() }, { replace: true });
-      // Scroll vers le haut de la page
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -134,7 +131,6 @@ export const ReservationProcessusPage = () => {
       const newStep = 6; // Index 6 = étape 7 (Réservation confirmée)
       setActiveStep(newStep);
       setSearchParams({ step: newStep.toString() }, { replace: true });
-      window.scrollTo({ top: 0, behavior: 'smooth' });
       
     } catch (error) {
       let errorMessage = 'Une erreur est survenue lors du paiement. Veuillez réessayer.';
