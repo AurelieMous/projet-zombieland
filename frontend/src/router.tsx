@@ -14,7 +14,7 @@ import SuccesAuthPage from "./pages/AuthPage/SuccesAuthPage.tsx";
 import { LoginContext } from './context/UserLoginContext.tsx';
 import { AdminDashboard } from './pages/Admin/AdminDashboard';
 import { colors } from './theme';
-import ReservationUserList from "./pages/UserPage/ReservationUser/ReservationUserList.tsx";
+import {UserDashboard} from "./pages/UserPage/UserDashboard.tsx";
 
 const ProtectedRoute = ({ children }: { children: ReactElement }) => {
   const { isLogged, isLoading } = useContext(LoginContext);
@@ -132,7 +132,7 @@ export const router = createBrowserRouter([
         path: 'account/reservations',
         element: (
             <ProtectedRoute>
-              <ReservationUserList/>
+              <UserDashboard/>
             </ProtectedRoute>
         )
       },

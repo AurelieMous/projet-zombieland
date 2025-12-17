@@ -1,23 +1,17 @@
-import {Box, Container, Tab, Tabs, Typography} from "@mui/material";
-import { useState } from "react";
-import { HeroSection } from "../../components/hero";
+import { Box, Container } from "@mui/material";
+import ReservationUserList from "./ReservationUser/ReservationUserList.tsx";
+import { colors } from "../../theme";
 import { CustomBreadcrumbs } from "../../components/common";
-import { colors } from '../../theme';
+import { HeroSection } from "../../components/hero/HeroSection";
+import { Typography } from "@mui/material";
 
-
-export const ReservationConsultUser = () => {
-    const [tabValue, setTabValue] = useState<number>(0);
-
+export const UserDashboard = () => {
     const heroImages = [
         '/activities-images/post-apocalyptic-street.jpg',
         '/activities-images/zombie.jpg',
         '/activities-images/abandoned-lab.jpg',
         '/activities-images/haunted-hospital.jpg',
     ].slice(0, 5);
-
-    const tabs = [
-        { label: 'Réservations', component: <ReservationConsultUser /> },
-    ];
 
     return (
         <Box sx={{ backgroundColor: colors.secondaryDark, minHeight: '100vh', color: colors.white }}>
@@ -27,44 +21,10 @@ export const ReservationConsultUser = () => {
                         <CustomBreadcrumbs
                             items={[
                                 { label: 'Accueil', path: '/', showOnMobile: true },
-                                { label: 'Administration', showOnMobile: true },
+                                { label: 'Mes réservations', showOnMobile: true },
                             ]}
                         />
                     </Box>
-
-                    <Tabs
-                        value={tabValue}
-                        onChange={(_, newValue) => setTabValue(newValue)}
-                        sx={{
-                            mb: { xs: 1.5, md: 3 },
-                            '& .MuiTabs-indicator': {
-                                backgroundColor: colors.primaryGreen,
-                                height: 3,
-                            },
-                            '& .MuiTab-root': {
-                                color: colors.white,
-                                opacity: 0.6,
-                                fontSize: { xs: '0.85rem', md: '1.1rem' },
-                                fontWeight: 700,
-                                textTransform: 'uppercase',
-                                letterSpacing: '0.05em',
-                                minHeight: { xs: 40, md: 48 },
-                                padding: { xs: '8px 12px', md: '12px 24px' },
-                                '&.Mui-selected': {
-                                    color: colors.primaryGreen,
-                                    opacity: 1,
-                                },
-                                '&:hover': {
-                                    color: colors.primaryGreen,
-                                    opacity: 0.9,
-                                },
-                            },
-                        }}
-                    >
-                        {tabs.map((tab, index) => (
-                            <Tab key={index} label={tab.label} />
-                        ))}
-                    </Tabs>
 
                     <Typography
                         variant="h1"
@@ -81,7 +41,7 @@ export const ReservationConsultUser = () => {
                             letterSpacing: '2px',
                         }}
                     >
-                        Administration
+                        Mes réservations
                     </Typography>
 
                     <Typography
@@ -93,7 +53,7 @@ export const ReservationConsultUser = () => {
                             mb: { xs: 1.5, md: 3 },
                         }}
                     >
-                        Gérez les réservations, utilisateurs et activités du parc Zombieland.
+                        Consultez et gérez toutes vos réservations au parc Zombieland.
                     </Typography>
                 </Box>
             </HeroSection>
@@ -118,7 +78,8 @@ export const ReservationConsultUser = () => {
                         minHeight: '400px',
                     }}
                 >
-                    {tabs[tabValue]?.component}
+                    {/* Voir pour modifier et remettre les tabs si ajout des réservations restaurants etc */}
+                    <ReservationUserList />
                 </Box>
             </Container>
         </Box>

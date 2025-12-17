@@ -56,7 +56,9 @@ export default function ReservationUserList() {
             // setSuccessMessage('Réservation supprimée avec succès');
 
         } catch (err) {
+            // Ajouter l'erreur dans la modal
             const message = err instanceof Error ? err.message : 'Erreur lors de la suppression de la réservation';
+            setDeleteDialogOpen(false);
             setError(message);
         } finally {
             setIsDeleting(false);
@@ -87,31 +89,10 @@ export default function ReservationUserList() {
 
     return (
         <Box>
-            <Box sx={{ mb: 3 }}>
-                <Typography
-                    variant="h2"
-                    sx={{
-                        fontSize: { xs: '1.5rem', md: '2rem' },
-                        mb: 2,
-                    }}
-                >
-                    Mes réservations
-                </Typography>
-                <Typography
-                    variant="body2"
-                    sx={{
-                        color: colors.secondaryGrey,
-                    }}
-                >
-                    Gérez toutes mes réservations sur le parc Zombieland.
-                </Typography>
-            </Box>
             <Box
                 sx={{
                     padding: 3,
                     backgroundColor: colors.secondaryDark,
-                    border: `1px solid ${colors.secondaryGrey}`,
-                    borderRadius: '8px',
                 }}
             >
                 {isLoading ? (
