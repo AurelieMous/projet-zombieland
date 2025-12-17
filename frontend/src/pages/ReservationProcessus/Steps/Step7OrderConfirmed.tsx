@@ -12,7 +12,8 @@ export const Step7OrderConfirmed = () => {
   const { tickets, total, date, createdReservations, customerInfo } = useReservationStore();
   const [prices, setPrices] = useState<Price[]>([]);
 
-    const { reservationNumbers, setReservationNumbers, fetchReservations } = useReservations();
+  // Utilisation d'un hook personnalisé
+  const { reservationNumbers, setReservationNumbers, fetchReservations } = useReservations();
 
   // Charger les prices pour afficher les détails
   useEffect(() => {

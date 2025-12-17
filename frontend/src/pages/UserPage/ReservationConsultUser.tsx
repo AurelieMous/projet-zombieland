@@ -1,7 +1,8 @@
-import {Box, colors, Container, Tab, Tabs, Typography} from "@mui/material";
+import {Box, Container, Tab, Tabs, Typography} from "@mui/material";
 import { useState } from "react";
 import { HeroSection } from "../../components/hero";
 import { CustomBreadcrumbs } from "../../components/common";
+import { colors } from '../../theme';
 
 
 export const ReservationConsultUser = () => {
@@ -15,7 +16,7 @@ export const ReservationConsultUser = () => {
     ].slice(0, 5);
 
     const tabs = [
-        { label: 'Réservations', component: <ReservationList /> },
+        { label: 'Réservations', component: <ReservationConsultUser /> },
     ];
 
     return (
