@@ -104,7 +104,7 @@ export class ActivitiesService {
   }
 
   async create(createActivityDto: CreateActivityDto) {
-    const { name, description, category_id, attraction_id } = createActivityDto;
+    const { name, description, category_id, attraction_id, image_url, thrill_level, duration, min_age, accessibility, is_published } = createActivityDto;
 
     // Validation des champs requis
     if (!name || !description || !category_id) {
@@ -142,6 +142,12 @@ export class ActivitiesService {
         description,
         category_id,
         attraction_id: attraction_id || null,
+        image_url: image_url || null,
+        thrill_level: thrill_level || null,
+        duration: duration || null,
+        min_age: min_age || null,
+        accessibility: accessibility || null,
+        is_published: is_published !== undefined ? is_published : true,
       },
       include: {
         category: true,
@@ -182,7 +188,7 @@ export class ActivitiesService {
       throw new NotFoundException(`Activité avec l'ID ${id} non trouvée`);
     }
 
-    const { name, description, category_id, attraction_id } = updateActivityDto;
+    const { name, description, category_id, attraction_id, image_url, thrill_level, duration, min_age, accessibility, is_published } = updateActivityDto;
 
     // Si category_id fourni, vérifier qu'elle existe
     if (category_id) {
@@ -216,6 +222,12 @@ export class ActivitiesService {
     if (description !== undefined) dataToUpdate.description = description;
     if (category_id !== undefined) dataToUpdate.category_id = category_id;
     if (attraction_id !== undefined) dataToUpdate.attraction_id = attraction_id;
+    if (image_url !== undefined) dataToUpdate.image_url = image_url;
+    if (thrill_level !== undefined) dataToUpdate.thrill_level = thrill_level;
+    if (duration !== undefined) dataToUpdate.duration = duration;
+    if (min_age !== undefined) dataToUpdate.min_age = min_age;
+    if (accessibility !== undefined) dataToUpdate.accessibility = accessibility;
+    if (is_published !== undefined) dataToUpdate.is_published = is_published;
 
     const updatedActivity = await this.prisma.activity.update({
       where: { id },
