@@ -11,10 +11,10 @@ interface WeatherBackgroundProps {
 }
 
 export default function WeatherBackground({ weather }: WeatherBackgroundProps) {
-  const gradient = weatherGradients[weather.condition]?.gradient || weatherGradients.pluvieux.gradient;
+  //const gradient = weatherGradients[weather.condition]?.gradient || weatherGradients.pluvieux.gradient;
 
-  const renderWeatherAnimation = () => {
-    switch (weather.condition) {
+  /*const renderWeatherAnimation = () => {
+    switch (weather.main) {
       case 'pluvieux':
         return (
           <>
@@ -28,7 +28,7 @@ export default function WeatherBackground({ weather }: WeatherBackgroundProps) {
       case 'neige':
         return (
           <>
-            {/* Soleil d'hiver */}
+            {/!* Soleil d'hiver *!/}
             <Box
               sx={{
                 position: 'absolute',
@@ -48,7 +48,7 @@ export default function WeatherBackground({ weather }: WeatherBackgroundProps) {
       default:
         return null;
     }
-  };
+  };*/
 
   return (
     <>
@@ -60,13 +60,12 @@ export default function WeatherBackground({ weather }: WeatherBackgroundProps) {
           left: 0,
           width: '100%',
           height: '100%',
-          background: gradient,
+          //background: gradient,
           zIndex: 0
         }}
       />
-
       {/* Weather animations */}
-      {renderWeatherAnimation()}
+      {/*{renderWeatherAnimation()}*/}
     </>
   );
 }

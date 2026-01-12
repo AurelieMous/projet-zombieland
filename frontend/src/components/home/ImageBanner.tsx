@@ -5,17 +5,23 @@ import CloudIcon from '@mui/icons-material/Cloud';
 import {colors} from "../../theme";
 import getTodaySchedule from "../../functions/getTodaySchedule.ts";
 import WeatherBackground from "./weather/WeatherBackground";
+import getWeather from "../../services/getApiWeather.ts";
+import {formatWeather} from "../../functions/formatWeather.ts";
 
 export default function ImageBanner() {
     const [isOpen, setIsOpen] = useState<boolean>(false);
+    const [weather, setWeather] = useState<any>(null);
+    const [errorWeather, setErrorWeather] = useState<any>(null);
     
     // Météo en dur
-    const weather = {
-        city: "Zombieland",
-        temperature: 12,
-        condition: "pluvieux",
-        icon: "🌧️"
-    };
+    //const weather = {
+    //    city: "Zombieland",
+    //    temperature: 12,
+    //    condition: "pluvieux",
+    //    icon: "🌧️"
+    //};
+    // Correspond aux données de Paris
+    const cityName = "Paris";
 
     useEffect(() => {
         const fetchSchedule = async () => {
@@ -27,7 +33,24 @@ export default function ImageBanner() {
                 setIsOpen(false);
             }
         };
+
+        // On récupère les données météos
+        const fetchWeatherApi = async (cityName: string) => {
+            console.log("Fonction ici")
+            try {
+                const response = await getWeather(cityName);
+                setWeather(response);
+                console.log(response);
+                console.log("Weather :", weather)
+                setErrorWeather(null)
+            } catch (error) {
+                setErrorWeather("Erreur lors de la récupération des données météo : " + error);
+            }
+        }
+
         fetchSchedule();
+        fetchWeatherApi(cityName);
+
     }, []);
 
     return (
@@ -90,15 +113,16 @@ export default function ImageBanner() {
                     minWidth: '350px',
                     minHeight: '100px'
                 }}>
+                    {errorWeather && <Typography sx={{ color: colors.secondaryRed }}>{errorWeather}</Typography>}
                     {/* Animation météo dans le conteneur */}
-                    <WeatherBackground weather={weather} />
+                    {weather && <WeatherBackground weather={weather}/>}
 
                     <CloudIcon sx={{ fontSize: '1.5rem', color: colors.secondaryGrey, zIndex: 2, position: 'relative' }} />
                     <Typography variant="h6" sx={{ fontSize: '1rem', zIndex: 2, position: 'relative' }}>
-                        {weather.city} - {weather.temperature}°C - {weather.condition}
+                        {weather?.name} - {formatWeather(weather?.main.temp)}°C - {weather?.weather[0].description}
                     </Typography>
                     <Typography sx={{ fontSize: '1.5rem', zIndex: 2, position: 'relative' }}>
-                        {weather.icon}
+                        {weather?.icon}
                     </Typography>
                 </Box>
             </Box>
