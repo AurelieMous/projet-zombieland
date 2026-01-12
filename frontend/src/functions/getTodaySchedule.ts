@@ -21,9 +21,9 @@ const getTodaySchedule = async () => {
             return {
                 id: todayParkDate.id,
                 jour: new Date(todayParkDate.jour),
-                openHour: today, // Non utilisé mais requis par l'interface
-                closeHour: today, // Non utilisé mais requis par l'interface
-                isOpen: todayParkDate.is_open,
+                open_hour: today,
+                close_hour: today,
+                is_open: todayParkDate.is_open,
                 notes: todayParkDate.notes || "",
                 createdAt: new Date(todayParkDate.created_at)
             };
@@ -33,10 +33,10 @@ const getTodaySchedule = async () => {
         return {
             id: 0,
             jour: today,
-            openHour: today,
-            closeHour: today,
-            isOpen: false,
-            notes: "Aucune information disponible",
+            open_hour: today,
+            close_hour: today,
+            is_open: false,
+            notes: null,
             createdAt: today
         };
     } catch (error) {
@@ -48,8 +48,8 @@ const getTodaySchedule = async () => {
             jour: today,
             openHour: today,
             closeHour: today,
-            isOpen: false,
-            notes: "Erreur de chargement",
+            is_open: false,
+            notes: null,
             createdAt: today
         };
     }

@@ -16,9 +16,6 @@ export function SchedulesCard({horaire}: SchedulesCardProps) {
         return dateObj.toLocaleDateString("fr-FR", {weekday: "long", day: "numeric", month: "long", year: "numeric"});
     }
 
-    console.log(horaire.notes);
-
-
     return (
         <>
             <Card sx={{minWidth: 275, borderRadius: 5, backgroundColor: 'colors.secondaryDark', color: 'white'}}>
@@ -32,15 +29,15 @@ export function SchedulesCard({horaire}: SchedulesCardProps) {
                             <Box
                                 component="span"
                                 sx={{
-                                    color: horaire.isOpen ? "primary.main" : "error.main",
+                                    color: horaire.is_open ? "primary.main" : "error.main",
                                     fontWeight: 'bold'
                                 }}
                             >
-                                {horaire.isOpen ? "ouvert" : "fermé"}
+                                {horaire.is_open ? "ouvert" : "fermé"}
                             </Box>
                         </Typography>
                     </Box>
-                    {/* {horaire.notes && (
+                    {horaire.notes && (
                         <Box sx={{
                             display: "flex",
                             justifyContent: 'center',
@@ -52,38 +49,51 @@ export function SchedulesCard({horaire}: SchedulesCardProps) {
                                 {horaire.notes}
                             </Typography>
                         </Box>
-                    )}*/}
+                    )}
 
-                    {horaire.isOpen ? (
-                        <Box sx={{
-                            display: "flex",
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            gap: 4,
-                            paddingBottom: 5
-                        }}>
-                            <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3}}>
-                                <Typography variant="body1">
-                                    Heure d'ouverture
-                                </Typography>
-                                <Chip
-                                    label={formatTime(horaire.openHour)}
-                                    variant="outlined"
-                                    sx={{fontWeight: 'bold', fontSize: '1.5rem', padding: 1, borderRadius: 3}}
-                                />
-                            </Box>
+                    {horaire.is_open ? (
+                        horaire.open_hour && horaire.close_hour ? (
+                            <Box sx={{
+                                display: "flex",
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                gap: 4,
+                                paddingBottom: 5
+                            }}>
+                                <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3}}>
+                                    <Typography variant="body1">
+                                        Heure d'ouverture
+                                    </Typography>
+                                    <Chip
+                                        label={formatTime(horaire.open_hour)}
+                                        variant="outlined"
+                                        sx={{fontWeight: 'bold', fontSize: '1.5rem', padding: 1, borderRadius: 3}}
+                                    />
+                                </Box>
 
-                            <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3}}>
-                                <Typography variant="body1">
-                                    Heure de fermeture
-                                </Typography>
-                                <Chip
-                                    label={formatTime(horaire.closeHour)}
-                                    variant="outlined"
-                                    sx={{fontWeight: 'bold', fontSize: '1.5rem', padding: 1, borderRadius: 3}}
-                                />
+                                <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3}}>
+                                    <Typography variant="body1">
+                                        Heure de fermeture
+                                    </Typography>
+                                    <Chip
+                                        label={formatTime(horaire.close_hour)}
+                                        variant="outlined"
+                                        sx={{fontWeight: 'bold', fontSize: '1.5rem', padding: 1, borderRadius: 3}}
+                                    />
+                                </Box>
                             </Box>
-                        </Box>
+                        ) : (
+                            <Box sx={{
+                                display: "flex",
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                minHeight: '200px',
+                            }}>
+                                <Typography variant="body1">
+                                    Pas d'horaires disponibles.
+                                </Typography>
+                            </Box>
+                        )
                     ) : (
                         <Box sx={{
                             display: "flex",
@@ -92,7 +102,7 @@ export function SchedulesCard({horaire}: SchedulesCardProps) {
                             minHeight: '200px',
                         }}>
                             <Typography variant="body1">
-                                Pas d'horaires disponibles.
+                                Le parc est fermé ce jour-là.
                             </Typography>
                         </Box>
                     )}

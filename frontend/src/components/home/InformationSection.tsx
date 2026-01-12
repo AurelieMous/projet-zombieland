@@ -2,16 +2,16 @@ import { useState, useEffect } from "react";
 import {SchedulesCard} from "../cards/SchedulesCard.tsx";
 import {Box, Typography} from "@mui/material";
 import AccessCard from "../cards/AccessCard.tsx";
-import getTodaySchedule from "../../functions/getTodaySchedule.ts";
+// import getTodaySchedule from "../../functions/getTodaySchedule.ts";
 import type { DateParc } from "../../@types/dateParc";
 
 
 export default function InformationSection() {
     const [todaySchedule, setTodaySchedule] = useState<DateParc | null>(null);
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     useEffect(() => {
-        const fetchSchedule = async () => {
+        /*const fetchSchedule = async () => {
             setIsLoading(true);
             try {
                 const schedule = await getTodaySchedule();
@@ -22,7 +22,17 @@ export default function InformationSection() {
                 setIsLoading(false);
             }
         };
-        fetchSchedule();
+        fetchSchedule();*/
+
+        setTodaySchedule({
+            id: 50,
+            jour: new Date('2026-01-12'),
+            open_hour: new Date('2026-01-12T10:00:00'),
+            close_hour: new Date('2026-01-12T19:00:00'),
+            is_open: true,
+            notes: 'Journée normale d\'hiver',
+            createdAt: new Date('2025-12-01T08:00:00')
+        })
     }, []);
 
     return (
