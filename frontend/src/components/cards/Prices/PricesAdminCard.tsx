@@ -1,8 +1,7 @@
 
-import {Card, CardContent, IconButton, Stack, Typography} from "@mui/material";
+import {Box, Card, CardContent, IconButton, Stack, Typography} from "@mui/material";
 import type {Price} from "../../../@types/price";
 import {colors} from "../../../theme";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {styled} from "@mui/material/styles";
@@ -66,62 +65,145 @@ export default function PriceAdminCard({price, onEdit, onClick, onDelete}: Price
         if (price.type === "PASS_2J") {
             return "PASS 2 JOURS";
         }
-        return `${price.type} - ${price.duration_days} JOUR${price.duration_days > 1 ? 'S' : ''}`;
+        return `${price.type}`;
     }
 
     return (
-        <>
-            <StyledPriceCard onClick={handleCardClick}>
-                <CardContent sx={{paddingLeft: 5}}>
-                    <Typography variant={"h4"}>
-                        {formatPriceTitle(price)}
-                    </Typography>
-                    <Typography variant="subtitle1" component="div">
-                        {price.label}
-                    </Typography>
-                    <Typography sx={{color: "primary.main", paddingTop: 4, fontSize: 30, fontWeight: "bold"}}>
-                        {price.amount} €
-                    </Typography>
-                    <Stack direction="row" spacing={1} justifyContent="flex-end">
-                        <IconButton
-                            size="small"
-                            onClick={handleCardClick}
-                            sx={{
-                                color: colors.primaryGreen,
-                                '&:hover': {
-                                    backgroundColor: `${colors.primaryGreen}20`,
-                                },
-                            }}
-                        >
-                            <VisibilityIcon />
-                        </IconButton>
-                        <IconButton
-                            size="small"
-                            onClick={handleEdit}
-                            sx={{
-                                color: colors.primaryGreen,
-                                '&:hover': {
-                                    backgroundColor: `${colors.primaryGreen}20`,
-                                },
-                            }}
-                        >
-                            <EditIcon />
-                        </IconButton>
-                        <IconButton
-                            size="small"
-                            onClick={handleDelete}
-                            sx={{
-                                color: colors.primaryRed,
-                                '&:hover': {
-                                    backgroundColor: `${colors.primaryRed}20`,
-                                },
-                            }}
-                        >
-                            <DeleteIcon />
-                        </IconButton>
+        <StyledPriceCard
+            onClick={handleCardClick}
+            sx={{
+                cursor: onClick ? 'pointer' : 'default',
+            }}
+        >
+            <CardContent>
+                <Stack spacing={2}>
+                    {/* En-tête avec numéro de réservation, statut et actions */}
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 2 }}>
+                        <Box>
+                            <Typography
+                                variant="h6"
+                                sx={{
+                                    color: colors.primaryGreen,
+                                    fontWeight: 700,
+                                    letterSpacing: '0.05em',
+                                }}
+                            >
+                                {price.label}
+                            </Typography>
+                        </Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            {(onEdit || onDelete) && (
+                                <Box sx={{ display: 'flex', gap: 0.5 }}>
+                                    {onEdit && (
+                                        <IconButton
+                                            onClick={handleEdit}
+                                            size="small"
+                                            sx={{
+                                                color: colors.primaryGreen,
+                                                '&:hover': {
+                                                    backgroundColor: `${colors.primaryGreen}20`,
+                                                },
+                                                '&.Mui-disabled': {
+                                                    color: colors.secondaryGrey,
+                                                },
+                                            }}
+                                            aria-label="Modifier le tarif"
+                                        >
+                                            <EditIcon fontSize="small" />
+                                        </IconButton>
+                                    )}
+                                    {onDelete && (
+                                        <IconButton
+                                            onClick={handleDelete}
+                                            size="small"
+                                            sx={{
+                                                color: colors.primaryRed,
+                                                '&:hover': {
+                                                    backgroundColor: `${colors.primaryRed}20`,
+                                                },
+                                                '&.Mui-disabled': {
+                                                    color: colors.secondaryGrey,
+                                                },
+                                            }}
+                                            aria-label="Supprimer le tarif"
+                                        >
+                                            <DeleteIcon fontSize="small" />
+                                        </IconButton>
+                                    )}
+                                </Box>
+                            )}
+                        </Box>
+                    </Box>
+
+                    <Box sx={{ height: '1px', backgroundColor: colors.secondaryGrey }} />
+
+                    {/* Informations principales */}
+                    <Stack spacing={1.5}>
+
+                            <Box>
+                                <Typography
+                                    variant="body2"
+                                    sx={{
+                                        color: colors.secondaryGrey,
+                                        textTransform: 'uppercase',
+                                        fontSize: '0.75rem',
+                                        letterSpacing: '0.05em',
+                                        mb: 0.5,
+                                    }}
+                                >
+                                    Type de tarif
+                                </Typography>
+                                <Typography variant="body1" sx={{ color: colors.white, fontWeight: 600 }}>
+                                    {formatPriceTitle(price)}
+                                </Typography>
+                            </Box>
+
+
+                        <Box>
+                            <Typography
+                                variant="body2"
+                                sx={{
+                                    color: colors.secondaryGrey,
+                                    textTransform: 'uppercase',
+                                    fontSize: '0.75rem',
+                                    letterSpacing: '0.05em',
+                                    mb: 0.5,
+                                }}
+                            >
+                                Nombre de jour
+                            </Typography>
+                            <Typography variant="body1" sx={{ color: colors.white }}>
+                                {price.duration_days}
+                            </Typography>
+                        </Box>
+
+                        <Box>
+                            <Typography
+                                variant="body2"
+                                sx={{
+                                    color: colors.secondaryGrey,
+                                    textTransform: 'uppercase',
+                                    fontSize: '0.75rem',
+                                    letterSpacing: '0.05em',
+                                    mb: 0.5,
+                                }}
+                            >
+                                Montant
+                            </Typography>
+                            <Typography
+                                variant="h6"
+                                sx={{
+                                    color: colors.primaryGreen,
+                                    fontWeight: 700,
+                                    fontSize: '1.5rem',
+                                }}
+                            >
+                                {price.amount} €
+                            </Typography>
+                        </Box>
                     </Stack>
-                </CardContent>
-            </StyledPriceCard>
-        </>
+                </Stack>
+            </CardContent>
+        </StyledPriceCard>
     )
 }

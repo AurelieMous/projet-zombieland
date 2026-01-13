@@ -40,9 +40,9 @@ export const PriceList = () => {
     const [dateToFilter, setDateToFilter] = useState('');
     const [priceType, setPriceType] = useState('');
     const [page, setPage] = useState(1);
-    const [limit, setLimit] = useState(10);
+    const [limit] = useState(10);
     const [sortBy, setSortBy] = useState('created_desc');
-    const [amount, setAmount] = useState<number>(0);
+    const [amount] = useState<number>(0);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const [total, setTotal] = useState(0);
@@ -258,7 +258,7 @@ export const PriceList = () => {
                             </FormControl>
                         </Grid>
 
-                        <Grid size={{ xs: 12, sm: 6, md: 2 }}>
+                        <Grid size={{ xs: 12, sm: 6, md: 6}}>
                             <FormControl fullWidth sx={{ minWidth: '200px' }}>
                                 <InputLabel sx={{ color: colors.secondaryGrey }}>Trier par</InputLabel>
                                 <Select

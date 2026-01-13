@@ -23,7 +23,7 @@ import type { Activity } from '../../../@types/activity';
 import { getActivities, deleteActivity, type ActivityFilters } from '../../../services/activities';
 import { getCategories } from '../../../services/categories';
 import type { Category } from '../../../@types/categorie';
-import { ActivityCard } from '../../../components/cards/ActivityCard';
+import { ActivityCard } from '../../../components/cards/Activity/ActivityCard.tsx';
 import { CreateActivityModal } from '../../../components/modals/Activity/CreateActivityModal.tsx';
 import { UpdateActivityModal } from '../../../components/modals/Activity/UpdateActivityModal.tsx';
 import { ActivityDetailsModal } from '../../../components/modals/Activity/ActivityDetailsModal.tsx';
