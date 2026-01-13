@@ -2,17 +2,16 @@ import { Alert, Box, MenuItem, Modal, Select, Typography, FormControl, InputLabe
 import { useState, useEffect } from 'react';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { toast } from 'react-toastify';
-import { createActivity, type CreateActivityDto } from '../../services/activities';
+import { createAttraction, type CreateAttractionDto, getAttractions } from '../../services/attractions';
 import { getCategories } from '../../services/categories';
-import { getActivities } from '../../services/activities';
-import { uploadActivityImage } from '../../services/upload';
+import { uploadAttractionImage } from '../../services/upload';
 import { colors } from '../../theme';
 import { PrimaryButton } from '../common';
 import type { Category } from '../../@types/categorie';
-import type { Activity } from '../../@types/activity';
+import type { Attraction } from '../../@types/attraction';
 import { resolveImageUrl, DEFAULT_ACTIVITY_IMAGE } from '../../utils/imageUtils';
 
-interface CreateActivityModalProps {
+interface CreateAttractionModalProps {
   open: boolean;
   onClose: () => void;
   onSuccess: () => void;
@@ -32,24 +31,21 @@ const style = {
   p: 4,
 };
 
-export const CreateActivityModal = ({
+export const CreateAttractionModal = ({
   open,
   onClose,
   onSuccess,
-}: CreateActivityModalProps) => {
+}: CreateAttractionModalProps) => {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [allActivities, setAllActivities] = useState<Activity[]>([]);
+  const [allAttractions, setAllAttractions] = useState<Attraction[]>([]);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [categoryId, setCategoryId] = useState<number | ''>('');
-  const [attractionId, setAttractionId] = useState<number | ''>('');
   const [imageUrl, setImageUrl] = useState('');
   const [thrillLevel, setThrillLevel] = useState<number | ''>('');
   const [duration, setDuration] = useState<number | ''>('');
-  const [minAge, setMinAge] = useState<number | ''>('');
-  const [accessibility, setAccessibility] = useState('');
   const [isPublished, setIsPublished] = useState(true);
-  const [relatedActivityIds, setRelatedActivityIds] = useState<number[]>([]);
+  const [relatedAttractionIds, setRelatedAttractionIds] = useState<number[]>([]);
   const [uploading, setUploading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -59,12 +55,12 @@ export const CreateActivityModal = ({
     if (open) {
       const fetchData = async () => {
         try {
-          const [cats, acts] = await Promise.all([
+          const [cats, attrs] = await Promise.all([
             getCategories(),
-            getActivities(),
+            getAttractions(),
           ]);
           setCategories(cats);
-          setAllActivities(acts);
+          setAllAttractions(attrs);
         } catch (err) {
           console.error('Erreur lors du chargement des données:', err);
         }
@@ -77,14 +73,11 @@ export const CreateActivityModal = ({
     setName('');
     setDescription('');
     setCategoryId('');
-    setAttractionId('');
     setImageUrl('');
     setThrillLevel('');
     setDuration('');
-    setMinAge('');
-    setAccessibility('');
     setIsPublished(true);
-    setRelatedActivityIds([]);
+    setRelatedAttractionIds([]);
     setError(null);
     setSuccess(null);
     onClose();
@@ -101,26 +94,23 @@ export const CreateActivityModal = ({
     setSuccess(null);
 
     try {
-      const dto: CreateActivityDto = {
+      const dto: CreateAttractionDto = {
         name,
         description,
         category_id: Number(categoryId),
-        attraction_id: attractionId ? Number(attractionId) : null,
         image_url: imageUrl || null,
         thrill_level: thrillLevel ? Number(thrillLevel) : null,
         duration: duration ? Number(duration) : null,
-        min_age: minAge ? Number(minAge) : null,
-        accessibility: accessibility || null,
         is_published: isPublished,
-        related_activity_ids: relatedActivityIds.length > 0 ? relatedActivityIds : undefined,
+        related_attraction_ids: relatedAttractionIds.length > 0 ? relatedAttractionIds : undefined,
       };
 
-      await createActivity(dto);
-      toast.success('Activité créée avec succès !');
+      await createAttraction(dto);
+      toast.success('Attraction créée avec succès !');
       onSuccess();
       handleClose();
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Erreur lors de la création de l\'activité';
+      const message = err instanceof Error ? err.message : 'Erreur lors de la création de l\'attraction';
       setError(message);
     } finally {
       setIsLoading(false);
@@ -140,7 +130,7 @@ export const CreateActivityModal = ({
     setUploading(true);
     setError(null);
     try {
-      const response = await uploadActivityImage(file);
+      const response = await uploadAttractionImage(file);
       setImageUrl(response.url);
       setSuccess('Image uploadée avec succès');
       setTimeout(() => setSuccess(null), 3000);
@@ -152,11 +142,11 @@ export const CreateActivityModal = ({
     }
   };
 
-  const toggleRelatedActivity = (activityId: number) => {
-    setRelatedActivityIds((prev) =>
-      prev.includes(activityId)
-        ? prev.filter((id) => id !== activityId)
-        : [...prev, activityId]
+  const toggleRelatedAttraction = (attractionId: number) => {
+    setRelatedAttractionIds((prev) =>
+      prev.includes(attractionId)
+        ? prev.filter((id) => id !== attractionId)
+        : [...prev, attractionId]
     );
   };
 
@@ -174,7 +164,7 @@ export const CreateActivityModal = ({
             textAlign: 'center',
           }}
         >
-          Créer une nouvelle activité
+          Créer une nouvelle attraction
         </Typography>
 
         {error && (
@@ -233,7 +223,7 @@ export const CreateActivityModal = ({
           {/* Upload d'image */}
           <Box sx={{ mb: 2 }}>
             <Typography variant="subtitle2" sx={{ mb: 1, color: colors.primaryGold }}>
-              Image de l'activité
+              Image de l'attraction
             </Typography>
 
             <Button
@@ -347,53 +337,12 @@ export const CreateActivityModal = ({
             />
           </Box>
 
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            <TextField
-              label="Durée (minutes)"
-              type="number"
-              value={duration}
-              onChange={(e) => setDuration(e.target.value ? Number(e.target.value) : '')}
-              inputProps={{ min: 1 }}
-              fullWidth
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  backgroundColor: colors.secondaryDarkAlt,
-                  color: colors.white,
-                  '& fieldset': { borderColor: colors.secondaryGrey },
-                  '&:hover fieldset': { borderColor: colors.primaryGreen },
-                  '&.Mui-focused fieldset': { borderColor: colors.primaryGreen },
-                },
-                '& .MuiInputLabel-root': { color: colors.secondaryGrey },
-                '& .MuiInputLabel-root.Mui-focused': { color: colors.primaryGreen },
-              }}
-            />
-
-            <TextField
-              label="Âge minimum"
-              type="number"
-              value={minAge}
-              onChange={(e) => setMinAge(e.target.value ? Number(e.target.value) : '')}
-              inputProps={{ min: 0 }}
-              fullWidth
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  backgroundColor: colors.secondaryDarkAlt,
-                  color: colors.white,
-                  '& fieldset': { borderColor: colors.secondaryGrey },
-                  '&:hover fieldset': { borderColor: colors.primaryGreen },
-                  '&.Mui-focused fieldset': { borderColor: colors.primaryGreen },
-                },
-                '& .MuiInputLabel-root': { color: colors.secondaryGrey },
-                '& .MuiInputLabel-root.Mui-focused': { color: colors.primaryGreen },
-              }}
-            />
-          </Box>
-
           <TextField
-            label="Accessibilité"
-            value={accessibility}
-            onChange={(e) => setAccessibility(e.target.value)}
-            placeholder="Ex: Accessible, Partiellement accessible..."
+            label="Durée (minutes)"
+            type="number"
+            value={duration}
+            onChange={(e) => setDuration(e.target.value ? Number(e.target.value) : '')}
+            inputProps={{ min: 1 }}
             fullWidth
             sx={{
               '& .MuiOutlinedInput-root': {
@@ -410,20 +359,20 @@ export const CreateActivityModal = ({
 
           <Box>
             <Typography sx={{ mb: 1, color: colors.secondaryGrey, fontSize: '0.9rem' }}>
-              Activités liées
+              Attractions liées
             </Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, maxHeight: '150px', overflow: 'auto', p: 1, border: `1px solid ${colors.secondaryGrey}`, borderRadius: 1 }}>
-              {allActivities.map((activity) => (
+              {allAttractions.map((attraction) => (
                 <Chip
-                  key={activity.id}
-                  label={activity.name}
-                  onClick={() => toggleRelatedActivity(activity.id)}
-                  color={relatedActivityIds.includes(activity.id) ? 'primary' : 'default'}
+                  key={attraction.id}
+                  label={attraction.name}
+                  onClick={() => toggleRelatedAttraction(attraction.id)}
+                  color={relatedAttractionIds.includes(attraction.id) ? 'primary' : 'default'}
                   sx={{
-                    backgroundColor: relatedActivityIds.includes(activity.id) ? colors.primaryGreen : colors.secondaryDarkAlt,
+                    backgroundColor: relatedAttractionIds.includes(attraction.id) ? colors.primaryGreen : colors.secondaryDarkAlt,
                     color: colors.white,
                     '&:hover': {
-                      backgroundColor: relatedActivityIds.includes(activity.id) ? colors.primaryGreen : colors.secondaryGrey,
+                      backgroundColor: relatedAttractionIds.includes(attraction.id) ? colors.primaryGreen : colors.secondaryGrey,
                     },
                   }}
                 />
