@@ -301,7 +301,7 @@ export const ActivityList = () => {
 
         {/* Filtres */}
         <Grid container spacing={2} sx={{ mb: 2 }}>
-          <Grid item xs={12} sm={6} md={4}>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
             <FormControl fullWidth sx={{ minWidth: '200px' }}>
               <InputLabel sx={{ color: colors.secondaryGrey }}>Catégorie</InputLabel>
               <Select
@@ -355,7 +355,7 @@ export const ActivityList = () => {
             </FormControl>
           </Grid>
 
-          <Grid item xs={12} sm={6} md={4}>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
             <FormControl fullWidth sx={{ minWidth: '200px' }}>
               <InputLabel sx={{ color: colors.secondaryGrey }}>Statut</InputLabel>
               <Select
@@ -406,7 +406,7 @@ export const ActivityList = () => {
             </FormControl>
           </Grid>
 
-          <Grid item xs={12} sm={6} md={4}>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
             <Button
               fullWidth
               variant="outlined"
@@ -490,7 +490,7 @@ export const ActivityList = () => {
             <Box>
               <Grid container spacing={2}>
                 {activities.map((activity) => (
-                  <Grid item xs={12} sm={6} md={4} key={activity.id}>
+                  <Grid size={{ xs: 12, sm: 6, md: 4 }} key={activity.id}>
                     <ActivityCard
                       activity={activity}
                       onEdit={handleEdit}

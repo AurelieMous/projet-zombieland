@@ -229,7 +229,7 @@ export const ReservationList = () => {
 
                     {/* Filtres */}
                     <Grid container spacing={2} sx={{ mb: 2 }}>
-                        <Grid item xs={12} sm={6} md={3}>
+                        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                             <FormControl fullWidth sx={{ minWidth: '200px' }}>
                                 <InputLabel sx={{ color: colors.secondaryGrey }}>Statut</InputLabel>
                                 <Select
@@ -284,7 +284,7 @@ export const ReservationList = () => {
                             </FormControl>
                         </Grid>
 
-                        <Grid item xs={12} sm={6} md={2}>
+                        <Grid size={{ xs: 12, sm: 6, md: 2 }}>
                             <FormControl fullWidth sx={{ minWidth: '200px' }}>
                                 <InputLabel sx={{ color: colors.secondaryGrey }}>Trier par</InputLabel>
                                 <Select
@@ -343,7 +343,7 @@ export const ReservationList = () => {
                             </FormControl>
                         </Grid>
 
-                        <Grid item xs={12} sm={6} md={2}>
+                        <Grid size={{ xs: 12, sm: 6, md: 2 }}>
                             <TextField
                                 fullWidth
                                 type="date"
@@ -372,7 +372,7 @@ export const ReservationList = () => {
                             />
                         </Grid>
 
-                        <Grid item xs={12} sm={6} md={3}>
+                        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                             <TextField
                                 fullWidth
                                 type="date"
@@ -401,7 +401,7 @@ export const ReservationList = () => {
                             />
                         </Grid>
 
-                        <Grid item xs={12} sm={6} md={2}>
+                        <Grid size={{ xs: 12, sm: 6, md: 2 }}>
                             <Button
                                 fullWidth
                                 variant="outlined"
