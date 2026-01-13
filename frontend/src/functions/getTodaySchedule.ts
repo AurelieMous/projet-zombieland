@@ -25,7 +25,7 @@ const getTodaySchedule = async () => {
                 close_hour: today,
                 is_open: todayParkDate.is_open,
                 notes: todayParkDate.notes || "",
-                createdAt: new Date(todayParkDate.created_at)
+                created_at: new Date(todayParkDate.created_at)
             };
         }
 
@@ -37,7 +37,7 @@ const getTodaySchedule = async () => {
             close_hour: today,
             is_open: false,
             notes: null,
-            createdAt: today
+            created_at: today
         };
     } catch (error) {
         console.error("Erreur lors de la récupération des horaires:", error);
@@ -46,11 +46,11 @@ const getTodaySchedule = async () => {
         return {
             id: 0,
             jour: today,
-            openHour: today,
-            closeHour: today,
+            open_hour: today,
+            close_hour: today,
             is_open: false,
             notes: null,
-            createdAt: today
+            created_at: today
         };
     }
 };
