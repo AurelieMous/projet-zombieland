@@ -1,6 +1,7 @@
 import { Alert, Box, MenuItem, Modal, Select, Typography, FormControl, InputLabel, Switch, FormControlLabel, TextField, Chip, Button, CircularProgress } from '@mui/material';
 import { useState, useEffect } from 'react';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { toast } from 'react-toastify';
 import { updateAttraction, type UpdateAttractionDto, getAttractions } from '../../services/attractions';
 import { getCategories } from '../../services/categories';
 import { uploadAttractionImage } from '../../services/upload';
@@ -115,11 +116,9 @@ export const UpdateAttractionModal = ({
       };
 
       await updateAttraction(attraction.id, dto);
-      setSuccess('Attraction mise à jour avec succès');
-      setTimeout(() => {
-        onUpdateSuccess();
-        handleClose();
-      }, 1500);
+      toast.success('Attraction mise à jour avec succès !');
+      onUpdateSuccess();
+      handleClose();
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Erreur lors de la mise à jour de l\'attraction';
       setError(message);

@@ -1,6 +1,7 @@
 import { Alert, Box, MenuItem, Modal, Select, Typography, FormControl, InputLabel, Switch, FormControlLabel, TextField, Chip, Button, CircularProgress } from '@mui/material';
 import { useState, useEffect } from 'react';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { toast } from 'react-toastify';
 import { createActivity, type CreateActivityDto } from '../../services/activities';
 import { getCategories } from '../../services/categories';
 import { getActivities } from '../../services/activities';
@@ -115,11 +116,9 @@ export const CreateActivityModal = ({
       };
 
       await createActivity(dto);
-      setSuccess('Activité créée avec succès');
-      setTimeout(() => {
-        onSuccess();
-        handleClose();
-      }, 1500);
+      toast.success('Activité créée avec succès !');
+      onSuccess();
+      handleClose();
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Erreur lors de la création de l\'activité';
       setError(message);

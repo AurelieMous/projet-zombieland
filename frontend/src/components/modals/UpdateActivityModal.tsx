@@ -1,6 +1,7 @@
 import { Alert, Box, MenuItem, Modal, Select, Typography, FormControl, InputLabel, Switch, FormControlLabel, TextField, Chip, Button, CircularProgress } from '@mui/material';
 import { useState, useEffect } from 'react';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { toast } from 'react-toastify';
 import { updateActivity, type UpdateActivityDto } from '../../services/activities';
 import { getCategories } from '../../services/categories';
 import { getActivities } from '../../services/activities';
@@ -125,11 +126,9 @@ export const UpdateActivityModal = ({
       };
 
       await updateActivity(activity.id, dto);
-      setSuccess('Activité mise à jour avec succès');
-      setTimeout(() => {
-        onUpdateSuccess();
-        handleClose();
-      }, 1500);
+      toast.success('Activité mise à jour avec succès !');
+      onUpdateSuccess();
+      handleClose();
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Erreur lors de la mise à jour de l\'activité';
       setError(message);

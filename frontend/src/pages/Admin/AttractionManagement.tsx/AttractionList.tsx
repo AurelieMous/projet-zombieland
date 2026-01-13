@@ -16,6 +16,7 @@ import {
 import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
 import AddIcon from '@mui/icons-material/Add';
+import { toast } from 'react-toastify';
 import { colors } from '../../../theme';
 import { useEffect, useState, useRef } from 'react';
 import type { Attraction } from '../../../@types/attraction';
@@ -47,6 +48,7 @@ export const AttractionList = () => {
   const [searchInput, setSearchInput] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<number | ''>('');
   const [publishedFilter, setPublishedFilter] = useState<string>('');
+  const [sortBy, setSortBy] = useState<string>('created_desc');
   const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -83,7 +85,28 @@ export const AttractionList = () => {
         } else if (publishedFilter === 'draft') {
           filtered = attractionsData.filter((a: any) => a.is_published === false);
         }
-        setAttractions(filtered);
+
+        // Trier les attractions
+        const sorted = [...filtered].sort((a, b) => {
+          switch (sortBy) {
+            case 'name_asc':
+              return a.name.localeCompare(b.name);
+            case 'name_desc':
+              return b.name.localeCompare(a.name);
+            case 'created_desc':
+              return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+            case 'created_asc':
+              return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+            case 'updated_desc':
+              return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+            case 'updated_asc':
+              return new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime();
+            default:
+              return 0;
+          }
+        });
+
+        setAttractions(sorted);
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Erreur lors de la récupération des attractions';
         setError(message);
@@ -97,7 +120,7 @@ export const AttractionList = () => {
         clearTimeout(debounceTimeoutRef.current);
       }
     };
-  }, [search, categoryFilter, publishedFilter]);
+  }, [search, categoryFilter, publishedFilter, sortBy]);
 
   const handleCreate = () => {
     setCreateModalOpen(true);
@@ -131,13 +154,10 @@ export const AttractionList = () => {
     setDeleteSuccess(null);
     try {
       await deleteAttraction(attractionToDelete.id);
-      setDeleteSuccess('Attraction supprimée avec succès');
+      toast.success('Attraction supprimée avec succès !');
       setAttractions(attractions.filter((a) => a.id !== attractionToDelete.id));
-      setTimeout(() => {
-        setDeleteDialogOpen(false);
-        setAttractionToDelete(null);
-        setDeleteSuccess(null);
-      }, 1500);
+      setDeleteDialogOpen(false);
+      setAttractionToDelete(null);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Erreur lors de la suppression de l\'attraction';
       setDeleteError(message);
@@ -212,6 +232,7 @@ export const AttractionList = () => {
     setSearch('');
     setCategoryFilter('');
     setPublishedFilter('');
+    setSortBy('created_desc');
   };
 
   const hasActiveFilters = search || categoryFilter || publishedFilter;
@@ -430,6 +451,61 @@ export const AttractionList = () => {
             </Button>
           </Grid>
         </Grid>
+      </Box>
+
+      {/* Filtre de tri */}
+      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'flex-end' }}>
+        <FormControl sx={{ minWidth: '250px' }}>
+          <InputLabel sx={{ color: colors.secondaryGrey }}>Trier par</InputLabel>
+          <Select
+            value={sortBy}
+            label="Trier par"
+            onChange={(e) => setSortBy(e.target.value)}
+            sx={{
+              backgroundColor: colors.secondaryDark,
+              color: colors.white,
+              minHeight: '56px',
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderColor: colors.secondaryGrey,
+              },
+              '&:hover .MuiOutlinedInput-notchedOutline': {
+                borderColor: colors.primaryGreen,
+              },
+              '& .MuiSelect-select': {
+                paddingY: '16.5px',
+                minWidth: '100px',
+                display: 'flex',
+                alignItems: 'center',
+              },
+            }}
+            MenuProps={{
+              PaperProps: {
+                sx: {
+                  backgroundColor: colors.secondaryDark,
+                  '& .MuiMenuItem-root': {
+                    color: colors.white,
+                    '&:hover': {
+                      backgroundColor: `${colors.primaryGreen}20`,
+                    },
+                    '&.Mui-selected': {
+                      backgroundColor: `${colors.primaryGreen}40`,
+                      '&:hover': {
+                        backgroundColor: `${colors.primaryGreen}60`,
+                      },
+                    },
+                  },
+                },
+              },
+            }}
+          >
+            <MenuItem value="created_desc">Date création (récent)</MenuItem>
+            <MenuItem value="created_asc">Date création (ancien)</MenuItem>
+            <MenuItem value="updated_desc">Dernière modification (récent)</MenuItem>
+            <MenuItem value="updated_asc">Dernière modification (ancien)</MenuItem>
+            <MenuItem value="name_asc">Nom (A-Z)</MenuItem>
+            <MenuItem value="name_desc">Nom (Z-A)</MenuItem>
+          </Select>
+        </FormControl>
       </Box>
 
       {/* Liste des attractions */}
