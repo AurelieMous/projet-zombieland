@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import type { CreatePriceDto, UpdatePriceDto } from 'src/generated';
-import {Prisma} from "@prisma/client";
+import {Prisma, PriceType} from "@prisma/client";
 
 @Injectable()
 export class PricesService {
@@ -38,12 +38,13 @@ export class PricesService {
     const limit = options?.limit || 10;
     const skip = (page - 1) * limit;
 
-    // Construction des filtres
-    const where: any = {};
+    // Construction des filtres avec typage strict
+    const where: Prisma.PriceWhereInput = {};
 
     // Recherche par type de prix
-    if (options?.priceType) {
-      where.priceType = options.priceType;
+    const validTypes = Object.values(PriceType);
+    if (validTypes.includes(options?.priceType as PriceType)) {
+      where.type = options?.priceType as PriceType;
     }
 
     // Recherche par montant

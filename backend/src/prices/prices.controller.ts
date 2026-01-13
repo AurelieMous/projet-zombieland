@@ -49,8 +49,6 @@ export class PricesController {
       filters.amount = parseFloat(amount);
     }
 
-
-
     return this.pricesService.findAll(filters);
   }
 
