@@ -1,3 +1,5 @@
+import type {UpdateActivityDto} from "../services/activities.ts";
+
 export interface Price {
     id: number;
     label: string;
@@ -10,11 +12,17 @@ export interface Price {
 
 export type PriceType = 'ETUDIANT' | 'ADULTE' | 'GROUPE' | 'PASS_2J';
 
+export const PRICES_TYPES : PriceType[] = ['ETUDIANT', 'ADULTE', 'GROUPE', 'PASS_2J']
+
 export interface PaginedPrices {
     data: Price[];
-    total: number;
-    page: number;
-    limit: number;
+    pagination : {
+        total: number;
+        page: number;
+        limit: number;
+        totalPages: number;
+    }
+
 }
 
 export interface PricesFilters {
@@ -25,3 +33,16 @@ export interface PricesFilters {
     amount?: number;
 }
 
+export interface UpdatePriceDto {
+    label: string;
+    type: PriceType;
+    amount: number;
+    duration_days: number;
+}
+
+export interface CreatePriceDto {
+    label: string;
+    type: PriceType;
+    amount: number;
+    duration_days: number;
+}

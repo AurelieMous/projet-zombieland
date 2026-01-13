@@ -21,9 +21,9 @@ import { useEffect, useState, useRef } from 'react';
 import type { Reservation } from '../../../@types/reservation';
 import { getAllReservations, deleteReservation, type ReservationFilters } from '../../../services/reservations';
 import { ReservationCard } from '../../../components/cards/ReservationCard';
-import { UpdateReservationModal } from '../../../components/modals/UpdateReservationModal';
-import { ReservationDetailsModal } from '../../../components/modals/ReservationDetailsModal';
-import {ReservationCanceledModal} from "../../../components/modals/ReservationCanceledModal.tsx";
+import { UpdateReservationModal } from '../../../components/modals/Reservations/UpdateReservationModal.tsx';
+import { ReservationDetailsModal } from '../../../components/modals/Reservations/ReservationDetailsModal.tsx';
+import {ReservationCanceledModal} from "../../../components/modals/Reservations/ReservationCanceledModal.tsx";
 
 export const ReservationList = () => {
     const [reservations, setReservations] = useState<Reservation[]>([]);
