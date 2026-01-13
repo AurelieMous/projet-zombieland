@@ -1,5 +1,6 @@
 import { Alert, Box, MenuItem, Modal, Select, Typography } from '@mui/material';
 import { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 import { updateReservation } from '../../services/reservations';
 import { colors } from '../../theme';
 import { PrimaryButton } from '../common';
@@ -61,11 +62,9 @@ export const UpdateReservationModal = ({
 
     try {
       await updateReservation(reservation.id, { status });
-      setSuccess('Réservation mise à jour avec succès');
-      setTimeout(() => {
-        onUpdateSuccess();
-        handleClose();
-      }, 1500);
+      toast.success('Réservation mise à jour avec succès !');
+      onUpdateSuccess();
+      handleClose();
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Erreur lors de la mise à jour de la réservation';
       setError(message);
@@ -86,6 +85,18 @@ export const UpdateReservationModal = ({
         return status;
     }
   };
+
+  // Vérifier si la date est passée
+  const isDatePassed = () => {
+    if (!reservation?.date?.jour) return false;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const visitDate = new Date(reservation.date.jour);
+    visitDate.setHours(0, 0, 0, 0);
+    return visitDate < today;
+  };
+
+  const datePassed = isDatePassed();
 
   return (
     <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title">
@@ -130,6 +141,12 @@ export const UpdateReservationModal = ({
           </Alert>
         )}
 
+        {datePassed && (
+          <Alert severity="warning" sx={{ mb: 2, width: '100%' }}>
+            Impossible de modifier le statut d'une réservation dont la date de visite est passée.
+          </Alert>
+        )}
+
         <Box sx={{ mb: 3 }}>
           <Typography
             component="label"
@@ -150,7 +167,7 @@ export const UpdateReservationModal = ({
             value={status}
             onChange={(e) => setStatus(e.target.value as ReservationStatus)}
             fullWidth
-            disabled={isLoading}
+            disabled={isLoading || datePassed}
             sx={{
               backgroundColor: colors.secondaryDarkAlt,
               color: colors.white,
@@ -192,7 +209,7 @@ export const UpdateReservationModal = ({
             text="Enregistrer"
             onClick={handleSubmit}
             fullWidth={false}
-            disabled={isLoading}
+            disabled={isLoading || datePassed}
             type="button"
           />
         </Box>

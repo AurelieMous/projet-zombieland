@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Box, Container, Grid, Typography, Alert, LinearProgress } from '@mui/material';
+import { Box, Container, Typography, Alert, LinearProgress } from '@mui/material';
 import { colors } from '../../theme';
 import { HeroSection } from '../../components/hero/HeroSection';
 import { CustomBreadcrumbs } from '../../components/common';
@@ -150,71 +150,74 @@ export function InformationPage() {
           >
             Informations Pratiques
           </Typography>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={4}>
-              <Box
-                sx={{
-                  p: 3,
-                  bgcolor: colors.secondaryDarkAlt,
-                  borderRadius: 2,
-                  border: `1px solid ${colors.secondaryGrey}`,
-                }}
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: { xs: 'column', md: 'row' },
+              gap: 3,
+            }}
+          >
+            <Box
+              sx={{
+                flex: 1,
+                p: 3,
+                bgcolor: colors.secondaryDarkAlt,
+                borderRadius: 2,
+                border: `1px solid ${colors.secondaryGrey}`,
+              }}
+            >
+              <Typography
+                variant="h6"
+                sx={{ color: colors.primaryGreen, mb: 2, fontWeight: 'bold', fontSize: 18 }}
               >
-                <Typography
-                  variant="h6"
-                  sx={{ color: colors.primaryGreen, mb: 2, fontWeight: 'bold', fontSize: 18 }}
-                >
-                  🕐 Horaires
-                </Typography>
-                <Typography sx={{ color: colors.white, fontSize: 14 }}>
-                  Mercredi - Dimanche : 10h - 22h<br />
-                  Fermé : Lundi & Mardi
-                </Typography>
-              </Box>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <Box
-                sx={{
-                  p: 3,
-                  bgcolor: colors.secondaryDarkAlt,
-                  borderRadius: 2,
-                  border: `1px solid ${colors.secondaryGrey}`,
-                }}
+                🕐 Horaires
+              </Typography>
+              <Typography sx={{ color: colors.white, fontSize: 14 }}>
+                Mercredi - Dimanche : 10h - 22h<br />
+                Fermé : Lundi & Mardi
+              </Typography>
+            </Box>
+            <Box
+              sx={{
+                flex: 1,
+                p: 3,
+                bgcolor: colors.secondaryDarkAlt,
+                borderRadius: 2,
+                border: `1px solid ${colors.secondaryGrey}`,
+              }}
+            >
+              <Typography
+                variant="h6"
+                sx={{ color: colors.primaryGreen, mb: 2, fontWeight: 'bold', fontSize: 18 }}
               >
-                <Typography
-                  variant="h6"
-                  sx={{ color: colors.primaryGreen, mb: 2, fontWeight: 'bold', fontSize: 18 }}
-                >
-                  📍 Adresse
-                </Typography>
-                <Typography sx={{ color: colors.white, fontSize: 14 }}>
-                  123 Avenue de l'Apocalypse<br />
-                  75000 Paris, France
-                </Typography>
-              </Box>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <Box
-                sx={{
-                  p: 3,
-                  bgcolor: colors.secondaryDarkAlt,
-                  borderRadius: 2,
-                  border: `1px solid ${colors.secondaryGrey}`,
-                }}
+                📍 Adresse
+              </Typography>
+              <Typography sx={{ color: colors.white, fontSize: 14 }}>
+                123 Avenue de l'Apocalypse<br />
+                75000 Paris, France
+              </Typography>
+            </Box>
+            <Box
+              sx={{
+                flex: 1,
+                p: 3,
+                bgcolor: colors.secondaryDarkAlt,
+                borderRadius: 2,
+                border: `1px solid ${colors.secondaryGrey}`,
+              }}
+            >
+              <Typography
+                variant="h6"
+                sx={{ color: colors.primaryGreen, mb: 2, fontWeight: 'bold', fontSize: 18 }}
               >
-                <Typography
-                  variant="h6"
-                  sx={{ color: colors.primaryGreen, mb: 2, fontWeight: 'bold', fontSize: 18 }}
-                >
-                  📞 Contact
-                </Typography>
-                <Typography sx={{ color: colors.white, fontSize: 14 }}>
-                  Tél : 01 23 45 67 89<br />
-                  Email : contact@zombieland.fr
-                </Typography>
-              </Box>
-            </Grid>
-          </Grid>
+                📞 Contact
+              </Typography>
+              <Typography sx={{ color: colors.white, fontSize: 14 }}>
+                Tél : 01 23 45 67 89<br />
+                Email : contact@zombieland.fr
+              </Typography>
+            </Box>
+          </Box>
         </Box>
 
         {/* Section Carte Interactive */}
@@ -322,104 +325,103 @@ export function InformationPage() {
           >
             Légende de la Carte
           </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6} md={3}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                <Box
-                  sx={{
-                    width: 36,
-                    height: 36,
-                    bgcolor: colors.primaryRed,
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    border: `3px solid ${colors.white}`,
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.6)',
-                  }}
-                >
-                  <svg viewBox="0 0 24 24" width="20" height="20" style={{ fill: 'white' }}>
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-4h2v2h-2zm0-10h2v6h-2z"/>
-                  </svg>
-                </Box>
-                <Typography sx={{ color: colors.white, fontSize: 14 }}>
-                  Attractions
-                </Typography>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: { xs: 'column', sm: 'row' },
+              flexWrap: 'wrap',
+              gap: 2,
+            }}
+          >
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flex: { xs: '1 1 100%', sm: '1 1 45%', md: '1 1 22%' } }}>
+              <Box
+                sx={{
+                  width: 36,
+                  height: 36,
+                  bgcolor: colors.primaryRed,
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  border: `3px solid ${colors.white}`,
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.6)',
+                }}
+              >
+                <svg viewBox="0 0 24 24" width="20" height="20" style={{ fill: 'white' }}>
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-4h2v2h-2zm0-10h2v6h-2z"/>
+                </svg>
               </Box>
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                <Box
-                  sx={{
-                    width: 36,
-                    height: 36,
-                    bgcolor: colors.primaryGreen,
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    border: `3px solid ${colors.white}`,
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.6)',
-                  }}
-                >
-                  <svg viewBox="0 0 24 24" width="20" height="20" style={{ fill: 'white' }}>
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
-                  </svg>
-                </Box>
-                <Typography sx={{ color: colors.white, fontSize: 14 }}>
-                  Activités
-                </Typography>
+              <Typography sx={{ color: colors.white, fontSize: 14 }}>
+                Attractions
+              </Typography>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flex: { xs: '1 1 100%', sm: '1 1 45%', md: '1 1 22%' } }}>
+              <Box
+                sx={{
+                  width: 36,
+                  height: 36,
+                  bgcolor: colors.primaryGreen,
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  border: `3px solid ${colors.white}`,
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.6)',
+                }}
+              >
+                <svg viewBox="0 0 24 24" width="20" height="20" style={{ fill: 'white' }}>
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                </svg>
               </Box>
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                <Box
-                  sx={{
-                    width: 36,
-                    height: 36,
-                    bgcolor: colors.white,
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    border: `3px solid ${colors.white}`,
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.6)',
-                  }}
-                >
-                  <svg viewBox="0 0 24 24" width="20" height="20" style={{ fill: colors.secondaryDark }}>
-                    <path d="M5.5 22v-7.5H4V9c0-1.1.9-2 2-2h3c1.1 0 2 .9 2 2v5.5H9.5V22h-4zM18 22v-6h3l-2.54-7.63C18.18 7.55 17.42 7 16.56 7h-.12c-.86 0-1.63.55-1.9 1.37L12 16h3v6h3zM7.5 6c1.11 0 2-.89 2-2s-.89-2-2-2-2 .89-2 2 .89 2 2 2zm9 0c1.11 0 2-.89 2-2s-.89-2-2-2-2 .89-2 2 .89 2 2 2z"/>
-                  </svg>
-                </Box>
-                <Typography sx={{ color: colors.white, fontSize: 14 }}>
-                  Toilettes
-                </Typography>
+              <Typography sx={{ color: colors.white, fontSize: 14 }}>
+                Activités
+              </Typography>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flex: { xs: '1 1 100%', sm: '1 1 45%', md: '1 1 22%' } }}>
+              <Box
+                sx={{
+                  width: 36,
+                  height: 36,
+                  bgcolor: colors.white,
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  border: `3px solid ${colors.white}`,
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.6)',
+                }}
+              >
+                <svg viewBox="0 0 24 24" width="20" height="20" style={{ fill: colors.secondaryDark }}>
+                  <path d="M5.5 22v-7.5H4V9c0-1.1.9-2 2-2h3c1.1 0 2 .9 2 2v5.5H9.5V22h-4zM18 22v-6h3l-2.54-7.63C18.18 7.55 17.42 7 16.56 7h-.12c-.86 0-1.63.55-1.9 1.37L12 16h3v6h3zM7.5 6c1.11 0 2-.89 2-2s-.89-2-2-2-2 .89-2 2 .89 2 2 2zm9 0c1.11 0 2-.89 2-2s-.89-2-2-2-2 .89-2 2 .89 2 2 2z"/>
+                </svg>
               </Box>
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                <Box
-                  sx={{
-                    width: 36,
-                    height: 36,
-                    bgcolor: colors.primaryGreen,
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    border: `3px solid ${colors.white}`,
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.6)',
-                  }}
-                >
-                  <svg viewBox="0 0 24 24" width="20" height="20" style={{ fill: 'white' }}>
-                    <path d="M20 6h-2.18c.11-.31.18-.65.18-1 0-1.66-1.34-3-3-3-1.05 0-1.96.54-2.5 1.35l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM9 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm11 15H4V8h16v11z"/>
-                  </svg>
-                </Box>
-                <Typography sx={{ color: colors.white, fontSize: 14 }}>
-                  Boutiques
-                </Typography>
+              <Typography sx={{ color: colors.white, fontSize: 14 }}>
+                Toilettes
+              </Typography>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flex: { xs: '1 1 100%', sm: '1 1 45%', md: '1 1 22%' } }}>
+              <Box
+                sx={{
+                  width: 36,
+                  height: 36,
+                  bgcolor: colors.primaryGreen,
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  border: `3px solid ${colors.white}`,
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.6)',
+                }}
+              >
+                <svg viewBox="0 0 24 24" width="20" height="20" style={{ fill: 'white' }}>
+                  <path d="M20 6h-2.18c.11-.31.18-.65.18-1 0-1.66-1.34-3-3-3-1.05 0-1.96.54-2.5 1.35l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM9 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm11 15H4V8h16v11z"/>
+                </svg>
               </Box>
-            </Grid>
-          </Grid>
+              <Typography sx={{ color: colors.white, fontSize: 14 }}>
+                Boutiques
+              </Typography>
+            </Box>
+          </Box>
         </Box>
       </Container>
     </Box>

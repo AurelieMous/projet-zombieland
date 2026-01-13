@@ -11,8 +11,11 @@ export interface Attraction {
     latitude?: number | null;
     longitude?: number | null;
     category_id: number;
+    is_published: boolean;
     created_at: string;
     updated_at: string;
     category?: Category;
     images?: Array<{ id: number; url: string; alt_text?: string }>;
+    activities?: Array<{ id: number; name: string }>;
+    related_attractions?: Array<Attraction>;
 }

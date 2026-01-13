@@ -11,10 +11,14 @@ export interface Activity {
     image_url?: string | null;
     latitude?: number | null;
     longitude?: number | null;
+    min_age?: number | null;
+    accessibility?: string | null;
+    is_published?: boolean;
     category_id: number;
     attraction_id?: number | null;
     created_at: string;
     updated_at: string;
     category?: Category;
     attraction?: Attraction | null;
+    related_activities?: Activity[];
 }

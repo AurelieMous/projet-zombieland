@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { MapContainer, ImageOverlay, Marker, Popup, useMap } from 'react-leaflet';
+import { useEffect, useState } from 'react';
+import { MapContainer, ImageOverlay, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Box, CircularProgress, Alert } from '@mui/material';
@@ -24,22 +24,6 @@ interface ParkMapProps {
   selectedTypes: string[];
   selectedCategories: number[];
   searchQuery: string;
-}
-
-// Composant pour ajuster la vue de la carte
-function FitBounds({ points }: { points: MapPoint[] }) {
-  const map = useMap();
-
-  useEffect(() => {
-    if (points.length > 0) {
-      const bounds = L.latLngBounds(
-        points.map((p) => [p.latitude, p.longitude])
-      );
-      map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
-    }
-  }, [points, map]);
-
-  return null;
 }
 
 export function ParkMap({ data, loading, error, selectedTypes, selectedCategories, searchQuery }: ParkMapProps) {

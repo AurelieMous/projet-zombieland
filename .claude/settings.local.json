@@ -24,7 +24,9 @@
       "Bash(npm run seed:*)",
       "Bash(npm install:*)",
       "Bash(git stash push:*)",
-      "Bash(git merge:*)"
+      "Bash(git merge:*)",
+      "Bash(git ls-tree:*)",
+      "Bash(npm run build:*)"
     ]
   }
 }

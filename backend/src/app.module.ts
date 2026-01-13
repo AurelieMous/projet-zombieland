@@ -11,6 +11,7 @@ import { PricesModule } from './prices/prices.module';
 import { ParkDatesModule } from './park-dates/park-dates.module';
 import { UsersModule } from './users/users.module';
 import { MapModule } from './map/map.module';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { MapModule } from './map/map.module';
     ParkDatesModule,
     UsersModule,
     MapModule,
+    UploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],
