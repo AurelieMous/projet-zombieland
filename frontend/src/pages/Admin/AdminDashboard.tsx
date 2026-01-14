@@ -45,11 +45,20 @@ export const AdminDashboard = () => {
           <Tabs
             value={tabValue}
             onChange={(_, newValue) => setTabValue(newValue)}
+            variant="scrollable"
+            scrollButtons="auto"
+            allowScrollButtonsMobile
             sx={{
               mb: { xs: 1.5, md: 3 },
               '& .MuiTabs-indicator': {
                 backgroundColor: colors.primaryGreen,
                 height: 3,
+              },
+              '& .MuiTabs-scrollButtons': {
+                color: colors.white,
+                '&.Mui-disabled': {
+                  opacity: 0.3,
+                },
               },
               '& .MuiTab-root': {
                 color: colors.white,

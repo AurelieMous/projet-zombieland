@@ -23,6 +23,12 @@ import {
   Paper,
   Switch,
   Tooltip,
+  Card,
+  CardContent,
+  useMediaQuery,
+  useTheme,
+  Stack,
+  Divider,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -39,6 +45,8 @@ import { UserDetailsModal } from '../../../components/modals/Users/UserDetailsMo
 import { DeleteUserModal } from '../../../components/modals/Users/DeleteUserModal';
 
 export const UserList = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -495,32 +503,42 @@ export const UserList = () => {
         ) : (
           <Fade in={!isLoading} timeout={500}>
             <Box>
-              <TableContainer component={Paper} sx={{ backgroundColor: colors.secondaryDarkAlt, boxShadow: 'none' }}>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell sx={{ color: colors.white, fontWeight: 600 }}>Nom</TableCell>
-                      <TableCell sx={{ color: colors.white, fontWeight: 600 }}>Email</TableCell>
-                      <TableCell sx={{ color: colors.white, fontWeight: 600 }}>Rôle</TableCell>
-                      <TableCell sx={{ color: colors.white, fontWeight: 600 }}>Statut</TableCell>
-                      <TableCell sx={{ color: colors.white, fontWeight: 600 }}>Date d'inscription</TableCell>
-                      <TableCell sx={{ color: colors.white, fontWeight: 600 }}>Réservations</TableCell>
-                      <TableCell sx={{ color: colors.white, fontWeight: 600 }} align="right">Actions</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {sortedUsers.map((user) => (
-                      <TableRow
-                        key={user.id}
-                        sx={{
-                          '&:hover': {
-                            backgroundColor: `${colors.primaryGreen}10`,
-                          },
-                        }}
-                      >
-                        <TableCell sx={{ color: colors.white }}>{user.pseudo}</TableCell>
-                        <TableCell sx={{ color: colors.white }}>{user.email}</TableCell>
-                        <TableCell>
+              {isMobile ? (
+                // Version mobile : cartes en colonne
+                <Stack spacing={2}>
+                  {sortedUsers.map((user) => (
+                    <Card
+                      key={user.id}
+                      sx={{
+                        backgroundColor: colors.secondaryDarkAlt,
+                        border: `1px solid ${colors.secondaryGrey}`,
+                        '&:hover': {
+                          borderColor: colors.primaryGreen,
+                        },
+                      }}
+                    >
+                      <CardContent>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                          <Box>
+                            <Typography
+                              variant="h6"
+                              sx={{
+                                color: colors.white,
+                                fontWeight: 600,
+                                mb: 0.5,
+                              }}
+                            >
+                              {user.pseudo}
+                            </Typography>
+                            <Typography
+                              variant="body2"
+                              sx={{
+                                color: colors.secondaryGrey,
+                              }}
+                            >
+                              {user.email}
+                            </Typography>
+                          </Box>
                           <Chip
                             label={user.role}
                             size="small"
@@ -530,91 +548,234 @@ export const UserList = () => {
                               fontWeight: 600,
                             }}
                           />
-                        </TableCell>
-                        <TableCell>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Tooltip title={user.is_active !== false ? 'Compte actif' : 'Compte désactivé'}>
-                              <Switch
-                                checked={user.is_active !== false}
-                                onChange={() => handleToggleActive(user)}
+                        </Box>
+
+                        <Divider sx={{ my: 2, borderColor: colors.secondaryGrey }} />
+
+                        <Stack spacing={1.5}>
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Typography variant="body2" sx={{ color: colors.secondaryGrey }}>
+                              Statut:
+                            </Typography>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <Tooltip title={user.is_active !== false ? 'Compte actif' : 'Compte désactivé'}>
+                                <Switch
+                                  checked={user.is_active !== false}
+                                  onChange={() => handleToggleActive(user)}
+                                  size="small"
+                                  sx={{
+                                    '& .MuiSwitch-switchBase.Mui-checked': {
+                                      color: colors.primaryGreen,
+                                    },
+                                    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                                      backgroundColor: colors.primaryGreen,
+                                    },
+                                  }}
+                                />
+                              </Tooltip>
+                              <Chip
+                                label={user.is_active !== false ? 'Actif' : 'Inactif'}
                                 size="small"
                                 sx={{
-                                  '& .MuiSwitch-switchBase.Mui-checked': {
-                                    color: colors.primaryGreen,
-                                  },
-                                  '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-                                    backgroundColor: colors.primaryGreen,
-                                  },
+                                  backgroundColor: user.is_active !== false ? colors.primaryGreen : colors.primaryRed,
+                                  color: colors.secondaryDark,
+                                  fontWeight: 600,
+                                  minWidth: '60px',
                                 }}
                               />
-                            </Tooltip>
+                            </Box>
+                          </Box>
+
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <Typography variant="body2" sx={{ color: colors.secondaryGrey }}>
+                              Date d'inscription:
+                            </Typography>
+                            <Typography variant="body2" sx={{ color: colors.white }}>
+                              {new Date(user.created_at).toLocaleDateString('fr-FR', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: '2-digit',
+                              })}
+                            </Typography>
+                          </Box>
+
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <Typography variant="body2" sx={{ color: colors.secondaryGrey }}>
+                              Réservations:
+                            </Typography>
+                            <Typography variant="body2" sx={{ color: colors.white, fontWeight: 600 }}>
+                              {user._count?.reservations || 0}
+                            </Typography>
+                          </Box>
+                        </Stack>
+
+                        <Divider sx={{ my: 2, borderColor: colors.secondaryGrey }} />
+
+                        <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
+                          <IconButton
+                            size="small"
+                            onClick={() => handleViewDetails(user)}
+                            sx={{
+                              color: colors.primaryGreen,
+                              '&:hover': {
+                                backgroundColor: `${colors.primaryGreen}20`,
+                              },
+                            }}
+                          >
+                            <VisibilityIcon />
+                          </IconButton>
+                          <IconButton
+                            size="small"
+                            onClick={() => handleEdit(user)}
+                            sx={{
+                              color: colors.primaryGold,
+                              '&:hover': {
+                                backgroundColor: `${colors.primaryGold}20`,
+                              },
+                            }}
+                          >
+                            <EditIcon />
+                          </IconButton>
+                          <IconButton
+                            size="small"
+                            onClick={() => handleDelete(user)}
+                            sx={{
+                              color: colors.primaryRed,
+                              '&:hover': {
+                                backgroundColor: `${colors.primaryRed}20`,
+                              },
+                            }}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </Box>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </Stack>
+              ) : (
+                // Version desktop : tableau
+                <TableContainer component={Paper} sx={{ backgroundColor: colors.secondaryDarkAlt, boxShadow: 'none' }}>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell sx={{ color: colors.white, fontWeight: 600 }}>Nom</TableCell>
+                        <TableCell sx={{ color: colors.white, fontWeight: 600 }}>Email</TableCell>
+                        <TableCell sx={{ color: colors.white, fontWeight: 600 }}>Rôle</TableCell>
+                        <TableCell sx={{ color: colors.white, fontWeight: 600 }}>Statut</TableCell>
+                        <TableCell sx={{ color: colors.white, fontWeight: 600 }}>Date d'inscription</TableCell>
+                        <TableCell sx={{ color: colors.white, fontWeight: 600 }}>Réservations</TableCell>
+                        <TableCell sx={{ color: colors.white, fontWeight: 600 }} align="right">Actions</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {sortedUsers.map((user) => (
+                        <TableRow
+                          key={user.id}
+                          sx={{
+                            '&:hover': {
+                              backgroundColor: `${colors.primaryGreen}10`,
+                            },
+                          }}
+                        >
+                          <TableCell sx={{ color: colors.white }}>{user.pseudo}</TableCell>
+                          <TableCell sx={{ color: colors.white }}>{user.email}</TableCell>
+                          <TableCell>
                             <Chip
-                              label={user.is_active !== false ? 'Actif' : 'Inactif'}
+                              label={user.role}
                               size="small"
                               sx={{
-                                backgroundColor: user.is_active !== false ? colors.primaryGreen : colors.primaryRed,
+                                backgroundColor: user.role === 'ADMIN' ? colors.primaryRed : colors.primaryGreen,
                                 color: colors.secondaryDark,
                                 fontWeight: 600,
-                                minWidth: '60px',
                               }}
                             />
-                          </Box>
-                        </TableCell>
-                        <TableCell sx={{ color: colors.white }}>
-                          {new Date(user.created_at).toLocaleDateString('fr-FR', {
-                            day: 'numeric',
-                            month: 'long',
-                            year: 'numeric',
-                          })}
-                        </TableCell>
-                        <TableCell sx={{ color: colors.white }}>
-                          {user._count?.reservations || 0}
-                        </TableCell>
-                        <TableCell align="right">
-                          <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
-                            <IconButton
-                              size="small"
-                              onClick={() => handleViewDetails(user)}
-                              sx={{
-                                color: colors.primaryGreen,
-                                '&:hover': {
-                                  backgroundColor: `${colors.primaryGreen}20`,
-                                },
-                              }}
-                            >
-                              <VisibilityIcon />
-                            </IconButton>
-                            <IconButton
-                              size="small"
-                              onClick={() => handleEdit(user)}
-                              sx={{
-                                color: colors.primaryGold,
-                                '&:hover': {
-                                  backgroundColor: `${colors.primaryGold}20`,
-                                },
-                              }}
-                            >
-                              <EditIcon />
-                            </IconButton>
-                            <IconButton
-                              size="small"
-                              onClick={() => handleDelete(user)}
-                              sx={{
-                                color: colors.primaryRed,
-                                '&:hover': {
-                                  backgroundColor: `${colors.primaryRed}20`,
-                                },
-                              }}
-                            >
-                              <DeleteIcon />
-                            </IconButton>
-                          </Box>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+                          </TableCell>
+                          <TableCell>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <Tooltip title={user.is_active !== false ? 'Compte actif' : 'Compte désactivé'}>
+                                <Switch
+                                  checked={user.is_active !== false}
+                                  onChange={() => handleToggleActive(user)}
+                                  size="small"
+                                  sx={{
+                                    '& .MuiSwitch-switchBase.Mui-checked': {
+                                      color: colors.primaryGreen,
+                                    },
+                                    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                                      backgroundColor: colors.primaryGreen,
+                                    },
+                                  }}
+                                />
+                              </Tooltip>
+                              <Chip
+                                label={user.is_active !== false ? 'Actif' : 'Inactif'}
+                                size="small"
+                                sx={{
+                                  backgroundColor: user.is_active !== false ? colors.primaryGreen : colors.primaryRed,
+                                  color: colors.secondaryDark,
+                                  fontWeight: 600,
+                                  minWidth: '60px',
+                                }}
+                              />
+                            </Box>
+                          </TableCell>
+                          <TableCell sx={{ color: colors.white }}>
+                            {new Date(user.created_at).toLocaleDateString('fr-FR', {
+                              day: 'numeric',
+                              month: 'long',
+                              year: 'numeric',
+                            })}
+                          </TableCell>
+                          <TableCell sx={{ color: colors.white }}>
+                            {user._count?.reservations || 0}
+                          </TableCell>
+                          <TableCell align="right">
+                            <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
+                              <IconButton
+                                size="small"
+                                onClick={() => handleViewDetails(user)}
+                                sx={{
+                                  color: colors.primaryGreen,
+                                  '&:hover': {
+                                    backgroundColor: `${colors.primaryGreen}20`,
+                                  },
+                                }}
+                              >
+                                <VisibilityIcon />
+                              </IconButton>
+                              <IconButton
+                                size="small"
+                                onClick={() => handleEdit(user)}
+                                sx={{
+                                  color: colors.primaryGold,
+                                  '&:hover': {
+                                    backgroundColor: `${colors.primaryGold}20`,
+                                  },
+                                }}
+                              >
+                                <EditIcon />
+                              </IconButton>
+                              <IconButton
+                                size="small"
+                                onClick={() => handleDelete(user)}
+                                sx={{
+                                  color: colors.primaryRed,
+                                  '&:hover': {
+                                    backgroundColor: `${colors.primaryRed}20`,
+                                  },
+                                }}
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </Box>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              )}
 
               {/* Pagination */}
               {totalPages > 1 && (
