@@ -37,7 +37,15 @@ const getTodaySchedule = async () => {
     } catch (error) {
         // En cas d'erreur, afficher un message d'erreur dans la console'
         console.error("Erreur lors de la récupération des horaires:", error);
-        return null
+        return {
+            id: 0,
+                jour: todayString,
+                open_hour: "",
+                close_hour: "",
+                is_open: false,
+                notes: null,
+                created_at: new Date().toISOString()
+        };
     }
 };
 
