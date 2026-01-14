@@ -7,6 +7,7 @@ import { ReservationList } from './ReservationManagement.tsx/ReservationList';
 import { ActivityList } from './ActivityManagement.tsx/ActivityList';
 import { AttractionList } from './AttractionManagement.tsx/AttractionList';
 import {PriceList} from "./PriceManagement/PriceList.tsx";
+import { CategoryList } from './CategoryManagement/CategoryList';
 import { UserList } from './UserManagement/UserList';
 
 export const AdminDashboard = () => {
@@ -24,7 +25,8 @@ export const AdminDashboard = () => {
     { label: 'Activités', component: <ActivityList /> },
     { label: 'Attractions', component: <AttractionList /> },
     { label: 'Tarifs', component: <PriceList /> },
-    { label: 'Utilisateurs', component: <UserList /> },
+    { label: 'Utilisateurs', component: <UserList /> },,
+    { label: 'Catégories', component: <CategoryList /> },
   ];
 
   return (
