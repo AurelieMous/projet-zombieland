@@ -1,4 +1,4 @@
-import { getParkDates} from "../services/parkDates";
+import {getParkDates} from "../services/parkDates";
 
 const getTodaySchedule = async () => {
     // Utiliser la date locale pour éviter les problèmes de timezone
@@ -10,48 +10,34 @@ const getTodaySchedule = async () => {
 
     try {
         // Récupérer les dates du parc depuis l'API
+
         const parkDates = await getParkDates();
-        
+
         // Chercher la date correspondant à aujourd'hui
         const todayParkDate = parkDates.find(
             (parkDate) => parkDate.jour === todayString
         );
+        console.log(todayParkDate)
 
         if (todayParkDate) {
-            return {
-                id: todayParkDate.id,
-                jour: new Date(todayParkDate.jour),
-                open_hour: today,
-                close_hour: today,
-                is_open: todayParkDate.is_open,
-                notes: todayParkDate.notes || "",
-                created_at: new Date(todayParkDate.created_at)
-            };
+            console.log(todayParkDate)
+            return todayParkDate;
         }
 
         // Si aucune date trouvée, retourner une donnée par défaut (fermé)
         return {
             id: 0,
-            jour: today,
-            open_hour: today,
-            close_hour: today,
+            jour: todayString,
+            open_hour: "",
+            close_hour: "",
             is_open: false,
             notes: null,
-            created_at: today
-        };
+            created_at: new Date().toISOString()
+    };
     } catch (error) {
+        // En cas d'erreur, afficher un message d'erreur dans la console'
         console.error("Erreur lors de la récupération des horaires:", error);
-        
-        // En cas d'erreur, retourner une donnée par défaut
-        return {
-            id: 0,
-            jour: today,
-            open_hour: today,
-            close_hour: today,
-            is_open: false,
-            notes: null,
-            created_at: today
-        };
+        return null
     }
 };
 

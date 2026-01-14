@@ -1,20 +1,16 @@
 import {Box, Card, CardActions, CardContent, Chip, Typography} from "@mui/material";
 import {PrimaryButton} from "../common/Button";
-import type {DateParc} from "../../@types/dateParc";
-import {formatTime} from "../../functions/formatTime.ts";
+import type {ParkDate} from "../../@types/parkDate.ts";
+import {formatDay} from "../../functions/formatDay.ts";
+import formatHour from "../../functions/formatHour.ts";
 
 
 
 interface SchedulesCardProps {
-    horaire: DateParc
+    schedules: ParkDate
 }
 
-export function SchedulesCard({horaire}: SchedulesCardProps) {
-
-    const formatDay = (date: Date | string) => {
-        const dateObj = typeof date === "string" ? new Date(date) : date;
-        return dateObj.toLocaleDateString("fr-FR", {weekday: "long", day: "numeric", month: "long", year: "numeric"});
-    }
+export function SchedulesCard({schedules}: SchedulesCardProps) {
 
     return (
         <>
@@ -25,19 +21,19 @@ export function SchedulesCard({horaire}: SchedulesCardProps) {
                         textAlign: 'center'
                     }}>
                         <Typography variant="h5">
-                            Aujourd'hui, {formatDay(horaire.jour)}, le parc est{' '}
+                            Aujourd'hui, {formatDay(schedules.jour)}, le parc est{' '}
                             <Box
                                 component="span"
                                 sx={{
-                                    color: horaire.is_open ? "primary.main" : "error.main",
+                                    color: schedules.is_open ? "primary.main" : "error.main",
                                     fontWeight: 'bold'
                                 }}
                             >
-                                {horaire.is_open ? "ouvert" : "fermé"}
+                                {schedules.is_open ? "ouvert" : "fermé"}
                             </Box>
                         </Typography>
                     </Box>
-                    {horaire.notes && (
+                    {schedules.notes && (
                         <Box sx={{
                             display: "flex",
                             justifyContent: 'center',
@@ -46,13 +42,13 @@ export function SchedulesCard({horaire}: SchedulesCardProps) {
                             paddingBottom: 5,
                         }}>
                             <Typography variant="body2" sx={{ fontStyle: 'italic', textAlign: 'center' }}>
-                                {horaire.notes}
+                                {schedules.notes}
                             </Typography>
                         </Box>
                     )}
 
-                    {horaire.is_open ? (
-                        horaire.open_hour && horaire.close_hour ? (
+                    {schedules.is_open ? (
+                        schedules.open_hour && schedules.close_hour ? (
                             <Box sx={{
                                 display: "flex",
                                 flexDirection: 'column',
@@ -65,7 +61,7 @@ export function SchedulesCard({horaire}: SchedulesCardProps) {
                                         Heure d'ouverture
                                     </Typography>
                                     <Chip
-                                        label={formatTime(horaire.open_hour)}
+                                        label={formatHour(schedules.open_hour)}
                                         variant="outlined"
                                         sx={{fontWeight: 'bold', fontSize: '1.5rem', padding: 1, borderRadius: 3}}
                                     />
@@ -76,7 +72,7 @@ export function SchedulesCard({horaire}: SchedulesCardProps) {
                                         Heure de fermeture
                                     </Typography>
                                     <Chip
-                                        label={formatTime(horaire.close_hour)}
+                                        label={formatHour(schedules.close_hour)}
                                         variant="outlined"
                                         sx={{fontWeight: 'bold', fontSize: '1.5rem', padding: 1, borderRadius: 3}}
                                     />
