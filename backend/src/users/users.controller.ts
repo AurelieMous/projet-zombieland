@@ -13,6 +13,8 @@ import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import type { UserDto } from '../generated';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -43,12 +45,18 @@ export class UsersController {
     return this.usersService.findUserReservations(id);
   }
 
+  @Get(':id/audit-logs')
+  getUserAuditLogs(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.getUserAuditLogs(id);
+  }
+
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateData: { pseudo?: string; email?: string; role?: 'ADMIN' | 'CLIENT'; is_active?: boolean },
+    @CurrentUser() admin: UserDto,
   ) {
-    return this.usersService.update(id, updateData);
+    return this.usersService.update(id, updateData, admin.id!);
   }
 
   @Delete(':id')

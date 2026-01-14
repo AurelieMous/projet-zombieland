@@ -2,9 +2,10 @@ import { Box, Modal, Typography, Chip, Stack, Button, CircularProgress, Card, Ca
 import { useEffect, useState } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import HistoryIcon from '@mui/icons-material/History';
 import { colors } from '../../../theme';
 import type { User } from '../../../@types/users';
-import { getUserById, getUserReservations } from '../../../services/users';
+import { getUserById, getUserReservations, getUserAuditLogs, type UserAuditLog } from '../../../services/users';
 
 interface UserDetailsModalProps {
   open: boolean;
@@ -37,6 +38,7 @@ export const UserDetailsModal = ({
 }: UserDetailsModalProps) => {
   const [detailedUser, setDetailedUser] = useState<User | null>(null);
   const [reservations, setReservations] = useState<any[]>([]);
+  const [auditLogs, setAuditLogs] = useState<UserAuditLog[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -50,6 +52,8 @@ export const UserDetailsModal = ({
           setDetailedUser(details);
           const userReservations = await getUserReservations(user.id);
           setReservations(userReservations);
+          const logs = await getUserAuditLogs(user.id);
+          setAuditLogs(logs);
         } catch (err) {
           const message = err instanceof Error ? err.message : 'Erreur lors du chargement des détails';
           setError(message);
@@ -245,6 +249,144 @@ export const UserDetailsModal = ({
                       </CardContent>
                     </Card>
                   ))}
+                </Stack>
+              </Box>
+            )}
+
+            {/* Historique des modifications */}
+            {auditLogs.length > 0 && (
+              <Box sx={{ mb: 3 }}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    mb: 2,
+                    color: colors.primaryGreen,
+                    fontWeight: 600,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1,
+                  }}
+                >
+                  <HistoryIcon />
+                  Historique des modifications ({auditLogs.length})
+                </Typography>
+                <Stack spacing={1.5}>
+                  {auditLogs.map((log) => {
+                    const getActionLabel = (action: string) => {
+                      switch (action) {
+                        case 'UPDATE':
+                          return 'Modification';
+                        case 'ACTIVATE':
+                          return 'Activation';
+                        case 'DEACTIVATE':
+                          return 'Désactivation';
+                        case 'DELETE':
+                          return 'Suppression';
+                        default:
+                          return action;
+                      }
+                    };
+
+                    const getFieldLabel = (field: string | null) => {
+                      switch (field) {
+                        case 'pseudo':
+                          return 'Pseudo';
+                        case 'email':
+                          return 'Email';
+                        case 'role':
+                          return 'Rôle';
+                        case 'is_active':
+                          return 'Statut';
+                        default:
+                          return field || 'N/A';
+                      }
+                    };
+
+                    const parseValue = (value: string | null, fieldName: string | null) => {
+                      if (!value) return 'N/A';
+                      try {
+                        const parsed = JSON.parse(value);
+                        // Pour is_active, afficher un label lisible
+                        if (fieldName === 'is_active') {
+                          return parsed === true || parsed === 'true' ? 'Actif' : 'Inactif';
+                        }
+                        return parsed;
+                      } catch {
+                        return value;
+                      }
+                    };
+
+                    return (
+                      <Card
+                        key={log.id}
+                        sx={{
+                          backgroundColor: colors.secondaryDarkAlt,
+                          border: `1px solid ${colors.secondaryGrey}`,
+                        }}
+                      >
+                        <CardContent>
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                            <Typography
+                              variant="subtitle2"
+                              sx={{
+                                color: colors.primaryGreen,
+                                fontWeight: 600,
+                              }}
+                            >
+                              {getActionLabel(log.action)}
+                              {log.field_name && ` - ${getFieldLabel(log.field_name)}`}
+                            </Typography>
+                            <Typography
+                              variant="caption"
+                              sx={{
+                                color: colors.secondaryGrey,
+                              }}
+                            >
+                              {new Date(log.created_at).toLocaleString('fr-FR', {
+                                day: 'numeric',
+                                month: 'short',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })}
+                            </Typography>
+                          </Box>
+                          {log.field_name && (
+                            <Box sx={{ mt: 1 }}>
+                              <Typography
+                                variant="body2"
+                                sx={{
+                                  color: colors.secondaryGrey,
+                                  mb: 0.5,
+                                }}
+                              >
+                                <strong style={{ color: colors.white }}>Ancienne valeur:</strong> {parseValue(log.old_value, log.field_name)}
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                sx={{
+                                  color: colors.secondaryGrey,
+                                }}
+                              >
+                                <strong style={{ color: colors.white }}>Nouvelle valeur:</strong> {parseValue(log.new_value, log.field_name)}
+                              </Typography>
+                            </Box>
+                          )}
+                          <Box sx={{ mt: 1.5, pt: 1.5, borderTop: `1px solid ${colors.secondaryGrey}` }}>
+                            <Typography
+                              variant="caption"
+                              sx={{
+                                color: colors.secondaryGrey,
+                                fontStyle: 'italic',
+                              }}
+                            >
+                              Modifié par: {log.modified_by?.pseudo || 'N/A'} ({log.modified_by?.email || 'N/A'})
+                            </Typography>
+                          </Box>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
                 </Stack>
               </Box>
             )}

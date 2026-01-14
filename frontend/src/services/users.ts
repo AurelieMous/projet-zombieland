@@ -119,3 +119,33 @@ export const deleteUser = async (id: number): Promise<void> => {
     throw new Error("Une erreur inattendue est survenue en supprimant l'utilisateur.");
   }
 };
+
+export interface UserAuditLog {
+  id: number;
+  user_id: number;
+  modified_by_id: number;
+  action: string;
+  field_name: string | null;
+  old_value: string | null;
+  new_value: string | null;
+  created_at: string;
+  modified_by: {
+    id: number;
+    pseudo: string;
+    email: string;
+  };
+}
+
+export const getUserAuditLogs = async (id: number): Promise<UserAuditLog[]> => {
+  try {
+    const res = await axiosInstance.get(`/users/${id}/audit-logs`);
+    return res.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message ?? "Impossible de récupérer les logs d'audit.",
+      );
+    }
+    throw new Error("Une erreur inattendue est survenue en récupérant les logs d'audit.");
+  }
+};

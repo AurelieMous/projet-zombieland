@@ -69,6 +69,10 @@ export class UsersService {
         _count: {
           select: { reservations: true },
         },
+        auditLogs: {
+          orderBy: { created_at: 'desc' },
+          take: 10, // Dernières 10 modifications
+        },
       },
     });
 
@@ -85,7 +89,7 @@ export class UsersService {
     };
   }
 
-  async update(id: number, updateData: { pseudo?: string; email?: string; role?: 'ADMIN' | 'CLIENT'; is_active?: boolean }) {
+  async update(id: number, updateData: { pseudo?: string; email?: string; role?: 'ADMIN' | 'CLIENT'; is_active?: boolean }, modifiedById: number) {
     const user = await this.prisma.user.findUnique({
       where: { id },
     });
@@ -116,9 +120,63 @@ export class UsersService {
       }
     }
 
+    // Enregistrer les modifications dans l'audit log
+    const auditLogs: Array<{
+      modified_by_id: number;
+      action: string;
+      field_name: string;
+      old_value: string;
+      new_value: string;
+    }> = [];
+    
+    if (updateData.pseudo && updateData.pseudo !== user.pseudo) {
+      auditLogs.push({
+        modified_by_id: modifiedById,
+        action: 'UPDATE',
+        field_name: 'pseudo',
+        old_value: JSON.stringify(user.pseudo),
+        new_value: JSON.stringify(updateData.pseudo),
+      });
+    }
+
+    if (updateData.email && updateData.email !== user.email) {
+      auditLogs.push({
+        modified_by_id: modifiedById,
+        action: 'UPDATE',
+        field_name: 'email',
+        old_value: JSON.stringify(user.email),
+        new_value: JSON.stringify(updateData.email),
+      });
+    }
+
+    if (updateData.role && updateData.role !== user.role) {
+      auditLogs.push({
+        modified_by_id: modifiedById,
+        action: 'UPDATE',
+        field_name: 'role',
+        old_value: JSON.stringify(user.role),
+        new_value: JSON.stringify(updateData.role),
+      });
+    }
+
+    if (updateData.is_active !== undefined && updateData.is_active !== user.is_active) {
+      auditLogs.push({
+        modified_by_id: modifiedById,
+        action: updateData.is_active ? 'ACTIVATE' : 'DEACTIVATE',
+        field_name: 'is_active',
+        old_value: JSON.stringify(user.is_active),
+        new_value: JSON.stringify(updateData.is_active),
+      });
+    }
+
     const updatedUser = await this.prisma.user.update({
       where: { id },
-      data: updateData,
+      data: {
+        ...updateData,
+        auditLogs: auditLogs.length > 0 ? {
+          create: auditLogs,
+        } : undefined,
+      },
       include: {
         _count: {
           select: { reservations: true },
@@ -155,6 +213,24 @@ export class UsersService {
     });
 
     return reservations;
+  }
+
+  async getUserAuditLogs(userId: number) {
+    const logs = await this.prisma.userAuditLog.findMany({
+      where: { user_id: userId },
+      orderBy: { created_at: 'desc' },
+      include: {
+        modified_by: {
+          select: {
+            id: true,
+            pseudo: true,
+            email: true,
+          },
+        },
+      },
+    });
+
+    return logs;
   }
 
   async remove(id: number): Promise<{ message: string }> {
