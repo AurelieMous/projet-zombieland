@@ -304,7 +304,7 @@ export const CategoryList = () => {
 
         {/* Filtres */}
         <Grid container spacing={2} sx={{ mb: 2 }}>
-          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+          <Grid size={{ xs: 12, sm: 6, md: 6 }}>
             <FormControl fullWidth sx={{ minWidth: '200px' }}>
               <InputLabel sx={{ color: colors.secondaryGrey }}>Utilisation</InputLabel>
               <Select
@@ -355,61 +355,7 @@ export const CategoryList = () => {
             </FormControl>
           </Grid>
 
-          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-            <FormControl fullWidth sx={{ minWidth: '200px' }}>
-              <InputLabel sx={{ color: colors.secondaryGrey }}>Trier par</InputLabel>
-              <Select
-                value={sortBy}
-                label="Trier par"
-                onChange={(e) => setSortBy(e.target.value)}
-                sx={{
-                  backgroundColor: colors.secondaryDark,
-                  color: colors.white,
-                  minHeight: '56px',
-                  '& .MuiOutlinedInput-notchedOutline': {
-                    borderColor: colors.secondaryGrey,
-                  },
-                  '&:hover .MuiOutlinedInput-notchedOutline': {
-                    borderColor: colors.primaryGreen,
-                  },
-                  '& .MuiSelect-select': {
-                    paddingY: '16.5px',
-                    minWidth: '100px',
-                    display: 'flex',
-                    alignItems: 'center',
-                  },
-                }}
-                MenuProps={{
-                  PaperProps: {
-                    sx: {
-                      backgroundColor: colors.secondaryDark,
-                      '& .MuiMenuItem-root': {
-                        color: colors.white,
-                        '&:hover': {
-                          backgroundColor: `${colors.primaryGreen}20`,
-                        },
-                        '&.Mui-selected': {
-                          backgroundColor: `${colors.primaryGreen}40`,
-                          '&:hover': {
-                            backgroundColor: `${colors.primaryGreen}60`,
-                          },
-                        },
-                      },
-                    },
-                  },
-                }}
-              >
-                <MenuItem value="name_asc">Alphabétique (A-Z)</MenuItem>
-                <MenuItem value="name_desc">Alphabétique (Z-A)</MenuItem>
-                <MenuItem value="created_desc">Date création (récent)</MenuItem>
-                <MenuItem value="created_asc">Date création (ancien)</MenuItem>
-                <MenuItem value="usage_desc">Utilisation (décroissant)</MenuItem>
-                <MenuItem value="usage_asc">Utilisation (croissant)</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-
-          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+          <Grid size={{ xs: 12, sm: 6, md: 6 }}>
             <Button
               fullWidth
               variant="outlined"
@@ -433,6 +379,61 @@ export const CategoryList = () => {
             </Button>
           </Grid>
         </Grid>
+      </Box>
+
+      {/* Filtre de tri */}
+      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'flex-end' }}>
+        <FormControl sx={{ minWidth: '250px' }}>
+          <InputLabel sx={{ color: colors.secondaryGrey }}>Trier par</InputLabel>
+          <Select
+            value={sortBy}
+            label="Trier par"
+            onChange={(e) => setSortBy(e.target.value)}
+            sx={{
+              backgroundColor: colors.secondaryDark,
+              color: colors.white,
+              minHeight: '56px',
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderColor: colors.secondaryGrey,
+              },
+              '&:hover .MuiOutlinedInput-notchedOutline': {
+                borderColor: colors.primaryGreen,
+              },
+              '& .MuiSelect-select': {
+                paddingY: '16.5px',
+                minWidth: '100px',
+                display: 'flex',
+                alignItems: 'center',
+              },
+            }}
+            MenuProps={{
+              PaperProps: {
+                sx: {
+                  backgroundColor: colors.secondaryDark,
+                  '& .MuiMenuItem-root': {
+                    color: colors.white,
+                    '&:hover': {
+                      backgroundColor: `${colors.primaryGreen}20`,
+                    },
+                    '&.Mui-selected': {
+                      backgroundColor: `${colors.primaryGreen}40`,
+                      '&:hover': {
+                        backgroundColor: `${colors.primaryGreen}60`,
+                      },
+                    },
+                  },
+                },
+              },
+            }}
+          >
+            <MenuItem value="name_asc">Alphabétique (A-Z)</MenuItem>
+            <MenuItem value="name_desc">Alphabétique (Z-A)</MenuItem>
+            <MenuItem value="created_desc">Date création (récent)</MenuItem>
+            <MenuItem value="created_asc">Date création (ancien)</MenuItem>
+            <MenuItem value="usage_desc">Utilisation (décroissant)</MenuItem>
+            <MenuItem value="usage_asc">Utilisation (croissant)</MenuItem>
+          </Select>
+        </FormControl>
       </Box>
 
       {/* Liste des catégories */}
