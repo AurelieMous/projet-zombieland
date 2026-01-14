@@ -17,10 +17,8 @@ const getTodaySchedule = async () => {
         const todayParkDate = parkDates.find(
             (parkDate) => parkDate.jour === todayString
         );
-        console.log(todayParkDate)
 
         if (todayParkDate) {
-            console.log(todayParkDate)
             return todayParkDate;
         }
 
