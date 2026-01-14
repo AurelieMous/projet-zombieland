@@ -1,12 +1,6 @@
 import axiosInstance from './getApi.ts';
+import type {ParkDate} from "../@types/parkDate.ts";
 
-export interface ParkDate {
-  id: number;
-  jour: string; // Format "YYYY-MM-DD"
-  is_open: boolean;
-  notes: string | null;
-  created_at: string;
-}
 
 export const getParkDates = async (from?: string, to?: string): Promise<ParkDate[]> => {
   try {
