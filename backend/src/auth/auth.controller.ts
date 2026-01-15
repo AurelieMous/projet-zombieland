@@ -39,11 +39,7 @@ export class AuthController {
     const { access_token } = await this.authService.generateJwt(user);
 
     return {
-      user: {
-        ...user,
-        created_at: user.created_at.toISOString(),
-        updated_at: user.updated_at.toISOString(),
-      },
+      user,
       access_token,
     };
   }
@@ -60,16 +56,7 @@ export class AuthController {
     @CurrentUser() user: UserDto,
     @Body() updateProfileDto: UpdateProfileDto,
   ): Promise<UserDto> {
-    const updatedUser = await this.authService.updateProfile(
-      user.id!,
-      updateProfileDto,
-    );
-
-    return {
-      ...updatedUser,
-      created_at: updatedUser.created_at.toISOString(),
-      updated_at: updatedUser.updated_at.toISOString(),
-    };
+    return this.authService.updateProfile(user.id!, updateProfileDto);
   }
 
   @Delete('me')

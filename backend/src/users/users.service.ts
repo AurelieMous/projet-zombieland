@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import type { UserDto } from '../generated';
 import { PrismaService } from '../prisma/prisma.service';
+import { UserMapper } from './mappers/user.mapper';
 
 @Injectable()
 export class UsersService {
@@ -51,11 +52,7 @@ export class UsersService {
     ]);
 
     return {
-      data: users.map(({ password: _password, ...user }) => ({
-        ...user,
-        created_at: user.created_at.toISOString(),
-        updated_at: user.updated_at.toISOString(),
-      })),
+      data: UserMapper.toDtoArray(users),
       total,
       page,
       limit,
@@ -68,7 +65,7 @@ export class UsersService {
       include: {
         _count: {
           select: { reservations: true },
-        },
+          },
         auditLogs: {
           orderBy: { created_at: 'desc' },
           take: 10, // Dernières 10 modifications
@@ -80,13 +77,7 @@ export class UsersService {
       throw new NotFoundException(`Utilisateur avec l'ID ${id} introuvable`);
     }
 
-    const { password: _password, ...userWithoutPassword } = user;
-
-    return {
-      ...userWithoutPassword,
-      created_at: user.created_at.toISOString(),
-      updated_at: user.updated_at.toISOString(),
-    };
+    return UserMapper.toDto(user);
   }
 
   async update(id: number, updateData: { pseudo?: string; email?: string; role?: 'ADMIN' | 'CLIENT'; is_active?: boolean }, modifiedById: number) {
@@ -184,13 +175,7 @@ export class UsersService {
       },
     });
 
-    const { password: _password, ...userWithoutPassword } = updatedUser;
-
-    return {
-      ...userWithoutPassword,
-      created_at: updatedUser.created_at.toISOString(),
-      updated_at: updatedUser.updated_at.toISOString(),
-    };
+    return UserMapper.toDto(updatedUser);
   }
 
   async findUserReservations(userId: number) {
