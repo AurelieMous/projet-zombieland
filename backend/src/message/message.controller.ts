@@ -15,7 +15,7 @@ import { MessageService } from './message.service';
 import { ConversationService } from '../conversation/conversation.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { CreateMessageDto } from 'src/generated'
+import type {CreateMessageDto} from "../generated";
 
 @Controller('messages')
 @UseGuards(JwtAuthGuard)

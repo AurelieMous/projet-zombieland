@@ -1,6 +1,5 @@
 import {BadRequestException, ForbiddenException, Injectable, NotFoundException} from '@nestjs/common';
-import { CreateConversationDto } from 'src/generated;
-import { UpdateConversationDto } from 'src/generated';
+import {ConversationStatus} from 'src/generated';
 import {PrismaService} from "../prisma/prisma.service";
 
 @Injectable()
@@ -32,7 +31,7 @@ export class ConversationService {
         user_id: userId,
         admin_id: adminId,
         status: {
-          not: ConversationStatus.CLOSED,
+          not: ConversationStatus.Closed,
         },
       },
     });
@@ -42,18 +41,18 @@ export class ConversationService {
     }
 
     // Créer la nouvelle conversation
-    return await this.prisma.conversation.create({
+    return this.prisma.conversation.create({
       data: {
         user_id: userId,
         admin_id: adminId,
-        status: ConversationStatus.OPEN,
+        status: ConversationStatus.Open,
       },
       include: {
         user: {
-          select: { id: true, pseudo: true, role: true, email: true },
+          select: {id: true, pseudo: true, role: true, email: true},
         },
         admin: {
-          select: { id: true, pseudo: true, role: true, email: true },
+          select: {id: true, pseudo: true, role: true, email: true},
         },
       },
     });
@@ -74,13 +73,13 @@ export class ConversationService {
           select: { id: true, pseudo: true, role: true, email: true },
         },
         messages: {
-          orderBy: { createdAt: 'desc' },
+          orderBy: { created_at: 'desc' },
           take: 1, // Dernier message pour preview
           select: {
             id: true,
             content: true,
-            createdAt: true,
-            isRead: true,
+            created_at: true,
+            is_read: true,
           },
         },
       },
@@ -103,42 +102,42 @@ export class ConversationService {
         ? {
           OR: [
             { admin_id: userId }, // Conversations assignées
-            { status: ConversationStatus.OPEN }, // Conversations en attente
+            { status: ConversationStatus.Open }, // Conversations en attente
           ],
         }
         : { user_id: userId }; // Conversations du client
 
-    return await this.prisma.conversation.findMany({
+    return this.prisma.conversation.findMany({
       where,
       include: {
         user: {
-          select: { id: true, pseudo: true, role: true, email: true },
+          select: {id: true, pseudo: true, role: true, email: true},
         },
         admin: {
-          select: { id: true, pseudo: true, role: true, email: true },
+          select: {id: true, pseudo: true, role: true, email: true},
         },
         messages: {
-          orderBy: { createdAt: 'desc' },
+          orderBy: {created_at: 'desc'},
           take: 1, // Dernier message
           select: {
             id: true,
             content: true,
-            createdAt: true,
-            isRead: true,
+            created_at: true,
+            is_read: true,
           },
         },
         _count: {
           select: {
             messages: {
               where: {
-                isRead: false,
-                senderId: { not: userId }, // Messages non lus des autres
+                is_read: false,
+                sender_id: {not: userId}, // Messages non lus des autres
               },
             },
           },
         },
       },
-      orderBy: { updatedAt: 'desc' },
+      orderBy: {updated_at: 'desc'},
     });
   }
 
@@ -177,15 +176,15 @@ export class ConversationService {
       throw new ForbiddenException('Vous n\'avez pas accès à cette conversation');
     }
 
-    return await this.prisma.conversation.update({
-      where: { id: conversationId },
-      data: { status },
+    return this.prisma.conversation.update({
+      where: {id: conversationId},
+      data: {status},
       include: {
         user: {
-          select: { id: true, pseudo: true, role: true },
+          select: {id: true, pseudo: true, role: true},
         },
         admin: {
-          select: { id: true, pseudo: true, role: true },
+          select: {id: true, pseudo: true, role: true},
         },
       },
     });
@@ -197,7 +196,7 @@ export class ConversationService {
   async touch(conversationId: number) {
     await this.prisma.conversation.update({
       where: { id: conversationId },
-      data: { updatedAt: new Date() },
+      data: { updated_at: new Date() },
     });
   }
 }

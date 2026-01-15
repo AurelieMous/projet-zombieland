@@ -56,10 +56,10 @@ export class MessageService {
     // Créer le message
     const message = await this.prisma.message.create({
       data: {
-        conversationId: finalConversationId,
-        senderId: userId,
+        conversation_id: finalConversationId,
+        sender_id: userId,
         content,
-        isRead: false,
+        is_read: false,
       },
       include: {
         sender: {
@@ -83,9 +83,9 @@ export class MessageService {
    * Récupérer tous les messages d'une conversation
    */
   async findAllByConversationId(conversationId: number) {
-    return await this.prisma.message.findMany({
-      where: { conversationId },
-      orderBy: { createdAt: 'asc' },
+    return this.prisma.message.findMany({
+      where: {conversation_id : conversationId},
+      orderBy: {created_at: 'asc'},
       include: {
         sender: {
           select: {
@@ -105,12 +105,12 @@ export class MessageService {
   async markAsRead(conversationId: number, userId: number) {
     await this.prisma.message.updateMany({
       where: {
-        conversationId,
-        senderId: { not: userId },
-        isRead: false,
+        conversation_id: conversationId,
+        sender_id: { not: userId },
+        is_read: false,
       },
       data: {
-        isRead: true,
+        is_read: true,
       },
     });
   }
@@ -145,7 +145,7 @@ export class MessageService {
     });
 
     // Vérifications d'autorisation
-    const isSender = message.senderId === userId;
+    const isSender = message.sender_id === userId;
     const isAdmin = currentUser?.role === 'ADMIN';
     const isParticipant =
         message.conversation.user_id === userId ||
