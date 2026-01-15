@@ -1,0 +1,185 @@
+{
+  "common": {
+    "welcome": "Bienvenue",
+    "logout": "Se déconnecter",
+    "login": "Connexion",
+    "register": "Inscription",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "view": "Voir",
+    "search": "Rechercher",
+    "close": "Fermer",
+    "open": "Ouvrir",
+    "closed": "Fermé",
+    "submit": "Valider",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "yes": "Oui",
+    "no": "Non"
+  },
+  "navigation": {
+    "reservations": "Réservations",
+    "activities": "Activités",
+    "attractions": "Attractions",
+    "info": "Infos",
+    "home": "Accueil",
+    "account": "Mon compte"
+  },
+  "home": {
+    "hero": {
+      "title": "Survivrez-vous au parc post-apocalyptique ? Réservez votre séjour et venez affronter vos peurs au cœur de ZombieLand !",
+      "parkStatus": "Aujourd'hui, le parc est {{status}}.",
+      "parkOpen": "ouvert",
+      "parkClosed": "fermé"
+    },
+    "experiences": {
+      "title": "EXPERIENCES",
+      "activities": "Activités",
+      "attractions": "Attractions"
+    },
+    "ticketing": {
+      "title": "BILLETTERIE",
+      "prices": "Tarifs",
+      "reservation": "Réservation"
+    },
+    "information": {
+      "title": "INFORMATIONS",
+      "accessibility": "Accessibilité du parc",
+      "schedule": "Horaires",
+      "contact": "Contact"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Connexion",
+      "email": "Email",
+      "password": "Mot de passe",
+      "forgotPassword": "Mot de passe oublié ?",
+      "noAccount": "Pas encore de compte ?",
+      "registerHere": "Inscrivez-vous ici",
+      "loginButton": "Se connecter"
+    },
+    "register": {
+      "title": "Inscription",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "Email",
+      "password": "Mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "alreadyAccount": "Déjà un compte ?",
+      "loginHere": "Connectez-vous ici",
+      "registerButton": "S'inscrire"
+    },
+    "account": {
+      "title": "Mon compte",
+      "profile": "Profil",
+      "reservations": "Mes réservations",
+      "logout": "Se déconnecter"
+    }
+  },
+  "activities": {
+    "title": "Activités",
+    "filter": "Filtrer",
+    "all": "Toutes",
+    "description": "Description",
+    "duration": "Durée",
+    "thrillLevel": "Niveau de frisson",
+    "minAge": "Âge minimum",
+    "reserve": "Réserver"
+  },
+  "reservations": {
+    "title": "Réservations",
+    "myReservations": "Mes réservations",
+    "newReservation": "Nouvelle réservation",
+    "date": "Date",
+    "tickets": "Billets",
+    "total": "Total",
+    "status": "Statut"
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Tableau de bord",
+      "users": "Utilisateurs",
+      "activities": "Activités",
+      "attractions": "Attractions",
+      "categories": "Catégories",
+      "reservations": "Réservations"
+    },
+    "users": {
+      "title": "Gestion des utilisateurs",
+      "create": "Créer un utilisateur",
+      "edit": "Modifier l'utilisateur",
+      "delete": "Supprimer l'utilisateur",
+      "details": "Détails de l'utilisateur",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "Email",
+      "role": "Rôle",
+      "createdAt": "Créé le",
+      "filter": "Filtrer par rôle",
+      "search": "Rechercher un utilisateur",
+      "noUsers": "Aucun utilisateur trouvé",
+      "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cet utilisateur ?",
+      "active": "Actif",
+      "inactive": "Inactif"
+    },
+    "activities": {
+      "title": "Gestion des activités",
+      "create": "Créer une activité",
+      "edit": "Modifier l'activité",
+      "delete": "Supprimer l'activité",
+      "name": "Titre",
+      "description": "Description",
+      "image": "Image",
+      "category": "Catégorie",
+      "duration": "Durée",
+      "thrillLevel": "Niveau de frisson",
+      "minAge": "Âge minimum"
+    }
+  },
+  "info": {
+    "title": "Informations",
+    "accessibility": "Accessibilité",
+    "schedule": "Horaires",
+    "contact": "Contact",
+    "map": "Plan du parc"
+  },
+  "validation": {
+    "required": "Ce champ est obligatoire",
+    "email": "Email invalide",
+    "password": "Le mot de passe doit contenir au moins 8 caractères",
+    "passwordMatch": "Les mots de passe ne correspondent pas",
+    "minLength": "Ce champ doit contenir au moins {{min}} caractères",
+    "maxLength": "Ce champ ne doit pas dépasser {{max}} caractères"
+  },
+  "errors": {
+    "generic": "Une erreur est survenue",
+    "network": "Erreur de connexion",
+    "notFound": "Ressource non trouvée",
+    "unauthorized": "Non autorisé",
+    "forbidden": "Accès interdit"
+  },
+  "messages": {
+    "success": {
+      "saved": "Enregistré avec succès",
+      "deleted": "Supprimé avec succès",
+      "created": "Créé avec succès"
+    },
+    "error": {
+      "save": "Erreur lors de l'enregistrement",
+      "delete": "Erreur lors de la suppression",
+      "load": "Erreur lors du chargement"
+    }
+  },
+  "language": {
+    "select": "Choisir la langue",
+    "french": "Français",
+    "english": "English"
+  }
+}

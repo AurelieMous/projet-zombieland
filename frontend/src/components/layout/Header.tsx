@@ -5,17 +5,20 @@ import {useContext, useEffect, useState} from "react";
 import ModalBurgerMenu from "../modals/BurgerMenu";
 import {colors} from "../../theme";
 import {LoginContext} from "../../context/UserLoginContext.tsx";
+import { LanguageSelector } from "../common";
+import { useTranslation } from "react-i18next";
 
 export default function Header() {
 
     const [open, setOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const { t } = useTranslation();
 
     // TODO ajouter ici les autres routes
     const pages = [
-        { name : "Réservations", path : "/reservations" },
-        { name : "Activités", path : "/activities" },
-        { name : "Infos", path : "/info" },
+        { name : t("navigation.reservations"), path : "/reservations" },
+        { name : t("navigation.activities"), path : "/activities" },
+        { name : t("navigation.info"), path : "/info" },
     ]
 
     const { isLogged, pseudo } = useContext(LoginContext);
@@ -97,7 +100,7 @@ export default function Header() {
                             display: { xs: 'none', md: 'block' }
                         }}>
                             <Typography>
-                                Bienvenue{' '}
+                                {t("common.welcome")}{' '}
                                 <Link
                                     component="button"
                                     onClick={() => navigate('/account')}
@@ -108,6 +111,15 @@ export default function Header() {
                             </Typography>
                         </Box>
                         ):""}
+
+                    {/* Sélecteur de langue */}
+                    <Box sx={{
+                        position: 'absolute',
+                        right: 100,
+                        display: { xs: 'none', md: 'flex' }
+                    }}>
+                        <LanguageSelector />
+                    </Box>
 
                     {/* Menu burger à droite */}
                     <IconButton
@@ -144,7 +156,7 @@ export default function Header() {
                                 display: { xs: 'block', md: 'none' }
                             }}>
                                 <Typography>
-                                    Bienvenue{' '}
+                                    {t("common.welcome")}{' '}
                                     <Link
                                         component="button"
                                         onClick={() => navigate('/account')}
@@ -156,12 +168,19 @@ export default function Header() {
                             </Box>
                         ):""}
                     </Box>
-                    <IconButton
-                        sx={{ color: 'white' }}
-                        onClick={handleOpen}
-                    >
-                        <MenuIcon />
-                    </IconButton>
+                    <Box sx={{
+                        display: { xs: 'flex', md: 'none' },
+                        gap: 2,
+                        alignItems: 'center'
+                    }}>
+                        <LanguageSelector />
+                        <IconButton
+                            sx={{ color: 'white' }}
+                            onClick={handleOpen}
+                        >
+                            <MenuIcon />
+                        </IconButton>
+                    </Box>
                     <ModalBurgerMenu
                         open={open}
                         onClose={handleClose}

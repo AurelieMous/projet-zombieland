@@ -1,0 +1,185 @@
+{
+  "common": {
+    "welcome": "Welcome",
+    "logout": "Logout",
+    "login": "Login",
+    "register": "Register",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "search": "Search",
+    "close": "Close",
+    "open": "Open",
+    "closed": "Closed",
+    "submit": "Submit",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "navigation": {
+    "reservations": "Reservations",
+    "activities": "Activities",
+    "attractions": "Attractions",
+    "info": "Info",
+    "home": "Home",
+    "account": "My account"
+  },
+  "home": {
+    "hero": {
+      "title": "Will you survive the post-apocalyptic park? Book your stay and come face your fears at the heart of ZombieLand!",
+      "parkStatus": "Today, the park is {{status}}.",
+      "parkOpen": "open",
+      "parkClosed": "closed"
+    },
+    "experiences": {
+      "title": "EXPERIENCES",
+      "activities": "Activities",
+      "attractions": "Attractions"
+    },
+    "ticketing": {
+      "title": "TICKETING",
+      "prices": "Prices",
+      "reservation": "Reservation"
+    },
+    "information": {
+      "title": "INFORMATION",
+      "accessibility": "Park accessibility",
+      "schedule": "Schedule",
+      "contact": "Contact"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Login",
+      "email": "Email",
+      "password": "Password",
+      "forgotPassword": "Forgot password?",
+      "noAccount": "No account yet?",
+      "registerHere": "Register here",
+      "loginButton": "Sign in"
+    },
+    "register": {
+      "title": "Register",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm password",
+      "alreadyAccount": "Already have an account?",
+      "loginHere": "Login here",
+      "registerButton": "Sign up"
+    },
+    "account": {
+      "title": "My account",
+      "profile": "Profile",
+      "reservations": "My reservations",
+      "logout": "Logout"
+    }
+  },
+  "activities": {
+    "title": "Activities",
+    "filter": "Filter",
+    "all": "All",
+    "description": "Description",
+    "duration": "Duration",
+    "thrillLevel": "Thrill level",
+    "minAge": "Minimum age",
+    "reserve": "Reserve"
+  },
+  "reservations": {
+    "title": "Reservations",
+    "myReservations": "My reservations",
+    "newReservation": "New reservation",
+    "date": "Date",
+    "tickets": "Tickets",
+    "total": "Total",
+    "status": "Status"
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Dashboard",
+      "users": "Users",
+      "activities": "Activities",
+      "attractions": "Attractions",
+      "categories": "Categories",
+      "reservations": "Reservations"
+    },
+    "users": {
+      "title": "User management",
+      "create": "Create user",
+      "edit": "Edit user",
+      "delete": "Delete user",
+      "details": "User details",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "role": "Role",
+      "createdAt": "Created at",
+      "filter": "Filter by role",
+      "search": "Search user",
+      "noUsers": "No users found",
+      "deleteConfirm": "Are you sure you want to delete this user?",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "activities": {
+      "title": "Activity management",
+      "create": "Create activity",
+      "edit": "Edit activity",
+      "delete": "Delete activity",
+      "name": "Title",
+      "description": "Description",
+      "image": "Image",
+      "category": "Category",
+      "duration": "Duration",
+      "thrillLevel": "Thrill level",
+      "minAge": "Minimum age"
+    }
+  },
+  "info": {
+    "title": "Information",
+    "accessibility": "Accessibility",
+    "schedule": "Schedule",
+    "contact": "Contact",
+    "map": "Park map"
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Invalid email",
+    "password": "Password must contain at least 8 characters",
+    "passwordMatch": "Passwords do not match",
+    "minLength": "This field must contain at least {{min}} characters",
+    "maxLength": "This field must not exceed {{max}} characters"
+  },
+  "errors": {
+    "generic": "An error occurred",
+    "network": "Connection error",
+    "notFound": "Resource not found",
+    "unauthorized": "Unauthorized",
+    "forbidden": "Access forbidden"
+  },
+  "messages": {
+    "success": {
+      "saved": "Saved successfully",
+      "deleted": "Deleted successfully",
+      "created": "Created successfully"
+    },
+    "error": {
+      "save": "Error saving",
+      "delete": "Error deleting",
+      "load": "Error loading"
+    }
+  },
+  "language": {
+    "select": "Choose language",
+    "french": "Français",
+    "english": "English"
+  }
+}
