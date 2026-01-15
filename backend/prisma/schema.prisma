@@ -248,7 +248,6 @@ model Message {
 }
 
 enum ConversationStatus {
-  WAITING // En attente d'un admin
   ASSIGNED // Assignée à un admin
   CLOSED // Conversation fermée
 }

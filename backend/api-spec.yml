@@ -42,6 +42,10 @@ tags:
     description: Gestion des tarifs
   - name: Reservations
     description: Gestion des réservations (règle J-10)
+  - name: Messages
+    description: Gestion des messages
+  - name: Conversations
+    description: Gestion des conversations avec messages (User vers Admin)
 
 paths:
   # ===== AUTH =====

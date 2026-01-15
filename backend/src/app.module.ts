@@ -12,6 +12,8 @@ import { ParkDatesModule } from './park-dates/park-dates.module';
 import { UsersModule } from './users/users.module';
 import { MapModule } from './map/map.module';
 import { UploadModule } from './upload/upload.module';
+import { MessageModule } from './message/message.module';
+import { ConversationModule } from './conversation/conversation.module';
 
 @Module({
   imports: [
@@ -26,6 +28,8 @@ import { UploadModule } from './upload/upload.module';
     UsersModule,
     MapModule,
     UploadModule,
+    MessageModule,
+    ConversationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
