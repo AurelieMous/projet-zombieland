@@ -238,6 +238,8 @@ async function main() {
   await prisma.price.deleteMany();
   await prisma.user.deleteMany();
   await prisma.pointOfInterest.deleteMany();
+  await prisma.message.deleteMany();
+  await prisma.conversation.deleteMany();
 
   console.log('✅ Base de données nettoyée');
 
@@ -621,6 +623,207 @@ async function main() {
 
   console.log('✅ Réservations créées (4)');
 
+  // ===== CONVERSATIONS & MESSAGES =====
+  console.log('🗨️  Création des conversations et messages...');
+
+  // Conversation 1 : Jean demande des infos sur les horaires
+  const conversation1 = await prisma.conversation.create({
+    data: {
+      user_id: users[1].id, // Jean
+      admin_id: users[0].id, // Admin
+      status: 'OPEN',
+    },
+  });
+
+  await prisma.message.createMany({
+    data: [
+      {
+        conversation_id: conversation1.id,
+        sender_id: users[1].id, // Jean
+        content: 'Bonjour, j\'aimerais savoir si le parc est ouvert le lundi 15 janvier ?',
+        is_read: true,
+        created_at: new Date('2026-01-10T10:30:00'),
+      },
+      {
+        conversation_id: conversation1.id,
+        sender_id: users[0].id, // Admin
+        content: 'Bonjour Jean ! Non, le parc est fermé les lundis et mardis. Je vous conseille de venir le mercredi 16 janvier, nous sommes ouverts de 10h à 22h.',
+        is_read: true,
+        created_at: new Date('2026-01-10T10:45:00'),
+      },
+      {
+        conversation_id: conversation1.id,
+        sender_id: users[1].id, // Jean
+        content: 'Parfait, merci ! Y a-t-il des réductions pour les groupes ?',
+        is_read: true,
+        created_at: new Date('2026-01-10T11:00:00'),
+      },
+      {
+        conversation_id: conversation1.id,
+        sender_id: users[0].id, // Admin
+        content: 'Oui, nous avons un tarif groupe à 35€ pour 10 personnes minimum, et 30€ pour les groupes de 20+. N\'hésitez pas si vous avez d\'autres questions !',
+        is_read: false,
+        created_at: new Date('2026-01-10T11:15:00'),
+      },
+    ],
+  });
+
+  // Conversation 2 : Marie a perdu un objet
+  const conversation2 = await prisma.conversation.create({
+    data: {
+      user_id: users[2].id, // Marie
+      admin_id: users[0].id, // Admin
+      status: 'CLOSED',
+    },
+  });
+
+  await prisma.message.createMany({
+    data: [
+      {
+        conversation_id: conversation2.id,
+        sender_id: users[2].id, // Marie
+        content: 'Bonjour, j\'ai perdu mon écharpe lors de ma visite d\'hier dans la zone "The Walking Dead Experience". L\'avez-vous retrouvée ?',
+        is_read: true,
+        created_at: new Date('2026-01-08T14:20:00'),
+      },
+      {
+        conversation_id: conversation2.id,
+        sender_id: users[0].id, // Admin
+        content: 'Bonjour Marie, je vérifie auprès de notre service des objets trouvés. Pouvez-vous me décrire votre écharpe ?',
+        is_read: true,
+        created_at: new Date('2026-01-08T14:35:00'),
+      },
+      {
+        conversation_id: conversation2.id,
+        sender_id: users[2].id, // Marie
+        content: 'C\'est une écharpe rouge avec des motifs de zombies, assez longue. Je l\'avais achetée dans votre boutique.',
+        is_read: true,
+        created_at: new Date('2026-01-08T14:40:00'),
+      },
+      {
+        conversation_id: conversation2.id,
+        sender_id: users[0].id, // Admin
+        content: 'Bonne nouvelle ! Nous avons retrouvé votre écharpe. Vous pouvez venir la récupérer à l\'accueil du parc avec une pièce d\'identité.',
+        is_read: true,
+        created_at: new Date('2026-01-08T15:00:00'),
+      },
+      {
+        conversation_id: conversation2.id,
+        sender_id: users[2].id, // Marie
+        content: 'Super ! Merci beaucoup, je passe la récupérer demain.',
+        is_read: true,
+        created_at: new Date('2026-01-08T15:10:00'),
+      },
+    ],
+  });
+
+  // Conversation 3 : Paul demande une annulation
+  const conversation3 = await prisma.conversation.create({
+    data: {
+      user_id: users[3].id, // Paul
+      admin_id: users[0].id, // Admin
+      status: 'OPEN',
+    },
+  });
+
+  await prisma.message.createMany({
+    data: [
+      {
+        conversation_id: conversation3.id,
+        sender_id: users[3].id, // Paul
+        content: 'Bonjour, j\'ai réservé pour un groupe de 12 personnes mais finalement nous ne serons que 8. Puis-je modifier ma réservation ?',
+        is_read: true,
+        created_at: new Date('2026-01-12T09:00:00'),
+      },
+      {
+        conversation_id: conversation3.id,
+        sender_id: users[0].id, // Admin
+        content: 'Bonjour Paul, pouvez-vous me communiquer votre numéro de réservation ?',
+        is_read: true,
+        created_at: new Date('2026-01-12T09:30:00'),
+      },
+      {
+        conversation_id: conversation3.id,
+        sender_id: users[3].id, // Paul
+        content: 'Oui, c\'est la réservation ZL-1737021600000-D1J6E',
+        is_read: false,
+        created_at: new Date('2026-01-12T09:45:00'),
+      },
+    ],
+  });
+
+  // Conversation 4 : Jean demande des conseils d'attractions
+  const conversation4 = await prisma.conversation.create({
+    data: {
+      user_id: users[1].id, // Jean (deuxième conversation)
+      admin_id: users[0].id, // Admin
+      status: 'OPEN',
+    },
+  });
+
+  await prisma.message.createMany({
+    data: [
+      {
+        conversation_id: conversation4.id,
+        sender_id: users[1].id, // Jean
+        content: 'Salut ! Je viens avec ma famille (2 adultes, 2 enfants de 8 et 10 ans). Quelles attractions nous conseillez-vous ?',
+        is_read: true,
+        created_at: new Date('2026-01-13T16:00:00'),
+      },
+      {
+        conversation_id: conversation4.id,
+        sender_id: users[0].id, // Admin
+        content: 'Bonjour Jean ! Pour une famille, je vous recommande le "Labyrinthe des Infectés" (niveau 2), le "Train Fantôme" et "Le Manège des Infectés". Évitez les attractions niveau 4-5 pour les enfants de cet âge.',
+        is_read: true,
+        created_at: new Date('2026-01-13T16:20:00'),
+      },
+      {
+        conversation_id: conversation4.id,
+        sender_id: users[1].id, // Jean
+        content: 'Merci ! Et pour nous les parents, on peut faire les attractions extrêmes pendant que les enfants font autre chose ?',
+        is_read: true,
+        created_at: new Date('2026-01-13T16:25:00'),
+      },
+      {
+        conversation_id: conversation4.id,
+        sender_id: users[0].id, // Admin
+        content: 'Bien sûr ! Nous avons un service de garderie "Bunker Kids" où vous pouvez laisser vos enfants pendant 1-2h. Ils feront des activités encadrées comme l\'Atelier Maquillage Zombie. Réservation conseillée !',
+        is_read: false,
+        created_at: new Date('2026-01-13T16:35:00'),
+      },
+    ],
+  });
+
+  // Conversation 5 : Marie demande des infos accessibilité
+  const conversation5 = await prisma.conversation.create({
+    data: {
+      user_id: users[2].id, // Marie (deuxième conversation)
+      admin_id: users[0].id, // Admin
+      status: 'OPEN',
+    },
+  });
+
+  await prisma.message.createMany({
+    data: [
+      {
+        conversation_id: conversation5.id,
+        sender_id: users[2].id, // Marie
+        content: 'Bonjour, je viens avec une personne en fauteuil roulant. Le parc est-il accessible ?',
+        is_read: true,
+        created_at: new Date('2026-01-14T11:00:00'),
+      },
+      {
+        conversation_id: conversation5.id,
+        sender_id: users[0].id, // Admin
+        content: 'Bonjour Marie ! Oui, tout le parc est accessible PMR. Certaines attractions ne sont pas accessibles pour des raisons de sécurité, mais environ 70% le sont. Vous pouvez consulter le plan d\'accessibilité sur notre site.',
+        is_read: false,
+        created_at: new Date('2026-01-14T11:15:00'),
+      },
+    ],
+  });
+  console.log('✅ Conversations créées (5)');
+  console.log('✅ Messages créés (16 au total)');
+
   console.log('');
   console.log('🎉 Seeding terminé avec succès !');
   console.log('');
@@ -641,6 +844,10 @@ async function main() {
   console.log('   Client 1: jean@zombieland.com / password123');
   console.log('   Client 2: marie@zombieland.com / password123');
   console.log('   Client 3: paul@zombieland.com / password123');
+  console.log('');
+  console.log('💬 Conversations :');
+  console.log('   - 4 conversations ouvertes (OPEN)');
+  console.log('   - 1 conversation fermée (CLOSED)');
 }
 
 main()
