@@ -164,7 +164,87 @@
     "duration": "Durée",
     "thrillLevel": "Niveau de frisson",
     "minAge": "Âge minimum",
-    "reserve": "Réserver"
+    "reserve": "Réserver",
+    "page": {
+      "breadcrumbs": {
+        "home": "Accueil",
+        "activities": "Activités"
+      },
+      "tabs": {
+        "activities": "Activités",
+        "attractions": "Attractions",
+        "restaurants": "Restauration"
+      },
+      "titles": {
+        "activities": "Activités du parc",
+        "attractions": "Attractions du parc",
+        "restaurants": "Restauration"
+      },
+      "descriptions": {
+        "activities": "Frissons, immersions ou ateliers : découvre toutes les activités disponibles avant de réserver.",
+        "attractions": "Parcours immersifs, expériences à sensations fortes : explore toutes nos attractions thématiques.",
+        "restaurants": "Restaurants, snacks et points de vente : découvre toutes nos options de restauration thématique."
+      },
+      "counters": {
+        "activities": "activités",
+        "attractions": "attractions",
+        "restaurants": "points de vente"
+      },
+      "counterDescriptions": {
+        "activities": "Zones immersives, ateliers, spectacles",
+        "attractions": "Parcours, expériences, sensations fortes",
+        "restaurants": "Restaurants, snacks, bars et cafés"
+      },
+      "features": {
+        "thrillUpTo": "Frisson jusqu'à 5/5",
+        "chooseIntensity": "Choisis ton niveau d'intensité",
+        "thematicCuisine": "Cuisine thématique",
+        "foodForAll": "Des plats pour tous les goûts",
+        "freeAccess": "Accès libre",
+        "onlineBooking": "Réservation en ligne",
+        "payOnSite": "Paiement sur place",
+        "limitedPlaces": "Places limitées par session"
+      },
+      "sections": {
+        "allActivities": "Toutes les activités",
+        "allAttractions": "Toutes les attractions",
+        "allRestaurants": "Tous les points de restauration"
+      },
+      "sectionDescriptions": {
+        "activities": "Parcours, VR, spectacles ou ateliers : découvre l'ensemble du parc et filtre par catégorie ou niveau de frisson.",
+        "attractions": "Attractions extrêmes, expériences immersives ou parcours familiaux : filtre par catégorie ou niveau d'intensité.",
+        "restaurants": "Restaurants gastronomiques, snacks rapides ou bars thématiques : découvre toutes nos options de restauration."
+      },
+      "errorLoading": "Impossible de charger les données.",
+      "filter": {
+        "title": "Filtrer",
+        "activities": "les activités",
+        "attractions": "les attractions",
+        "restaurants": "la restauration",
+        "displayed": {
+          "activities": "activité(s) affichée(s)",
+          "attractions": "attraction(s) affichée(s)",
+          "restaurants": "point(s) de vente affiché(s)"
+        },
+        "search": {
+          "label": "Recherche",
+          "placeholder": "Rechercher par nom ou description..."
+        },
+        "categories": "Catégories",
+        "intensity": {
+          "label": "Intensité minimale",
+          "all": "Tous"
+        }
+      },
+      "empty": {
+        "title": {
+          "activities": "Aucune activité trouvée",
+          "attractions": "Aucune attraction trouvée",
+          "restaurants": "Aucun point de restauration trouvé"
+        },
+        "message": "Réessaie plus tard ou contacte le support si le problème persiste."
+      }
+    }
   },
   "reservations": {
     "title": "Réservations",

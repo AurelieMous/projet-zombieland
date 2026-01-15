@@ -164,7 +164,87 @@
     "duration": "Duration",
     "thrillLevel": "Thrill level",
     "minAge": "Minimum age",
-    "reserve": "Reserve"
+    "reserve": "Reserve",
+    "page": {
+      "breadcrumbs": {
+        "home": "Home",
+        "activities": "Activities"
+      },
+      "tabs": {
+        "activities": "Activities",
+        "attractions": "Attractions",
+        "restaurants": "Restaurants"
+      },
+      "titles": {
+        "activities": "Park activities",
+        "attractions": "Park attractions",
+        "restaurants": "Restaurants"
+      },
+      "descriptions": {
+        "activities": "Thrills, immersions or workshops: discover all available activities before booking.",
+        "attractions": "Immersive courses, extreme experiences: explore all our themed attractions.",
+        "restaurants": "Restaurants, snacks and points of sale: discover all our themed dining options."
+      },
+      "counters": {
+        "activities": "activities",
+        "attractions": "attractions",
+        "restaurants": "points of sale"
+      },
+      "counterDescriptions": {
+        "activities": "Immersive zones, workshops, shows",
+        "attractions": "Courses, experiences, extreme thrills",
+        "restaurants": "Restaurants, snacks, bars and cafes"
+      },
+      "features": {
+        "thrillUpTo": "Thrill up to 5/5",
+        "chooseIntensity": "Choose your intensity level",
+        "thematicCuisine": "Thematic cuisine",
+        "foodForAll": "Dishes for all tastes",
+        "freeAccess": "Free access",
+        "onlineBooking": "Online booking",
+        "payOnSite": "Payment on site",
+        "limitedPlaces": "Limited places per session"
+      },
+      "sections": {
+        "allActivities": "All activities",
+        "allAttractions": "All attractions",
+        "allRestaurants": "All dining points"
+      },
+      "sectionDescriptions": {
+        "activities": "Courses, VR, shows or workshops: discover the whole park and filter by category or thrill level.",
+        "attractions": "Extreme attractions, immersive experiences or family courses: filter by category or intensity level.",
+        "restaurants": "Gastronomic restaurants, fast snacks or themed bars: discover all our dining options."
+      },
+      "errorLoading": "Unable to load data.",
+      "filter": {
+        "title": "Filter",
+        "activities": "activities",
+        "attractions": "attractions",
+        "restaurants": "restaurants",
+        "displayed": {
+          "activities": "activity/activities displayed",
+          "attractions": "attraction(s) displayed",
+          "restaurants": "point(s) of sale displayed"
+        },
+        "search": {
+          "label": "Search",
+          "placeholder": "Search by name or description..."
+        },
+        "categories": "Categories",
+        "intensity": {
+          "label": "Minimum intensity",
+          "all": "All"
+        }
+      },
+      "empty": {
+        "title": {
+          "activities": "No activity found",
+          "attractions": "No attraction found",
+          "restaurants": "No dining point found"
+        },
+        "message": "Try again later or contact support if the problem persists."
+      }
+    }
   },
   "reservations": {
     "title": "Reservations",
