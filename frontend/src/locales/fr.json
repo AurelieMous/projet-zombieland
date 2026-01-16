@@ -585,7 +585,154 @@
     "accessibility": "Accessibilité",
     "schedule": "Horaires",
     "contact": "Contact",
-    "map": "Plan du parc"
+    "map": "Plan du parc",
+    "page": {
+      "breadcrumbs": {
+        "home": "Accueil",
+        "info": "Informations"
+      },
+      "hero": {
+        "title": "Informations du Parc",
+        "description": "Découvrez toutes les informations pratiques et explorez la carte interactive de Zombieland."
+      },
+      "schedule": {
+        "openToday": "Ouvert aujourd'hui",
+        "closedToday": "Fermé aujourd'hui"
+      },
+      "about": {
+        "title": "À propos de Zombieland",
+        "description": "Bienvenue à <strong>Zombieland</strong>, le parc d'attractions le plus terrifiant et immersif d'Europe ! Plongez dans un monde post-apocalyptique où vous devrez survivre aux hordes de zombies tout en profitant d'attractions à sensations fortes, de spectacles époustouflants et d'expériences immersives inoubliables."
+      },
+      "map": {
+        "title": "Carte Interactive du Parc",
+        "description": "Explorez la carte pour découvrir toutes les attractions, activités et services disponibles dans le parc. Utilisez les filtres pour affiner votre recherche !",
+        "error": "Impossible de charger les données de la carte.",
+        "legend": {
+          "title": "Légende de la Carte",
+          "attractions": "Attractions",
+          "activities": "Activités",
+          "toilets": "Toilettes",
+          "shops": "Boutiques"
+        }
+      },
+      "hours": {
+        "title": "Horaires d'Ouverture",
+        "closed": "Fermé",
+        "days": {
+          "monday": "Lundi",
+          "tuesday": "Mardi",
+          "wednesday": "Mercredi",
+          "thursday": "Jeudi",
+          "friday": "Vendredi",
+          "saturday": "Samedi",
+          "sunday": "Dimanche"
+        }
+      },
+      "prices": {
+        "title": "Nos Tarifs",
+        "oneDay": "Billet 1 jour",
+        "passDays": "Pass {{days}} jours",
+        "note": "* Tarifs susceptibles d'évoluer selon les périodes. Réservation en ligne recommandée."
+      },
+      "contact": {
+        "title": "Nous Contacter",
+        "coordinates": {
+          "title": "Coordonnées",
+          "phone": "Téléphone",
+          "email": "Email",
+          "customerService": "Service client",
+          "customerServiceHours": "Du mercredi au dimanche<br />De 9h30 à 21h00",
+          "socialMedia": "Réseaux sociaux",
+          "socialMediaHandle": "Facebook • Instagram • Twitter<br />@zombielandparis"
+        },
+        "help": {
+          "title": "Besoin d'aide ?",
+          "description": "Notre équipe est à votre disposition pour répondre à toutes vos questions concernant :",
+          "items": {
+            "reservations": "Réservations et modifications",
+            "groups": "Groupes et événements privés",
+            "accessibility": "Accessibilité PMR",
+            "lockers": "Consignes et objets perdus",
+            "birthdays": "Anniversaires et animations"
+          }
+        }
+      },
+      "access": {
+        "title": "Plan d'Accès",
+        "address": {
+          "title": "Adresse",
+          "street": "123 Avenue de l'Apocalypse<br />75000 Paris, France"
+        },
+        "publicTransport": {
+          "title": "En Transports en Commun",
+          "metro": {
+            "label": "Métro",
+            "info": "Ligne 7 - Station \"Zombieland\"<br />Sortie 2 - Direction Parc"
+          },
+          "rer": {
+            "label": "RER",
+            "info": "RER B - Arrêt \"Parc Zombieland\"<br />À 5 min à pied"
+          },
+          "bus": {
+            "label": "Bus",
+            "info": "Lignes 38, 47, 91<br />Arrêt \"Zombieland Entrée Principale\""
+          }
+        },
+        "car": {
+          "title": "En Voiture",
+          "fromCenter": {
+            "label": "Depuis Paris Centre",
+            "info": "Prendre le Périphérique direction Porte de la Chapelle<br />Sortie 23 \"Zombieland\"<br />Suivre les panneaux verts"
+          },
+          "fromA1": {
+            "label": "Depuis l'Autoroute A1",
+            "info": "Sortie 7 \"Paris Nord - Zombieland\"<br />Direction centre-ville pendant 3km<br />Le parc sera sur votre gauche"
+          },
+          "parking": {
+            "label": "Parking",
+            "info": "3 parkings gratuits disponibles<br />2000 places<br />Accessible PMR"
+          }
+        },
+        "mapTitle": "Localisation Zombieland"
+      },
+      "faq": {
+        "title": "Questions Fréquentes",
+        "items": {
+          "accessibility": {
+            "question": "Le parc est-il accessible aux personnes à mobilité réduite ?",
+            "answer": "Oui, toutes nos attractions et services sont accessibles PMR. Des fauteuils roulants sont disponibles gratuitement à l'entrée sur demande."
+          },
+          "age": {
+            "question": "Y a-t-il un âge minimum pour visiter le parc ?",
+            "answer": "Le parc est ouvert à tous les âges, mais certaines attractions sont déconseillées aux moins de 12 ans en raison de leur intensité. Consultez les panneaux à l'entrée de chaque attraction."
+          },
+          "food": {
+            "question": "Puis-je apporter ma propre nourriture ?",
+            "answer": "Les pique-niques sont autorisés dans les zones dédiées. Cependant, nous vous invitons à découvrir nos restaurants thématiques pour une expérience complète."
+          },
+          "animals": {
+            "question": "Les animaux sont-ils acceptés ?",
+            "answer": "Seuls les chiens guides et d'assistance sont autorisés dans l'enceinte du parc pour des raisons de sécurité et d'hygiène."
+          },
+          "weather": {
+            "question": "Que se passe-t-il en cas de mauvais temps ?",
+            "answer": "Le parc reste ouvert par tous les temps. En cas de conditions météorologiques extrêmes, certaines attractions extérieures peuvent être temporairement fermées pour votre sécurité."
+          },
+          "cancellation": {
+            "question": "Puis-je annuler ou modifier ma réservation ?",
+            "answer": "Les réservations sont modifiables jusqu'à 48h avant la date prévue. Les annulations sont remboursées à 100% jusqu'à 7 jours avant, et à 50% jusqu'à 48h avant."
+          },
+          "lockers": {
+            "question": "Y a-t-il des casiers pour ranger mes affaires ?",
+            "answer": "Oui, des consignes sécurisées sont disponibles à l'entrée du parc pour 3€ la journée. Les objets de valeur peuvent être déposés gratuitement au vestiaire principal."
+          },
+          "events": {
+            "question": "Le parc propose-t-il des événements spéciaux ?",
+            "answer": "Oui ! Consultez notre calendrier en ligne pour découvrir nos soirées Halloween, événements de Noël, et animations spéciales tout au long de l'année."
+          }
+        }
+      }
+    }
   },
   "footer": {
     "legal": {

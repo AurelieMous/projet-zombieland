@@ -585,7 +585,154 @@
     "accessibility": "Accessibility",
     "schedule": "Schedule",
     "contact": "Contact",
-    "map": "Park map"
+    "map": "Park map",
+    "page": {
+      "breadcrumbs": {
+        "home": "Home",
+        "info": "Information"
+      },
+      "hero": {
+        "title": "Park Information",
+        "description": "Discover all practical information and explore the interactive map of Zombieland."
+      },
+      "schedule": {
+        "openToday": "Open today",
+        "closedToday": "Closed today"
+      },
+      "about": {
+        "title": "About Zombieland",
+        "description": "Welcome to <strong>Zombieland</strong>, the most terrifying and immersive theme park in Europe! Dive into a post-apocalyptic world where you'll have to survive hordes of zombies while enjoying thrilling attractions, stunning shows and unforgettable immersive experiences."
+      },
+      "map": {
+        "title": "Interactive Park Map",
+        "description": "Explore the map to discover all attractions, activities and services available in the park. Use the filters to refine your search!",
+        "error": "Unable to load map data.",
+        "legend": {
+          "title": "Map Legend",
+          "attractions": "Attractions",
+          "activities": "Activities",
+          "toilets": "Toilets",
+          "shops": "Shops"
+        }
+      },
+      "hours": {
+        "title": "Opening Hours",
+        "closed": "Closed",
+        "days": {
+          "monday": "Monday",
+          "tuesday": "Tuesday",
+          "wednesday": "Wednesday",
+          "thursday": "Thursday",
+          "friday": "Friday",
+          "saturday": "Saturday",
+          "sunday": "Sunday"
+        }
+      },
+      "prices": {
+        "title": "Our Prices",
+        "oneDay": "1-day ticket",
+        "passDays": "{{days}}-day pass",
+        "note": "* Prices may vary according to periods. Online booking recommended."
+      },
+      "contact": {
+        "title": "Contact Us",
+        "coordinates": {
+          "title": "Contact Details",
+          "phone": "Phone",
+          "email": "Email",
+          "customerService": "Customer service",
+          "customerServiceHours": "Wednesday to Sunday<br />9:30 AM to 9:00 PM",
+          "socialMedia": "Social media",
+          "socialMediaHandle": "Facebook • Instagram • Twitter<br />@zombielandparis"
+        },
+        "help": {
+          "title": "Need help?",
+          "description": "Our team is available to answer all your questions regarding:",
+          "items": {
+            "reservations": "Bookings and modifications",
+            "groups": "Groups and private events",
+            "accessibility": "PMR accessibility",
+            "lockers": "Lockers and lost items",
+            "birthdays": "Birthdays and activities"
+          }
+        }
+      },
+      "access": {
+        "title": "Access Plan",
+        "address": {
+          "title": "Address",
+          "street": "123 Apocalypse Avenue<br />75000 Paris, France"
+        },
+        "publicTransport": {
+          "title": "By Public Transport",
+          "metro": {
+            "label": "Metro",
+            "info": "Line 7 - \"Zombieland\" Station<br />Exit 2 - Park Direction"
+          },
+          "rer": {
+            "label": "RER",
+            "info": "RER B - \"Parc Zombieland\" Stop<br />5 min walk"
+          },
+          "bus": {
+            "label": "Bus",
+            "info": "Lines 38, 47, 91<br />\"Zombieland Main Entrance\" Stop"
+          }
+        },
+        "car": {
+          "title": "By Car",
+          "fromCenter": {
+            "label": "From Paris Center",
+            "info": "Take the Ring Road towards Porte de la Chapelle<br />Exit 23 \"Zombieland\"<br />Follow the green signs"
+          },
+          "fromA1": {
+            "label": "From A1 Motorway",
+            "info": "Exit 7 \"Paris Nord - Zombieland\"<br />Head towards city center for 3km<br />The park will be on your left"
+          },
+          "parking": {
+            "label": "Parking",
+            "info": "3 free parking lots available<br />2000 spaces<br />PMR accessible"
+          }
+        },
+        "mapTitle": "Zombieland Location"
+      },
+      "faq": {
+        "title": "Frequently Asked Questions",
+        "items": {
+          "accessibility": {
+            "question": "Is the park accessible to people with reduced mobility?",
+            "answer": "Yes, all our attractions and services are PMR accessible. Wheelchairs are available free of charge at the entrance upon request."
+          },
+          "age": {
+            "question": "Is there a minimum age to visit the park?",
+            "answer": "The park is open to all ages, but some attractions are not recommended for children under 12 due to their intensity. Check the signs at the entrance of each attraction."
+          },
+          "food": {
+            "question": "Can I bring my own food?",
+            "answer": "Picnics are allowed in dedicated areas. However, we invite you to discover our themed restaurants for a complete experience."
+          },
+          "animals": {
+            "question": "Are animals allowed?",
+            "answer": "Only guide and assistance dogs are allowed on park premises for safety and hygiene reasons."
+          },
+          "weather": {
+            "question": "What happens in case of bad weather?",
+            "answer": "The park remains open in all weather conditions. In case of extreme weather conditions, some outdoor attractions may be temporarily closed for your safety."
+          },
+          "cancellation": {
+            "question": "Can I cancel or modify my booking?",
+            "answer": "Bookings can be modified up to 48 hours before the scheduled date. Cancellations are refunded 100% up to 7 days before, and 50% up to 48 hours before."
+          },
+          "lockers": {
+            "question": "Are there lockers to store my belongings?",
+            "answer": "Yes, secure lockers are available at the park entrance for €3 per day. Valuables can be deposited free of charge at the main cloakroom."
+          },
+          "events": {
+            "question": "Does the park offer special events?",
+            "answer": "Yes! Check our online calendar to discover our Halloween evenings, Christmas events, and special activities throughout the year."
+          }
+        }
+      }
+    }
   },
   "footer": {
     "legal": {
