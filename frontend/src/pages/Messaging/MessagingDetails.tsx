@@ -48,7 +48,7 @@ export default function MessagingDetails() {
     const [loading, setLoading] = useState<boolean>(false);
     const { role } = useContext(LoginContext)
     const [newMessage, setNewMessage] = useState<string>("");
-    const [seding, setSeding] = useState<boolean>(false);
+    const [sending, setSending] = useState<boolean>(false);
 
     const fetchConversation = async (id: number) => {
         setLoading(true);
@@ -65,7 +65,7 @@ export default function MessagingDetails() {
 
     const handleSubmit = async () => {
         if (newMessage.trim() === '' || !id) return;
-        setSeding(true);
+        setSending(true);
         try {
             // 1. Envoyer le message
             await createMessage(Number(id), newMessage.trim());
@@ -79,7 +79,7 @@ export default function MessagingDetails() {
         } catch (error) {
             setSendError(`Une erreur est survenue lors de l'envoi du message : ${error}`)
         } finally {
-            setSeding(false);
+            setSending(false);
         }
     }
 
@@ -173,15 +173,15 @@ export default function MessagingDetails() {
                         )}
                         {/* Répondre au message */}
                         {sendError && (<Alert severity="error">{sendError}</Alert>)}
-                        <Stack>
+                        <Stack direction="row" spacing={2} alignItems="center" justifyItems="center" sx={{ mt: 2 }}>
                             <TextField
                                 multiline
                                 rows={2}
                                 placeholder="Écrivez votre message..."
                                 variant="outlined"
-                                fullWidth
                                 value={newMessage}
                                 onChange={(e) => setNewMessage(e.target.value)}
+                                fullWidth
                                 sx={{
                                     '& .MuiOutlinedInput-root': {
                                         backgroundColor: colors.secondaryDark,
@@ -202,16 +202,19 @@ export default function MessagingDetails() {
                                 variant="contained"
                                 endIcon={<SendIcon />}
                                 onClick={handleSubmit}
+                                disabled={!newMessage.trim() || sending}
                                 sx={{
                                     backgroundColor: colors.primaryGreen,
                                     color: colors.white,
                                     '&:hover': {
                                         backgroundColor: colors.primaryRed,
                                     },
-                                    alignSelf: 'flex-end',
+                                    minWidth: '120px',
+                                    height: 'fit-content',
+                                    whiteSpace: 'nowrap',
                                 }}
                             >
-                                {seding ? 'Envoi en cours...' : 'Envoyer'}
+                                {sending ? 'Envoi...' : 'Envoyer'}
                             </Button>
                         </Stack>
                     </Container>
