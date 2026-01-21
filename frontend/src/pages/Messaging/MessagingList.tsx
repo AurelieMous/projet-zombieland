@@ -1,11 +1,14 @@
-import { Box, Container } from "@mui/material";
-import ReservationUserList from "./ReservationUser/ReservationUserList.tsx";
-import { colors } from "../../theme";
-import { CustomBreadcrumbs } from "../../components/common";
-import { HeroSection } from "../../components/hero/HeroSection";
-import { Typography } from "@mui/material";
+import {colors} from "../../theme";
+import {HeroSection} from "../../components/hero";
+import {Box, Container, LinearProgress, Stack, Typography} from "@mui/material";
+import {CustomBreadcrumbs} from "../../components/common";
+import {getAllConvesations} from "../../services/conversations.ts";
+import {useEffect, useState} from "react";
+import type {Conversation} from "../../@types/messaging";
+import ConversationCard from "../../components/cards/Messaging/ConversationCard.tsx";
 
-export const UserDashboard = () => {
+export default function MessagingList() {
+
     const heroImages = [
         '/activities-images/post-apocalyptic-street.jpg',
         '/activities-images/zombie.jpg',
@@ -13,7 +16,28 @@ export const UserDashboard = () => {
         '/activities-images/haunted-hospital.jpg',
     ].slice(0, 5);
 
-    return (
+    const [conversations, setConversations] = useState<Conversation[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const fetchConversations = async () => {
+        setLoading(true);
+        try{
+            const response = await getAllConvesations()
+            console.log(response);
+            setConversations(response);
+        } catch (error){
+            setError("Erreur lors de la récupération des conversations : " + error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        fetchConversations();
+    }, [])
+
+    return(
         <Box sx={{ backgroundColor: colors.secondaryDark, minHeight: '100vh', color: colors.white }}>
             <HeroSection images={heroImages}>
                 <Box>
@@ -22,7 +46,7 @@ export const UserDashboard = () => {
                             items={[
                                 { label: 'Accueil', path: '/', showOnMobile: true },
                                 { label: 'Mon compte', path: '/account',showOnMobile: true },
-                                { label: 'Mes réservations', showOnMobile: true },
+                                { label: 'Ma messagerie', showOnMobile: true },
                             ]}
                         />
                     </Box>
@@ -42,7 +66,7 @@ export const UserDashboard = () => {
                             letterSpacing: '2px',
                         }}
                     >
-                        Mes réservations
+                        Ma messagerie
                     </Typography>
 
                     <Typography
@@ -54,7 +78,7 @@ export const UserDashboard = () => {
                             mb: { xs: 1.5, md: 3 },
                         }}
                     >
-                        Consultez et gérez toutes vos réservations au parc Zombieland.
+                        Consultez vos messages.
                     </Typography>
                 </Box>
             </HeroSection>
@@ -79,9 +103,27 @@ export const UserDashboard = () => {
                         minHeight: '400px',
                     }}
                 >
-                    <ReservationUserList />
+                    {loading && (
+                        <LinearProgress
+                            sx={{
+                                mb: 3,
+                                backgroundColor: colors.secondaryGrey,
+                                '& .MuiLinearProgress-bar': { backgroundColor: colors.primaryGreen },
+                            }}
+                        />
+                    )}
+                    {error && "Erreur lors de la récupération des conversations : " + error + "."}
+                    <Stack spacing={2}>
+                        {conversations.map((conversation) => (
+                            <ConversationCard
+                                conversation={conversation}
+                                key={conversation.id}
+                            />
+                        ))}
+                    </Stack>
+
                 </Box>
             </Container>
         </Box>
-    );
-};
+    )
+}

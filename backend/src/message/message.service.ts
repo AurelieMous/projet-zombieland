@@ -47,7 +47,7 @@ export class MessageService {
         throw new BadRequestException('Vous ne pouvez pas vous envoyer un message à vous-même');
       }
 
-      if(!object || object.trim().length === '') {
+      if(!object || object.trim().length === 0) {
         throw new BadRequestException('L\'objet de la conversation est requis pour créer une nouvelle conversation');
       }
 

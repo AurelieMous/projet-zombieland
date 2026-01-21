@@ -37,6 +37,7 @@ export const AdminDashboard = () => {
             <CustomBreadcrumbs
               items={[
                 { label: 'Accueil', path: '/', showOnMobile: true },
+                { label: 'Mon compte', path: '/account',showOnMobile: true },
                 { label: 'Administration', showOnMobile: true },
               ]}
             />
