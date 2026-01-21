@@ -64,20 +64,27 @@ export default function MessagingDetails() {
     }
 
     const handleSubmit = async () => {
-        if (newMessage.trim() === '' || !id) return;
-        setSending(true);
-        try {
-            // 1. Envoyer le message
-            await createMessage(Number(id), newMessage.trim());
+        if (!newMessage.trim() || !id) return;
 
-            // 2. Recharger la conversation complète (avec tous les messages et leurs senders)
+        setSending(true);
+        setSendError(null);
+
+        try {
+            // 1. Envoyer le message avec la nouvelle signature
+            await createMessage({
+                conversationId: Number(id),
+                content: newMessage.trim(),
+            });
+
+            // 2. Recharger la conversation complète
             await fetchConversation(Number(id));
 
             // 3. Réinitialiser le champ
             setNewMessage('');
 
-        } catch (error) {
-            setSendError(`Une erreur est survenue lors de l'envoi du message : ${error}`)
+        } catch (error: any) {
+            const errorMessage = error.response?.data?.message || error.message || 'Erreur lors de l\'envoi du message';
+            setSendError(errorMessage);
         } finally {
             setSending(false);
         }
@@ -141,39 +148,44 @@ export default function MessagingDetails() {
                             pr: { xs: 2, sm: 4, md: '60px', lg: '90px' },
                         }}
                     >
-                        {error && "Erreur lors de la récupération des messages : " + error + "."}
+                        {error && (
+                            <Alert severity="error" sx={{ mb: 2 }}>
+                                {error}
+                            </Alert>
+                        )}
+
                         {conversation && (
                             <BoxMessageStyle>
                                 <Stack spacing={2}>
-                                    {conversation && (
-                                        <Box>
-                                            <Stack spacing={2}>
-                                                {conversation.messages.map((message) => {
-                                                    const isOwnMessage = role === 'CLIENT'
-                                                        ? message.sender.role === 'CLIENT'
-                                                        : message.sender.role === 'ADMIN';
+                                    {conversation.messages.map((message) => {
+                                        const isOwnMessage = role === 'CLIENT'
+                                            ? message.sender.role === 'CLIENT'
+                                            : message.sender.role === 'ADMIN';
 
-                                                    return (
-                                                        <Box
-                                                            key={message.id}
-                                                            sx={{
-                                                                display: 'flex',
-                                                                justifyContent: isOwnMessage ? 'flex-end' : 'flex-start',
-                                                            }}
-                                                        >
-                                                            <MessageCard message={message} isOwn={isOwnMessage} />
-                                                        </Box>
-                                                    );
-                                                })}
-                                            </Stack>
-                                        </Box>
-                                    )}
+                                        return (
+                                            <Box
+                                                key={message.id}
+                                                sx={{
+                                                    display: 'flex',
+                                                    justifyContent: isOwnMessage ? 'flex-end' : 'flex-start',
+                                                }}
+                                            >
+                                                <MessageCard message={message} isOwn={isOwnMessage} />
+                                            </Box>
+                                        );
+                                    })}
                                 </Stack>
                             </BoxMessageStyle>
                         )}
+
                         {/* Répondre au message */}
-                        {sendError && (<Alert severity="error">{sendError}</Alert>)}
-                        <Stack direction="row" spacing={2} alignItems="center" justifyItems="center" sx={{ mt: 2 }}>
+                        {sendError && (
+                            <Alert severity="error" sx={{ mt: 2 }}>
+                                {sendError}
+                            </Alert>
+                        )}
+
+                        <Stack direction="row" spacing={2} alignItems="center" sx={{ mt: 2 }}>
                             <TextField
                                 multiline
                                 rows={2}
@@ -210,7 +222,6 @@ export default function MessagingDetails() {
                                         backgroundColor: colors.primaryRed,
                                     },
                                     minWidth: '120px',
-                                    height: 'fit-content',
                                     whiteSpace: 'nowrap',
                                 }}
                             >

@@ -8,7 +8,6 @@ import type {Conversation} from "../../@types/messaging";
 import ConversationCard from "../../components/cards/Messaging/ConversationCard.tsx";
 import AddIcon from "@mui/icons-material/Add";
 import {CreateMessageModal} from "../../components/modals/Message/CreateMessageModal.tsx";
-import {getFirstAdmin} from "../../services/users.ts";
 
 export default function MessagingList() {
 

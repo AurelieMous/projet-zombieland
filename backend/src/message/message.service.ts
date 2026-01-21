@@ -21,6 +21,8 @@ export class MessageService {
    * @param createMessageDto - Données du message
    * @param userId - ID de l'expéditeur
    */
+  // message.service.ts - Modifier la méthode create
+
   async create(createMessageDto: CreateMessageDto, userId: number) {
     const { conversationId, recipientId, content, object } = createMessageDto;
 
@@ -28,7 +30,6 @@ export class MessageService {
 
     // CAS 1 : Conversation existante
     if (conversationId) {
-      // Vérifier l'accès via ConversationService
       const hasAccess = await this.conversationService.userHasAccess(
           userId,
           conversationId,
@@ -40,30 +41,20 @@ export class MessageService {
 
       finalConversationId = conversationId;
     }
-    // CAS 2 : Nouvelle conversation
-    else if (recipientId !== undefined || !conversationId) {
-      // Vérifier qu'on n'essaie pas de s'envoyer un message à soi-même
-      if (recipientId === userId) {
-        throw new BadRequestException('Vous ne pouvez pas vous envoyer un message à vous-même');
-      }
-
-      if(!object || object.trim().length === 0) {
+    // CAS 2 : Nouvelle conversation (avec ou sans recipientId)
+    else {
+      if (!object || object.trim().length === 0) {
         throw new BadRequestException('L\'objet de la conversation est requis pour créer une nouvelle conversation');
       }
 
-      // Créer ou récupérer la conversation via ConversationService
+      // Créer ou récupérer la conversation
+      // Si recipientId est null/undefined, un admin sera assigné automatiquement
       const conversation = await this.conversationService.create(
           userId,
-          recipientId ?? null,
+          recipientId ?? null, // null si non fourni = auto-assignation
           object
       );
       finalConversationId = conversation.id;
-    }
-    // CAS 3 : Ni conversationId ni recipientId
-    else {
-      throw new BadRequestException(
-          'Vous devez fournir soit conversationId soit recipientId'
-      );
     }
 
     // Créer le message
