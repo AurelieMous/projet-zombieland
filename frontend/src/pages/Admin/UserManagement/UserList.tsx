@@ -632,42 +632,48 @@ export const UserList = () => {
                         <Divider sx={{ my: 2, borderColor: colors.secondaryGrey }} />
 
                         <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
-                          <IconButton
-                            size="small"
-                            onClick={() => handleViewDetails(user)}
-                            sx={{
-                              color: colors.primaryGreen,
-                              '&:hover': {
-                                backgroundColor: `${colors.primaryGreen}20`,
-                              },
-                            }}
-                          >
-                            <VisibilityIcon />
-                          </IconButton>
-                          <IconButton
-                            size="small"
-                            onClick={() => handleEdit(user)}
-                            sx={{
-                              color: colors.primaryGold,
-                              '&:hover': {
-                                backgroundColor: `${colors.primaryGold}20`,
-                              },
-                            }}
-                          >
-                            <EditIcon />
-                          </IconButton>
-                          <IconButton
-                            size="small"
-                            onClick={() => handleDelete(user)}
-                            sx={{
-                              color: colors.primaryRed,
-                              '&:hover': {
-                                backgroundColor: `${colors.primaryRed}20`,
-                              },
-                            }}
-                          >
-                            <DeleteIcon />
-                          </IconButton>
+                          <Tooltip title={t('admin.users.viewDetails')}>
+                            <IconButton
+                              size="small"
+                              onClick={() => handleViewDetails(user)}
+                              sx={{
+                                color: colors.primaryGreen,
+                                '&:hover': {
+                                  backgroundColor: `${colors.primaryGreen}20`,
+                                },
+                              }}
+                            >
+                              <VisibilityIcon />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title={t('admin.users.editUser')}>
+                            <IconButton
+                              size="small"
+                              onClick={() => handleEdit(user)}
+                              sx={{
+                                color: colors.primaryGold,
+                                '&:hover': {
+                                  backgroundColor: `${colors.primaryGold}20`,
+                                },
+                              }}
+                            >
+                              <EditIcon />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title={t('admin.users.deleteUser')}>
+                            <IconButton
+                              size="small"
+                              onClick={() => handleDelete(user)}
+                              sx={{
+                                color: colors.primaryRed,
+                                '&:hover': {
+                                  backgroundColor: `${colors.primaryRed}20`,
+                                },
+                              }}
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </Tooltip>
                         </Box>
                       </CardContent>
                     </Card>
@@ -752,44 +758,50 @@ export const UserList = () => {
                             {user._count?.reservations || 0}
                           </TableCell>
                           <TableCell align="right">
-                            <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
-                              <IconButton
-                                size="small"
-                                onClick={() => handleViewDetails(user)}
-                                sx={{
-                                  color: colors.primaryGreen,
-                                  '&:hover': {
-                                    backgroundColor: `${colors.primaryGreen}20`,
-                                  },
-                                }}
-                              >
-                                <VisibilityIcon />
-                              </IconButton>
-                              <IconButton
-                                size="small"
-                                onClick={() => handleEdit(user)}
-                                sx={{
-                                  color: colors.primaryGold,
-                                  '&:hover': {
-                                    backgroundColor: `${colors.primaryGold}20`,
-                                  },
-                                }}
-                              >
-                                <EditIcon />
-                              </IconButton>
-                              <IconButton
-                                size="small"
-                                onClick={() => handleDelete(user)}
-                                sx={{
-                                  color: colors.primaryRed,
-                                  '&:hover': {
-                                    backgroundColor: `${colors.primaryRed}20`,
-                                  },
-                                }}
-                              >
-                                <DeleteIcon />
-                              </IconButton>
-                            </Box>
+                        <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
+                          <Tooltip title={t('admin.users.viewDetails')}>
+                            <IconButton
+                              size="small"
+                              onClick={() => handleViewDetails(user)}
+                              sx={{
+                                color: colors.primaryGreen,
+                                '&:hover': {
+                                  backgroundColor: `${colors.primaryGreen}20`,
+                                },
+                              }}
+                            >
+                              <VisibilityIcon />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title={t('admin.users.editUser')}>
+                            <IconButton
+                              size="small"
+                              onClick={() => handleEdit(user)}
+                              sx={{
+                                color: colors.primaryGold,
+                                '&:hover': {
+                                  backgroundColor: `${colors.primaryGold}20`,
+                                },
+                              }}
+                            >
+                              <EditIcon />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title={t('admin.users.deleteUser')}>
+                            <IconButton
+                              size="small"
+                              onClick={() => handleDelete(user)}
+                              sx={{
+                                color: colors.primaryRed,
+                                '&:hover': {
+                                  backgroundColor: `${colors.primaryRed}20`,
+                                },
+                              }}
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </Tooltip>
+                        </Box>
                           </TableCell>
                         </TableRow>
                       ))}

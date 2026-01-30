@@ -5,7 +5,6 @@ import {useContext, useEffect, useState} from "react";
 import ModalBurgerMenu from "../modals/BurgerMenu";
 import {colors} from "../../theme";
 import {LoginContext} from "../../context/UserLoginContext.tsx";
-import { LanguageSelector } from "../common";
 import { useTranslation } from "react-i18next";
 
 export default function Header() {
@@ -112,15 +111,6 @@ export default function Header() {
                         </Box>
                         ):""}
 
-                    {/* Sélecteur de langue */}
-                    <Box sx={{
-                        position: 'absolute',
-                        right: 100,
-                        display: { xs: 'none', md: 'flex' }
-                    }}>
-                        <LanguageSelector />
-                    </Box>
-
                     {/* Menu burger à droite */}
                     <IconButton
                         sx={{
@@ -173,7 +163,6 @@ export default function Header() {
                         gap: 2,
                         alignItems: 'center'
                     }}>
-                        <LanguageSelector />
                         <IconButton
                             sx={{ color: 'white' }}
                             onClick={handleOpen}

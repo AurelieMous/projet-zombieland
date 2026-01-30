@@ -72,7 +72,7 @@ export function transformTranslatableFields<T extends Record<string, any>>(
   entity: T,
   lang: Language,
 ): T {
-  const transformed = { ...entity };
+  const transformed: Record<string, any> = { ...entity };
 
   // Transform name and description
   if ('name' in entity || 'name_en' in entity) {
@@ -98,7 +98,7 @@ export function transformTranslatableFields<T extends Record<string, any>>(
     delete transformed.alt_text_en;
   }
 
-  return transformed;
+  return transformed as T;
 }
 
 /**

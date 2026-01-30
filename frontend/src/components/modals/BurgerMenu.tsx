@@ -7,6 +7,7 @@ import {useContext} from "react";
 import {LoginContext} from "../../context/UserLoginContext.tsx";
 import {PrimaryButton} from "../common";
 import { useTranslation } from "react-i18next";
+import { colors } from "../../theme";
 
 interface ModalBurgerMenuProps {
     open: boolean;
@@ -14,7 +15,8 @@ interface ModalBurgerMenuProps {
 }
 
 export default function ModalBurgerMenu({ open, onClose }: ModalBurgerMenuProps) {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const currentLang = i18n.language?.split('-')[0] || 'fr';
 
     const fullScreenStyle = {
         position: 'absolute' as 'absolute',
@@ -277,6 +279,43 @@ export default function ModalBurgerMenu({ open, onClose }: ModalBurgerMenuProps)
                     >
                         {t("navigation.info").toUpperCase()}
                     </Button>
+                    <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center', zIndex: 2, mb: 2 }}>
+                        <Typography
+                            component="button"
+                            onClick={() => i18n.changeLanguage('fr')}
+                            sx={{
+                                border: 'none',
+                                background: 'none',
+                                cursor: 'pointer',
+                                fontWeight: currentLang === 'fr' ? 'bold' : 'normal',
+                                color: currentLang === 'fr' ? colors.primaryGreen : 'grey',
+                                font: 'inherit',
+                                padding: 0,
+                                fontSize: '1rem',
+                                '&:hover': { color: colors.primaryGreen },
+                            }}
+                        >
+                            FR
+                        </Typography>
+                        <Typography component="span" sx={{ color: 'grey' }}>|</Typography>
+                        <Typography
+                            component="button"
+                            onClick={() => i18n.changeLanguage('en')}
+                            sx={{
+                                border: 'none',
+                                background: 'none',
+                                cursor: 'pointer',
+                                fontWeight: currentLang === 'en' ? 'bold' : 'normal',
+                                color: currentLang === 'en' ? colors.primaryGreen : 'grey',
+                                font: 'inherit',
+                                padding: 0,
+                                fontSize: '1rem',
+                                '&:hover': { color: colors.primaryGreen },
+                            }}
+                        >
+                            EN
+                        </Typography>
+                    </Box>
                     <Box sx={{ mt: 4, display: {xs: 'flex', md: 'none', zIndex: 2}}}>
                         <PrimaryButton
                             text={isLogged ? t("common.logout") : t("common.login")}
