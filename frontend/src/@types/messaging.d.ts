@@ -1,4 +1,4 @@
-import type {Role, User} from "./users";
+import type {User} from "./users";
 
 export interface Message {
     id: number;
@@ -7,6 +7,7 @@ export interface Message {
     content: string;
     is_read: boolean;
     created_at: string;
+    is_deleted: boolean;
 }
 
 export interface Conversation {

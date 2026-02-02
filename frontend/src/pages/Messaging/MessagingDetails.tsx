@@ -20,7 +20,7 @@ import MessageCard from "../../components/cards/Messaging/MessageCard.tsx";
 import {LoginContext} from "../../context/UserLoginContext.tsx";
 import {styled} from "@mui/material/styles";
 import SendIcon from '@mui/icons-material/Send';
-import {createMessage, deleteMessage, markMessageAsRead} from "../../services/messages.ts";
+import {createMessage, markMessageAsRead, softDeleteMessage} from "../../services/messages.ts";
 import {toast} from "react-toastify";
 import * as React from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -135,14 +135,24 @@ export default function MessagingDetails() {
         }
     }
 
-    const handleDeleteMessage = async (messageId: number) => {
+    const handleSoftDeleteMessage = async (messageId: number) => {
         if (!messageId || !conversation) return;
         try {
-            const res = await deleteMessage(messageId)
+            const res = await softDeleteMessage(messageId)
             setSuccessDelete(res.message)
             setDeleteError(null)
+            setRefreshTrigger(prev => prev + 1);
+            // Masquer l'alerte après 3 secondes
+            setTimeout(() => {
+                setSuccessDelete(null);
+            }, 3000);
         } catch (error) {
             setDeleteError("Une erreur est survenue lors de la suppression du message : " + error + ".")
+            setSuccessDelete(null)
+            // Masquer l'alerte après 3 secondes
+            setTimeout(() => {
+                setDeleteError(null);
+            }, 3000);
         }
     }
 
@@ -269,9 +279,9 @@ export default function MessagingDetails() {
                                                     justifyContent: isOwnMessage ? 'flex-end' : 'flex-start',
                                                 }}
                                             >
-                                                {isOwnMessage && (
+                                                {isOwnMessage && !message.is_deleted && (
                                                     <IconButton
-                                                        onClick={() => handleDeleteMessage(message.id)}
+                                                        onClick={() => handleSoftDeleteMessage(message.id)}
                                                         size="small"
                                                         sx={{
                                                             color: colors.primaryRed,
