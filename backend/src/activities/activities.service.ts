@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import type { CreateActivityDto, UpdateActivityDto } from 'src/generated';
+import { ActivityMapper } from './mappers/activity.mapper';
 import {
   transformTranslatableFields,
   transformTranslatableArray,
@@ -14,6 +15,16 @@ import {
 @Injectable()
 export class ActivitiesService {
   constructor(private readonly prisma: PrismaService) {}
+
+  /**
+   * Génère un temps d'attente simulé basé sur le thrill_level
+   */
+  private generateWaitTime(thrillLevel: number | null): number {
+    const thrill = thrillLevel ?? 3;
+    const minWait = 5 + (thrill - 1) * 5;
+    const maxWait = Math.floor(25 + (thrill - 1) * 8.75);
+    return Math.floor(Math.random() * (maxWait - minWait + 1)) + minWait;
+  }
 
   async findAll(
     filters?: {
@@ -66,18 +77,30 @@ export class ActivitiesService {
     return activities.map((activity: any) => {
       const transformedActivity = transformTranslatableFields(activity, lang);
       return {
-        ...transformedActivity,
-        created_at: activity.created_at.toISOString(),
-        updated_at: activity.updated_at.toISOString(),
-        category: transformTranslatableFields(activity.category, lang),
+        ...ActivityMapper.toDto(transformedActivity),
+        category: {
+          ...transformTranslatableFields(activity.category, lang),
+          created_at: activity.category.created_at.toISOString(),
+          updated_at: activity.category.updated_at.toISOString(),
+        },
         attraction: activity.attraction
-          ? transformTranslatableFields(activity.attraction, lang)
+          ? {
+              ...transformTranslatableFields(activity.attraction, lang),
+              created_at: activity.attraction.created_at.toISOString(),
+              updated_at: activity.attraction.updated_at.toISOString(),
+            }
           : null,
         related_activities: activity.relatedFrom
-          ? transformTranslatableArray(
-              activity.relatedFrom.map((rel: any) => rel.related_activity),
-              lang,
-            )
+          ? activity.relatedFrom.map((rel: any) => ({
+              ...transformTranslatableFields(rel.related_activity, lang),
+              created_at: rel.related_activity.created_at.toISOString(),
+              updated_at: rel.related_activity.updated_at.toISOString(),
+              category: {
+                ...transformTranslatableFields(rel.related_activity.category, lang),
+                created_at: rel.related_activity.category.created_at.toISOString(),
+                updated_at: rel.related_activity.category.updated_at.toISOString(),
+              },
+            }))
           : [],
       };
     });
@@ -109,22 +132,43 @@ export class ActivitiesService {
       throw new NotFoundException(`Activité avec l'ID ${id} non trouvée`);
     }
 
-    // Convertir les dates en ISO string et appliquer les traductions
     const activityWithRelations = activity as any;
     const transformedActivity = transformTranslatableFields(
       activityWithRelations,
       lang,
     );
     return {
-      ...transformedActivity,
-      created_at: activityWithRelations.created_at.toISOString(),
-      updated_at: activityWithRelations.updated_at.toISOString(),
-      category: transformTranslatableFields(activityWithRelations.category, lang),
+      ...ActivityMapper.toDto(transformedActivity),
+      category: {
+        ...transformTranslatableFields(activityWithRelations.category, lang),
+        created_at: activityWithRelations.category.created_at.toISOString(),
+        updated_at: activityWithRelations.category.updated_at.toISOString(),
+      },
       attraction: activityWithRelations.attraction
-        ? transformTranslatableFields(activityWithRelations.attraction, lang)
+        ? {
+            ...transformTranslatableFields(
+              activityWithRelations.attraction,
+              lang,
+            ),
+            created_at: activityWithRelations.attraction.created_at.toISOString(),
+            updated_at:
+              activityWithRelations.attraction.updated_at.toISOString(),
+          }
         : null,
       related_activities: (activityWithRelations.relatedFrom || []).map(
-        (rel: any) => transformTranslatableFields(rel.related_activity, lang),
+        (rel: any) => ({
+          ...transformTranslatableFields(rel.related_activity, lang),
+          created_at: rel.related_activity.created_at.toISOString(),
+          updated_at: rel.related_activity.updated_at.toISOString(),
+          category: {
+            ...transformTranslatableFields(
+              rel.related_activity.category,
+              lang,
+            ),
+            created_at: rel.related_activity.category.created_at.toISOString(),
+            updated_at: rel.related_activity.category.updated_at.toISOString(),
+          },
+        }),
       ),
     };
   }
@@ -203,12 +247,13 @@ export class ActivitiesService {
       } as any,
     });
 
-    // Convertir les dates en ISO string
     const createdActivity = activity as any;
+    const transformedActivity = transformTranslatableFields(
+      createdActivity,
+      'fr',
+    );
     const result = {
-      ...createdActivity,
-      created_at: createdActivity.created_at.toISOString(),
-      updated_at: createdActivity.updated_at.toISOString(),
+      ...ActivityMapper.toDto(transformedActivity),
       category: {
         ...createdActivity.category,
         created_at: createdActivity.category.created_at.toISOString(),
@@ -325,12 +370,13 @@ export class ActivitiesService {
       } as any,
     });
 
-    // Convertir les dates en ISO string
     const updatedActivityData = updatedActivity as any;
+    const transformedActivity = transformTranslatableFields(
+      updatedActivityData,
+      'fr',
+    );
     const result = {
-      ...updatedActivityData,
-      created_at: updatedActivityData.created_at.toISOString(),
-      updated_at: updatedActivityData.updated_at.toISOString(),
+      ...ActivityMapper.toDto(transformedActivity),
       category: {
         ...updatedActivityData.category,
         created_at: updatedActivityData.category.created_at.toISOString(),

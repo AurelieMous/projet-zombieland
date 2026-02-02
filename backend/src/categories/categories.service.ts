@@ -10,6 +10,7 @@ import {
   transformTranslatableFields,
   type Language,
 } from '../common/translations.util';
+import { CategoryMapper } from './mappers/category.mapper';
 
 @Injectable()
 export class CategoriesService {
@@ -18,9 +19,7 @@ export class CategoriesService {
   private formatCategoryResponse(category: any, lang: Language = 'fr') {
     const transformed = transformTranslatableFields(category, lang);
     return {
-      ...transformed,
-      created_at: category.created_at.toISOString(),
-      updated_at: category.updated_at.toISOString(),
+      ...CategoryMapper.toDto(transformed),
     };
   }
 
@@ -37,7 +36,9 @@ export class CategoriesService {
       },
     });
 
-    return categories.map((category) => this.formatCategoryResponse(category, lang));
+    return categories.map((category) =>
+      this.formatCategoryResponse(category, lang),
+    );
   }
 
   async findOne(id: number, lang: Language = 'fr') {
@@ -73,24 +74,23 @@ export class CategoriesService {
       throw new NotFoundException(`Catégorie avec l'ID ${id} non trouvée`);
     }
 
-    // Transformer les attractions et activités incluses
     const transformedCategory = transformTranslatableFields(category, lang);
     const result: any = {
-      ...this.formatCategoryResponse(transformedCategory, lang),
+      ...CategoryMapper.toDto(transformedCategory),
     };
-    
+
     if (category.attractions && Array.isArray(category.attractions)) {
       result.attractions = category.attractions.map((attraction: any) =>
         transformTranslatableFields(attraction, lang),
       );
     }
-    
+
     if (category.activities && Array.isArray(category.activities)) {
       result.activities = category.activities.map((activity: any) =>
         transformTranslatableFields(activity, lang),
       );
     }
-    
+
     return result;
   }
 
@@ -125,7 +125,7 @@ export class CategoriesService {
       },
     });
 
-    return this.formatCategoryResponse(category);
+    return CategoryMapper.toDto(transformTranslatableFields(category, 'fr'));
   }
 
   async update(id: number, updateCategoryDto: UpdateCategoryDto) {
@@ -162,7 +162,9 @@ export class CategoriesService {
       },
     });
 
-    return this.formatCategoryResponse(updatedCategory);
+    return CategoryMapper.toDto(
+      transformTranslatableFields(updatedCategory, 'fr'),
+    );
   }
 
   async remove(id: number) {

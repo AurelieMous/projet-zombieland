@@ -16,6 +16,7 @@ import { MetricBox } from '../../components/cards/MetricBox';
 import { useTranslation } from 'react-i18next';
 import { ThrillLevel } from '../../components/common/ThrillLevel/ThrillLevel';
 import { ReservationButton } from '../../components/common/Button/ReservationButton';
+import { WaitTime } from '../../components/common/WaitTime/WaitTime';
 import { ActivityCarousel } from '../../components/carousel/ActivityCarousel';
 import { getActivityById, getActivities } from '../../services/activities';
 import { getAttractionById, getAttractions } from '../../services/attractions';
@@ -439,6 +440,12 @@ export const ActivityDetail = () => {
                   >
                     {thrillLevel}/5
                   </Typography>
+                </MetricBox>
+              )}
+
+              {!isRestaurant && (entity as any).wait_time !== undefined && (
+                <MetricBox title={t('activityDetail.sections.waitTime')}>
+                  <WaitTime minutes={(entity as any).wait_time} variant="full" showLabel />
                 </MetricBox>
               )}
 

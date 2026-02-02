@@ -10,10 +10,21 @@ import {
   transformTranslatableArray,
   type Language,
 } from '../common/translations.util';
+import { AttractionMapper } from './mappers/attraction.mapper';
 
 @Injectable()
 export class AttractionsService {
   constructor(private readonly prisma: PrismaService) {}
+
+  /**
+   * Génère un temps d'attente simulé basé sur le thrill_level
+   */
+  private generateWaitTime(thrillLevel: number | null): number {
+    const thrill = thrillLevel ?? 3;
+    const minWait = 5 + (thrill - 1) * 5;
+    const maxWait = Math.floor(25 + (thrill - 1) * 8.75);
+    return Math.floor(Math.random() * (maxWait - minWait + 1)) + minWait;
+  }
 
   async findAll(
     filters?: { search?: string; categoryId?: number },
@@ -49,34 +60,50 @@ export class AttractionsService {
             },
           },
         },
-      },
+      } as any,
       orderBy: {
         created_at: 'desc',
       },
     });
 
-    // Convertir les dates en ISO string et appliquer les traductions
-    return attractions.map((attraction) => {
-      const transformedAttraction = transformTranslatableFields(attraction, lang);
+    return attractions.map((attraction: any) => {
+      const transformedAttraction = transformTranslatableFields(
+        attraction,
+        lang,
+      );
       return {
-        ...transformedAttraction,
-        created_at: attraction.created_at.toISOString(),
-        updated_at: attraction.updated_at.toISOString(),
-        category: transformTranslatableFields(attraction.category, lang),
+        ...AttractionMapper.toDto(transformedAttraction),
+        wait_time: this.generateWaitTime(attraction.thrill_level),
+        category: {
+          ...transformTranslatableFields(attraction.category, lang),
+          created_at: attraction.category.created_at.toISOString(),
+          updated_at: attraction.category.updated_at.toISOString(),
+        },
         images: attraction.images.map((image) => ({
           ...transformTranslatableFields(image, lang),
           created_at: image.created_at.toISOString(),
         })),
-        activities: attraction.activities.map((activity) => ({
+        activities: attraction.activities.map((activity: any) => ({
           ...transformTranslatableFields(activity, lang),
           created_at: activity.created_at.toISOString(),
           updated_at: activity.updated_at.toISOString(),
         })),
         related_attractions: attraction.relatedFrom
-          ? transformTranslatableArray(
-              attraction.relatedFrom.map((rel: any) => rel.related_attraction),
-              lang,
-            )
+          ? attraction.relatedFrom.map((rel: any) => ({
+              ...transformTranslatableFields(rel.related_attraction, lang),
+              created_at: rel.related_attraction.created_at.toISOString(),
+              updated_at: rel.related_attraction.updated_at.toISOString(),
+              category: {
+                ...transformTranslatableFields(
+                  rel.related_attraction.category,
+                  lang,
+                ),
+                created_at:
+                  rel.related_attraction.category.created_at.toISOString(),
+                updated_at:
+                  rel.related_attraction.category.updated_at.toISOString(),
+              },
+            }))
           : [],
       };
     });
@@ -102,20 +129,25 @@ export class AttractionsService {
             },
           },
         },
-      },
+      } as any,
     });
 
     if (!attraction) {
       throw new NotFoundException(`Attraction avec l'ID ${id} non trouvée`);
     }
 
-    // Convertir les dates en ISO string et appliquer les traductions
-    const transformedAttraction = transformTranslatableFields(attraction, lang);
+    const transformedAttraction = transformTranslatableFields(
+      attraction as any,
+      lang,
+    );
     return {
-      ...transformedAttraction,
-      created_at: attraction.created_at.toISOString(),
-      updated_at: attraction.updated_at.toISOString(),
-      category: transformTranslatableFields(attraction.category, lang),
+      ...AttractionMapper.toDto(transformedAttraction),
+      wait_time: this.generateWaitTime((attraction as any).thrill_level),
+      category: {
+        ...transformTranslatableFields((attraction as any).category, lang),
+        created_at: attraction.category.created_at.toISOString(),
+        updated_at: attraction.category.updated_at.toISOString(),
+      },
       images: attraction.images.map((image) => ({
         ...transformTranslatableFields(image, lang),
         created_at: image.created_at.toISOString(),
@@ -125,10 +157,18 @@ export class AttractionsService {
         created_at: activity.created_at.toISOString(),
         updated_at: activity.updated_at.toISOString(),
       })),
-      related_attractions: transformTranslatableArray(
-        (attraction.relatedFrom || []).map((rel: any) => rel.related_attraction),
-        lang,
-      ),
+      related_attractions: (attraction.relatedFrom || []).map((rel: any) => ({
+        ...transformTranslatableFields(rel.related_attraction, lang),
+        created_at: rel.related_attraction.created_at.toISOString(),
+        updated_at: rel.related_attraction.updated_at.toISOString(),
+        category: {
+          ...transformTranslatableFields(rel.related_attraction.category, lang),
+          created_at:
+            rel.related_attraction.category.created_at.toISOString(),
+          updated_at:
+            rel.related_attraction.category.updated_at.toISOString(),
+        },
+      })),
     };
   }
 
@@ -187,32 +227,46 @@ export class AttractionsService {
             },
           },
         },
-      },
+      } as any,
     });
 
-    // Convertir les dates en ISO string
+    const attractionData = attraction as any;
+    const transformedAttraction = transformTranslatableFields(
+      attractionData,
+      'fr',
+    );
     return {
-      ...attraction,
-      created_at: attraction.created_at.toISOString(),
-      updated_at: attraction.updated_at.toISOString(),
+      ...AttractionMapper.toDto(transformedAttraction),
       category: {
-        ...attraction.category,
-        created_at: attraction.category.created_at.toISOString(),
-        updated_at: attraction.category.updated_at.toISOString(),
+        ...transformTranslatableFields(attractionData.category, 'fr'),
+        created_at: attractionData.category.created_at.toISOString(),
+        updated_at: attractionData.category.updated_at.toISOString(),
       },
-      images: attraction.images.map((image) => ({
-        ...image,
+      images: attractionData.images.map((image: any) => ({
+        ...transformTranslatableFields(image, 'fr'),
         created_at: image.created_at.toISOString(),
       })),
-      activities: attraction.activities.map((activity) => ({
-        ...activity,
+      activities: attractionData.activities.map((activity: any) => ({
+        ...transformTranslatableFields(activity, 'fr'),
         created_at: activity.created_at.toISOString(),
         updated_at: activity.updated_at.toISOString(),
       })),
-      related_attractions: (attraction.relatedFrom || []).map((rel: any) => ({
-        ...rel.related_attraction,
+      related_attractions: (attractionData.relatedFrom || []).map((rel: any) => ({
+        ...transformTranslatableFields(rel.related_attraction, 'fr'),
         created_at: rel.related_attraction.created_at.toISOString(),
         updated_at: rel.related_attraction.updated_at.toISOString(),
+        category: rel.related_attraction.category
+          ? {
+              ...transformTranslatableFields(
+                rel.related_attraction.category,
+                'fr',
+              ),
+              created_at:
+                rel.related_attraction.category.created_at.toISOString(),
+              updated_at:
+                rel.related_attraction.category.updated_at.toISOString(),
+            }
+          : undefined,
       })),
     };
   }
@@ -288,32 +342,46 @@ export class AttractionsService {
             },
           },
         },
-      },
+      } as any,
     });
 
-    // Convertir les dates en ISO string
+    const updatedData = updatedAttraction as any;
+    const transformedAttraction = transformTranslatableFields(
+      updatedData,
+      'fr',
+    );
     return {
-      ...updatedAttraction,
-      created_at: updatedAttraction.created_at.toISOString(),
-      updated_at: updatedAttraction.updated_at.toISOString(),
+      ...AttractionMapper.toDto(transformedAttraction),
       category: {
-        ...updatedAttraction.category,
-        created_at: updatedAttraction.category.created_at.toISOString(),
-        updated_at: updatedAttraction.category.updated_at.toISOString(),
+        ...transformTranslatableFields(updatedData.category, 'fr'),
+        created_at: updatedData.category.created_at.toISOString(),
+        updated_at: updatedData.category.updated_at.toISOString(),
       },
-      images: updatedAttraction.images.map((image) => ({
-        ...image,
+      images: updatedData.images.map((image: any) => ({
+        ...transformTranslatableFields(image, 'fr'),
         created_at: image.created_at.toISOString(),
       })),
-      activities: updatedAttraction.activities.map((activity) => ({
-        ...activity,
+      activities: updatedData.activities.map((activity: any) => ({
+        ...transformTranslatableFields(activity, 'fr'),
         created_at: activity.created_at.toISOString(),
         updated_at: activity.updated_at.toISOString(),
       })),
-      related_attractions: (updatedAttraction.relatedFrom || []).map((rel: any) => ({
-        ...rel.related_attraction,
+      related_attractions: (updatedData.relatedFrom || []).map((rel: any) => ({
+        ...transformTranslatableFields(rel.related_attraction, 'fr'),
         created_at: rel.related_attraction.created_at.toISOString(),
         updated_at: rel.related_attraction.updated_at.toISOString(),
+        category: rel.related_attraction.category
+          ? {
+              ...transformTranslatableFields(
+                rel.related_attraction.category,
+                'fr',
+              ),
+              created_at:
+                rel.related_attraction.category.created_at.toISOString(),
+              updated_at:
+                rel.related_attraction.category.updated_at.toISOString(),
+            }
+          : undefined,
       })),
     };
   }

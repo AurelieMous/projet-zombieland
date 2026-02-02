@@ -10,22 +10,16 @@ import {
   transformTranslatableFields,
   type Language,
 } from '../common/translations.util';
+import { PriceMapper } from './mappers/price.mapper';
 
 @Injectable()
 export class PricesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  /**
-   * Helper DRY : Formate la réponse d'un tarif
-   * Convertit les dates en ISO et amount (Decimal) en number
-   */
   private formatPriceResponse(price: any, lang: Language = 'fr') {
     const transformed = transformTranslatableFields(price, lang);
     return {
-      ...transformed,
-      amount: parseFloat(price.amount.toString()),
-      created_at: price.created_at.toISOString(),
-      updated_at: price.updated_at.toISOString(),
+      ...PriceMapper.toDto(transformed),
     };
   }
 
@@ -132,7 +126,7 @@ export class PricesService {
       },
     });
 
-    return this.formatPriceResponse(price);
+    return PriceMapper.toDto(transformTranslatableFields(price, 'fr'));
   }
 
   async update(id: number, updatePriceDto: UpdatePriceDto) {
@@ -160,7 +154,9 @@ export class PricesService {
       data: updatePriceDto,
     });
 
-    return this.formatPriceResponse(updatedPrice);
+    return PriceMapper.toDto(
+      transformTranslatableFields(updatedPrice, 'fr'),
+    );
   }
 
   async remove(id: number) {

@@ -3,6 +3,7 @@ import { styled } from '@mui/material/styles';
 import { colors } from '../../../theme';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { WaitTime } from '../../common/WaitTime/WaitTime';
 
 const StyledActivityCard = styled(Card)(({ theme }) => ({
   backgroundColor: colors.secondaryDark,
@@ -39,6 +40,7 @@ interface ActivityCardPublicProps {
   description?: string;
   isAttraction?: boolean;
   isRestaurant?: boolean;
+  waitTime?: number;
 }
 
 export const ActivityCardPublic = ({
@@ -51,6 +53,7 @@ export const ActivityCardPublic = ({
   description,
   isAttraction = false,
   isRestaurant = false,
+  waitTime,
 }: ActivityCardPublicProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -145,6 +148,9 @@ export const ActivityCardPublic = ({
                 fontSize: '0.75rem',
               }}
             />
+          )}
+          {waitTime !== undefined && !isRestaurant && (
+            <WaitTime minutes={waitTime} variant="chip" />
           )}
         </Stack>
       </CardContent>

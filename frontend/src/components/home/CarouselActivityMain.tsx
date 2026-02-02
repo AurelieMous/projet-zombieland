@@ -44,6 +44,7 @@ export default function CarouselActivityMain(){
                         name={activity.name}
                         category={activity.category?.name || t("home.carousel.activityFallback")}
                         image={activityImage}
+                        waitTime={activity.wait_time}
                     />
                 );
             });
@@ -61,6 +62,7 @@ export default function CarouselActivityMain(){
                         category={attraction.category?.name || t("home.carousel.attractionFallback")}
                         image={image}
                         type="attraction"
+                        waitTime={attraction.wait_time}
                     />
                 );
             });

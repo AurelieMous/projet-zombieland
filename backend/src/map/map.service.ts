@@ -11,6 +11,16 @@ export class MapService {
   constructor(private prisma: PrismaService) {}
 
   /**
+   * Génère un temps d'attente simulé basé sur le thrill_level
+   */
+  private generateWaitTime(thrillLevel: number | null): number {
+    const thrill = thrillLevel ?? 3;
+    const minWait = 5 + (thrill - 1) * 5;
+    const maxWait = Math.floor(25 + (thrill - 1) * 8.75);
+    return Math.floor(Math.random() * (maxWait - minWait + 1)) + minWait;
+  }
+
+  /**
    * Récupère tous les points de la carte (attractions, activités, POI)
    */
   async getAllMapPoints(lang: Language = 'fr') {
@@ -53,12 +63,23 @@ export class MapService {
       }),
     ]);
 
+    // Ajouter wait_time simulé aux attractions et activités
+    const attractionsWithWaitTime = attractions.map((attraction) => ({
+      ...attraction,
+      wait_time: this.generateWaitTime(attraction.thrill_level),
+    }));
+
+    const activitiesWithWaitTime = activities.map((activity) => ({
+      ...activity,
+      wait_time: this.generateWaitTime(activity.thrill_level),
+    }));
+
     return {
-      attractions: attractions.map((attraction) => ({
+      attractions: attractionsWithWaitTime.map((attraction) => ({
         ...transformTranslatableFields(attraction, lang),
         category: transformTranslatableFields(attraction.category, lang),
       })),
-      activities: activities.map((activity) => ({
+      activities: activitiesWithWaitTime.map((activity) => ({
         ...transformTranslatableFields(activity, lang),
         category: transformTranslatableFields(activity.category, lang),
       })),

@@ -1,0 +1,203 @@
+import {BadRequestException, ForbiddenException, Injectable, NotFoundException} from '@nestjs/common';
+import {ConversationStatus} from 'src/generated';
+import {PrismaService} from "../prisma/prisma.service";
+
+@Injectable()
+export class ConversationService {
+  constructor(private prisma: PrismaService) {}
+
+  /**
+   * Créer une nouvelle conversation entre un user et un admin
+   * @param userId - ID de l'utilisateur (CLIENT)
+   * @param adminId - ID de l'admin
+   */
+  async create(userId: number, adminId: number) {
+    // Vérifier que l'admin existe et est bien un ADMIN
+    const admin = await this.prisma.user.findUnique({
+      where: { id: adminId },
+    });
+
+    if (!admin) {
+      throw new NotFoundException('Admin non trouvé');
+    }
+
+    if (admin.role !== 'ADMIN') {
+      throw new BadRequestException('Le destinataire doit être un administrateur');
+    }
+
+    // Vérifier qu'une conversation active n'existe pas déjà
+    const existingConversation = await this.prisma.conversation.findFirst({
+      where: {
+        user_id: userId,
+        admin_id: adminId,
+        status: {
+          not: ConversationStatus.Closed,
+        },
+      },
+    });
+
+    if (existingConversation) {
+      return existingConversation;
+    }
+
+    // Créer la nouvelle conversation
+    return this.prisma.conversation.create({
+      data: {
+        user_id: userId,
+        admin_id: adminId,
+        status: ConversationStatus.Open,
+      },
+      include: {
+        user: {
+          select: {id: true, pseudo: true, role: true, email: true},
+        },
+        admin: {
+          select: {id: true, pseudo: true, role: true, email: true},
+        },
+      },
+    });
+  }
+
+  /**
+   * Récupérer une conversation par son ID
+   * @param conversationId - ID de la conversation
+   */
+  async findOne(conversationId: number) {
+    const conversation = await this.prisma.conversation.findUnique({
+      where: { id: conversationId },
+      include: {
+        user: {
+          select: { id: true, pseudo: true, role: true, email: true },
+        },
+        admin: {
+          select: { id: true, pseudo: true, role: true, email: true },
+        },
+        messages: {
+          orderBy: { created_at: 'desc' },
+          take: 1, // Dernier message pour preview
+          select: {
+            id: true,
+            content: true,
+            created_at: true,
+            is_read: true,
+          },
+        },
+      },
+    });
+
+    if (!conversation) {
+      throw new NotFoundException('Conversation non trouvée');
+    }
+
+    return conversation;
+  }
+
+  /**
+   * Récupérer toutes les conversations d'un utilisateur
+   * @param userId - ID de l'utilisateur
+   * @param userRole - Rôle de l'utilisateur
+   */
+  async findByUser(userId: number, userRole: string) {
+    const where = userRole === 'ADMIN'
+        ? {
+          OR: [
+            { admin_id: userId }, // Conversations assignées
+            { status: ConversationStatus.Open }, // Conversations en attente
+          ],
+        }
+        : { user_id: userId }; // Conversations du client
+
+    return this.prisma.conversation.findMany({
+      where,
+      include: {
+        user: {
+          select: {id: true, pseudo: true, role: true, email: true},
+        },
+        admin: {
+          select: {id: true, pseudo: true, role: true, email: true},
+        },
+        messages: {
+          orderBy: {created_at: 'desc'},
+          take: 1, // Dernier message
+          select: {
+            id: true,
+            content: true,
+            created_at: true,
+            is_read: true,
+          },
+        },
+        _count: {
+          select: {
+            messages: {
+              where: {
+                is_read: false,
+                sender_id: {not: userId}, // Messages non lus des autres
+              },
+            },
+          },
+        },
+      },
+      orderBy: {updated_at: 'desc'},
+    });
+  }
+
+  /**
+   * Vérifier si un utilisateur a accès à une conversation
+   */
+  async userHasAccess(userId: number, conversationId: number): Promise<boolean> {
+    const conversation = await this.prisma.conversation.findFirst({
+      where: {
+        id: conversationId,
+        OR: [
+          { user_id: userId },
+          { admin_id: userId },
+        ],
+      },
+    });
+
+    return conversation !== null;
+  }
+
+  /**
+   * Mettre à jour le statut d'une conversation (ADMIN uniquement)
+   * @param conversationId - ID de la conversation
+   * @param status - Nouveau statut
+   * @param adminId - ID de l'admin qui effectue l'action
+   */
+  async updateStatus(
+      conversationId: number,
+      status: ConversationStatus,
+      adminId: number,
+  ) {
+    const conversation = await this.findOne(conversationId);
+
+    // Vérifier que l'admin a accès à cette conversation
+    if (conversation.admin_id !== adminId) {
+      throw new ForbiddenException('Vous n\'avez pas accès à cette conversation');
+    }
+
+    return this.prisma.conversation.update({
+      where: {id: conversationId},
+      data: {status},
+      include: {
+        user: {
+          select: {id: true, pseudo: true, role: true},
+        },
+        admin: {
+          select: {id: true, pseudo: true, role: true},
+        },
+      },
+    });
+  }
+
+  /**
+   * Mettre à jour le timestamp updated_at de la conversation
+   */
+  async touch(conversationId: number) {
+    await this.prisma.conversation.update({
+      where: { id: conversationId },
+      data: { updated_at: new Date() },
+    });
+  }
+}
+
