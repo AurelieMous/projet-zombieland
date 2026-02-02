@@ -24,27 +24,27 @@ export class MessageService {
   // message.service.ts - Modifier la méthode create
 
   async create(createMessageDto: CreateMessageDto, userId: number) {
-    const { conversationId, recipientId, content, object } = createMessageDto;
+    const { conversation_id, recipient_id, content, object } = createMessageDto;
 
     let finalConversationId: number;
 
     // CAS 1 : Conversation existante
-    if (conversationId) {
+    if (conversation_id) {
       const hasAccess = await this.conversationService.userHasAccess(
           userId,
-          conversationId,
+          conversation_id,
       );
 
       if (!hasAccess) {
         throw new ForbiddenException('Vous ne faites pas partie de cette conversation');
       }
 
-      const openConversation = await this.conversationService.findOne(conversationId);
+      const openConversation = await this.conversationService.findOne(conversation_id);
       if(openConversation.status !== 'OPEN'){
         throw new ForbiddenException('Vous ne pouvez pas créer de nouveau message sur une conversation clôturée.');
       }
 
-      finalConversationId = conversationId;
+      finalConversationId = conversation_id;
     }
     // CAS 2 : Nouvelle conversation (avec ou sans recipientId)
     else {
@@ -56,7 +56,7 @@ export class MessageService {
       // Si recipientId est null/undefined, un admin sera assigné automatiquement
       const conversation = await this.conversationService.create(
           userId,
-          recipientId ?? null, // null si non fourni = auto-assignation
+          recipient_id ?? null, // null si non fourni = auto-assignation
           object
       );
       finalConversationId = conversation.id;

@@ -194,6 +194,38 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
 
+    delete:
+      tags:
+        - Auth
+      summary: Supprimer son propre compte
+      description: Permet à l'utilisateur connecté de supprimer définitivement son compte
+      operationId: deleteOwnAccount
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Compte supprimé avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Compte supprimé avec succès"
+        '401':
+          description: Non authentifié
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+        '500':
+          description: Erreur serveur
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+
   # ===== USERS =====
   /users:
     get:
@@ -1997,7 +2029,7 @@ paths:
             schema:
               type: object
               required:
-                - isRead
+                - is_read
               properties:
                 isRead:
                   type: boolean
@@ -2082,61 +2114,31 @@ paths:
                     type: string
                     example: "Message supprimé avec succès"
                   data:
-                    $ref: '#/components/schemas/Message'
+                    $ref: '#/components/schemas/MessageDto'
         '400':
           description: Requête invalide
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  statusCode:
-                    type: integer
-                    example: 400
-                  message:
-                    type: string
-                    example: "Ce message est déjà supprimé"
-                  error:
-                    type: string
-                    example: "Bad Request"
+                $ref: '#/components/schemas/ErrorDto'
         '401':
           description: Non authentifié
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UnauthorizedError'
+                $ref: '#/components/schemas/ErrorDto'
         '403':
           description: Accès refusé - Vous ne pouvez supprimer que vos propres messages
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  statusCode:
-                    type: integer
-                    example: 403
-                  message:
-                    type: string
-                    example: "Vous ne pouvez supprimer que vos propres messages"
-                  error:
-                    type: string
-                    example: "Forbidden"
+                $ref: '#/components/schemas/ErrorDto'
         '404':
           description: Message introuvable
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  statusCode:
-                    type: integer
-                    example: 404
-                  message:
-                    type: string
-                    example: "Message avec l'ID 42 introuvable"
-                  error:
-                    type: string
-                    example: "Not Found"
+                $ref: '#/components/schemas/ErrorDto'
 
 
   # ===== CONVERSATIONS =====
@@ -3087,7 +3089,7 @@ components:
           nullable: true
           example: 1
           description: ID de la conversation existante (optionnel si recipientId fourni)
-        recipientId:
+        recipient_id:
           type: integer
           nullable: true
           example: 2
