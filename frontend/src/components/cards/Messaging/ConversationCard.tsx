@@ -42,50 +42,23 @@ interface ConversationCardProps {
 export default function ConversationCard({conversation}: ConversationCardProps) {
 
     const navigate = useNavigate()
-    const {userId} = useContext(LoginContext)
+    const {userId, role} = useContext(LoginContext)
 
     const handleCardClick = () => {
         navigate(`/messagerie/${conversation.id}`)
     };
 
-    /*const unreadCount = conversation.messages?.filter(
-        (message) =>
-            !message.is_read &&
-            message.sender?.id &&
-            message.sender.id !== userId
-    ).length || 0;*/
-
     const unreadCount = (() => {
-        console.log('=== DEBUG CONVERSATION ===');
-        console.log('Conversation ID:', conversation.id);
-        console.log('Total messages:', conversation.messages?.length);
-        console.log('User ID (moi):', userId);
-
         const filtered = conversation.messages?.filter((message) => {
-            console.log('---');
-            console.log('Message ID:', message.id);
-            console.log('is_read:', message.is_read);
-            console.log('sender:', message.sender);
-            console.log('sender.id:', message.sender?.id);
-            console.log('userId:', userId);
 
             const isUnread = !message.is_read;
             const hasSender = message.sender?.id;
-            const isNotMyMessage = message.sender?.id !== userId; // ✅ CORRECTION ICI
-
-            console.log('isUnread:', isUnread);
-            console.log('hasSender:', hasSender);
-            console.log('isNotMyMessage (devrait être true pour compter):', isNotMyMessage);
+            const isNotMyMessage = message.sender?.id !== userId;
 
             const shouldCount = isUnread && hasSender && isNotMyMessage;
-            console.log('shouldCount:', shouldCount);
 
             return shouldCount;
         }) || [];
-
-        console.log('Messages filtrés (non lus reçus):', filtered);
-        console.log('Nombre total de messages non lus:', filtered.length);
-        console.log('=========================');
 
         return filtered.length;
     })();
@@ -163,6 +136,13 @@ export default function ConversationCard({conversation}: ConversationCardProps) 
                                 <Typography variant="body1" sx={{ color: colors.white, fontWeight: 600 }}>
                                     Dernière mise à jour le {formatDay(conversation.created_at)}
                                 </Typography>
+                            </Box>
+                            <Box>
+                                { role === 'ADMIN' && (
+                                    <Typography variant="overline" sx={{ color: colors.secondaryRed, fontWeight: 600}}>
+                                        Conversation avec {conversation.user.pseudo}
+                                    </Typography>
+                                )}
                             </Box>
                         </Stack>
                     </Stack>

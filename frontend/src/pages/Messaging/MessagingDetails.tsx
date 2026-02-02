@@ -11,6 +11,7 @@ import {styled} from "@mui/material/styles";
 import SendIcon from '@mui/icons-material/Send';
 import {createMessage, markMessageAsRead} from "../../services/messages.ts";
 import {toast} from "react-toastify";
+import * as React from "react";
 
 const BoxMessageStyle = styled(Box)(({ theme }) => ({
     backgroundColor: colors.secondaryDarkAlt,
@@ -51,13 +52,13 @@ export default function MessagingDetails() {
     const [newMessage, setNewMessage] = useState<string>("");
     const [sending, setSending] = useState<boolean>(false);
     const [updateError, setUpdateError] = useState<string | null>(null);
+    const [readingError, setReadingError] = useState<string | null>(null);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     const fetchConversation = async (id: number) => {
         setLoading(true);
         try {
             const response = await getOneConversation(id);
-            console.log(response);
             setConversation(response);
 
             // Marquer tous les messages comme lu
@@ -67,15 +68,16 @@ export default function MessagingDetails() {
 
             if(unreadMessages.length > 0) {
                 // Marquer chaque message non lu en parallèle
-                await Promise.all(unreadMessages.map(
+                await Promise.all(
                     unreadMessages.map((msg: Message) =>
                         markMessageAsRead(msg.id).catch(err =>
-                            console.error(`Impossible de marquer le message ${msg.id} comme lu : ${err}`))
+                            setReadingError(`Impossible de marquer le message ${msg.id} comme lu : ${err}`)
+                        )
                     )
-                ));
+                );
             }
         } catch (error) {
-            setError(`Une erreur est survenue : ${error}`);
+            setError(`Une erreur est survenue lors de la récupération des données : ${error}`);
         } finally {
             setLoading(false);
         }
@@ -223,7 +225,7 @@ export default function MessagingDetails() {
                     >
                         {error && (
                             <Alert severity="error" sx={{ mb: 2 }}>
-                                {error}
+                                Update ? {error}
                             </Alert>
                         )}
 
@@ -243,7 +245,7 @@ export default function MessagingDetails() {
                                                     justifyContent: isOwnMessage ? 'flex-end' : 'flex-start',
                                                 }}
                                             >
-                                                <MessageCard message={message} isOwn={isOwnMessage} />
+                                                <MessageCard message={message} isOwn={isOwnMessage} readingError={readingError}/>
                                             </Box>
                                         );
                                     })}
@@ -258,7 +260,7 @@ export default function MessagingDetails() {
                             </Alert>
                         )}
 
-                        <Stack direction="row" spacing={2} alignItems="center" sx={{ mt: 2 }}>
+                        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems="center" sx={{ mt: 2 }}>
                             <TextField
                                 multiline
                                 rows={2}
@@ -266,6 +268,12 @@ export default function MessagingDetails() {
                                 variant="outlined"
                                 value={newMessage}
                                 onChange={(e) => setNewMessage(e.target.value)}
+                                onKeyDown={(e : React.KeyboardEvent<HTMLDivElement>) => {
+                                    if (e.key == 'Enter' && !e.shiftKey){
+                                        e.preventDefault();
+                                        handleSubmit();
+                                    }
+                                }}
                                 fullWidth
                                 disabled={conversation?.status !== 'OPEN'}
                                 sx={{
@@ -290,13 +298,14 @@ export default function MessagingDetails() {
                                     endIcon={<SendIcon />}
                                     onClick={handleSubmit}
                                     disabled={!newMessage.trim() || sending}
+
                                     sx={{
                                         backgroundColor: colors.primaryGreen,
                                         color: colors.white,
                                         '&:hover': {
                                             backgroundColor: colors.primaryRed,
                                         },
-                                        minWidth: '120px',
+                                        minWidth: { xs: '100%', sm: '120px' },
                                         whiteSpace: 'nowrap',
                                     }}
                                 >

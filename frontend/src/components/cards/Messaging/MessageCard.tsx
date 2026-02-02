@@ -1,13 +1,14 @@
 import type {Message} from "../../../@types/messaging";
-import {Box, Chip, Typography} from "@mui/material";
+import {Alert, Box, Chip, Typography} from "@mui/material";
 import {colors} from "../../../theme";
 
 interface MessageCardProps {
     message: Message;
     isOwn?: boolean;
+    readingError: string | null;
 }
 
-export default function MessageCard({message, isOwn}: MessageCardProps) {
+export default function MessageCard({message, isOwn, readingError}: MessageCardProps) {
     return(
         <Box
             sx={{
@@ -25,6 +26,7 @@ export default function MessageCard({message, isOwn}: MessageCardProps) {
             <Typography variant="caption" sx={{ color: colors.secondaryGrey, mt: 1 }}>
                 {message.sender.pseudo} - {new Date(message.created_at).toLocaleString('fr-FR')}
             </Typography>
+            {readingError && (<Alert severity="error" sx={{ mt: 2 }}>{readingError}</Alert>)}
             {!message.is_read && (
                 <Chip
                     label="Non lu"
@@ -38,6 +40,7 @@ export default function MessageCard({message, isOwn}: MessageCardProps) {
                         '& .MuiChip-label': {
                             px: 1,
                         },
+                        ml: 1
                     }}
                 />
             )}
