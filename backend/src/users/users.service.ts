@@ -76,7 +76,7 @@ export class UsersService {
     return UserMapper.toDto(user);
   }
 
-  async update(id: number, updateData: { pseudo?: string; email?: string; role?: 'ADMIN' | 'CLIENT' }, modifiedById: number) {
+  async update(id: number, updateData: { pseudo?: string; email?: string; role?: 'ADMIN' | 'CLIENT'; is_active?: boolean }, modifiedById: number) {
     const user = await this.prisma.user.findUnique({
       where: { id },
     });
@@ -143,6 +143,16 @@ export class UsersService {
         field_name: 'role',
         old_value: JSON.stringify(user.role),
         new_value: JSON.stringify(updateData.role),
+      });
+    }
+
+    if (updateData.is_active !== undefined && updateData.is_active !== user.is_active) {
+      auditLogs.push({
+        modified_by_id: modifiedById,
+        action: updateData.is_active ? 'ACTIVATE' : 'DEACTIVATE',
+        field_name: 'is_active',
+        old_value: JSON.stringify(user.is_active),
+        new_value: JSON.stringify(updateData.is_active),
       });
     }
 

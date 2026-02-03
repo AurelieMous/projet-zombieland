@@ -247,6 +247,11 @@ paths:
           schema:
             type: integer
             default: 20
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: Recherche par pseudo ou email
         - name: email
           in: query
           schema:
@@ -338,6 +343,64 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorDto'
     
+    patch:
+      tags:
+        - Users
+      summary: Modifier un utilisateur (ADMIN)
+      description: Permet à un admin de modifier le pseudo, email, role ou statut actif d'un utilisateur. Enregistre les modifications dans l'audit log.
+      operationId: updateUser
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserDto'
+      responses:
+        '200':
+          description: Utilisateur modifié avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        '400':
+          description: Données invalides ou email/pseudo déjà utilisé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+        '401':
+          description: Non authentifié
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+        '403':
+          description: Accès interdit
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+        '404':
+          description: Utilisateur non trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+        '500':
+          description: Erreur serveur
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+    
     delete:
       tags:
         - Users
@@ -402,6 +465,55 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ReservationDto'
+        '401':
+          description: Non authentifié
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+        '403':
+          description: Accès interdit
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+        '404':
+          description: Utilisateur non trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+        '500':
+          description: Erreur serveur
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDto'
+
+  /users/{id}/audit-logs:
+    get:
+      tags:
+        - Users
+      summary: Historique des modifications d'un utilisateur (ADMIN)
+      description: Récupère l'historique complet des modifications effectuées sur un utilisateur (pseudo, email, role, is_active) avec les détails de l'admin ayant effectué chaque modification
+      operationId: getUserAuditLogs
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Historique des modifications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserAuditLogDto'
         '401':
           description: Non authentifié
           content:
@@ -2362,6 +2474,10 @@ components:
           example: JeanZ
         role:
           $ref: '#/components/schemas/Role'
+        is_active:
+          type: boolean
+          example: true
+          description: Indique si le compte utilisateur est actif
         created_at:
           type: string
           format: date-time
@@ -2679,6 +2795,43 @@ components:
           type: boolean
           example: false
 
+    UserAuditLogDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        user_id:
+          type: integer
+          example: 5
+        modified_by_id:
+          type: integer
+          example: 2
+        action:
+          type: string
+          example: UPDATE
+          description: Type d'action (UPDATE, DELETE, ACTIVATE, DEACTIVATE)
+        field_name:
+          type: string
+          nullable: true
+          example: email
+          description: Nom du champ modifié (pseudo, email, role, is_active)
+        old_value:
+          type: string
+          nullable: true
+          example: '"old@email.com"'
+          description: Ancienne valeur (JSON stringifié)
+        new_value:
+          type: string
+          nullable: true
+          example: '"new@email.com"'
+          description: Nouvelle valeur (JSON stringifié)
+        modified_by:
+          $ref: '#/components/schemas/UserDto'
+        created_at:
+          type: string
+          format: date-time
+
     # ===== REQUEST DTOs (INPUT) =====
     RegisterDto:
       type: object
@@ -2732,6 +2885,25 @@ components:
           type: string
           format: password
           minLength: 8
+
+    UpdateUserDto:
+      type: object
+      properties:
+        pseudo:
+          type: string
+          minLength: 3
+          maxLength: 20
+          example: NewPseudo
+        email:
+          type: string
+          format: email
+          example: newemail@zombieland.com
+        role:
+          $ref: '#/components/schemas/Role'
+        is_active:
+          type: boolean
+          example: true
+          description: Active ou désactive le compte utilisateur
 
     CreateCategoryDto:
       type: object

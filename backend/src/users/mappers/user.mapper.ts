@@ -22,6 +22,7 @@ export class UserMapper {
       email: user.email,
       pseudo: user.pseudo,
       role: user.role,
+      is_active: user.is_active,
       created_at: user.created_at.toISOString(),
       updated_at: user.updated_at.toISOString(),
       // ⚠️ Le champ 'password' est VOLONTAIREMENT EXCLU
