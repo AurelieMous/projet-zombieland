@@ -7,13 +7,16 @@ import {
   Param,
   Delete,
   ParseIntPipe,
-  UseGuards, Query,
+  UseGuards,
+  Query,
+  Headers,
 } from '@nestjs/common';
 import { PricesService } from './prices.service';
 import type { CreatePriceDto, UpdatePriceDto } from 'src/generated';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { getLanguageFromRequest } from '../common/translations.util';
 
 @Controller('prices')
 export class PricesController {
@@ -21,13 +24,16 @@ export class PricesController {
 
   @Get()
   findAll(
-      @Query('priceType') priceType?: string,
-      @Query('page') page?: string,
-      @Query('limit') limit?: string,
-      @Query('sortBy') sortBy?: string,
-      @Query('amount') amount?: string,
+    @Query('priceType') priceType?: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('sortBy') sortBy?: string,
+    @Query('amount') amount?: string,
+    @Query('lang') lang?: string,
+    @Headers('accept-language') acceptLanguage?: string,
   ) {
     const filters: any = {};
+    const language = getLanguageFromRequest(acceptLanguage, lang);
 
     if (priceType) {
       filters.priceType = priceType;
@@ -49,12 +55,17 @@ export class PricesController {
       filters.amount = parseFloat(amount);
     }
 
-    return this.pricesService.findAll(filters);
+    return this.pricesService.findAll(filters, language);
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.pricesService.findOne(id);
+  findOne(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('lang') lang?: string,
+    @Headers('accept-language') acceptLanguage?: string,
+  ) {
+    const language = getLanguageFromRequest(acceptLanguage, lang);
+    return this.pricesService.findOne(id, language);
   }
 
   @Post()

@@ -2,6 +2,8 @@ import { Box, Card, CardContent, Chip, Stack, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { colors } from '../../../theme';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { WaitTime } from '../../common/WaitTime/WaitTime';
 
 const StyledActivityCard = styled(Card)(({ theme }) => ({
   backgroundColor: colors.secondaryDark,
@@ -38,6 +40,7 @@ interface ActivityCardPublicProps {
   description?: string;
   isAttraction?: boolean;
   isRestaurant?: boolean;
+  waitTime?: number;
 }
 
 export const ActivityCardPublic = ({
@@ -50,7 +53,9 @@ export const ActivityCardPublic = ({
   description,
   isAttraction = false,
   isRestaurant = false,
+  waitTime,
 }: ActivityCardPublicProps) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const handleCardClick = () => {
@@ -124,7 +129,7 @@ export const ActivityCardPublic = ({
         <Stack direction="row" spacing={1} sx={{ mb: 2, flexWrap: 'wrap', gap: 1 }}>
           {thrill !== undefined && !isRestaurant && (
             <Chip
-              label={`Frisson: ${thrill}/5`}
+              label={`${t('cards.thrill')}: ${thrill}/5`}
               size="small"
               sx={{
                 backgroundColor: colors.secondaryDarkAlt,
@@ -143,6 +148,9 @@ export const ActivityCardPublic = ({
                 fontSize: '0.75rem',
               }}
             />
+          )}
+          {waitTime !== undefined && !isRestaurant && (
+            <WaitTime minutes={waitTime} variant="chip" />
           )}
         </Stack>
       </CardContent>

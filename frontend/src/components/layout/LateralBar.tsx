@@ -5,8 +5,15 @@ import EmailIcon from '@mui/icons-material/Email';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import XIcon from '@mui/icons-material/X';
 import InstagramIcon from '@mui/icons-material/Instagram';
+import { useTranslation } from "react-i18next";
+import { colors } from "../../theme";
+import {useNavigate} from "react-router";
 
 export default function LateralBar() {
+    const { i18n } = useTranslation();
+    const currentLang = i18n.language?.split('-')[0] || 'fr';
+    const navigate = useNavigate();
+
     return (
         <AppBar
             position="fixed"
@@ -39,31 +46,74 @@ export default function LateralBar() {
                         zIndex: 2,
                     }}
                 />
-                <Box>
-                    <Typography component="h5" textAlign={"center"}>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        gap: 0.5,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        mt: 1,
+                    }}
+                >
+                    <Typography
+                        component="button"
+                        onClick={() => i18n.changeLanguage('fr')}
+                        sx={{
+                            border: 'none',
+                            background: 'none',
+                            cursor: 'pointer',
+                            fontWeight: currentLang === 'fr' ? 'bold' : 'normal',
+                            color: currentLang === 'fr' ? colors.primaryGreen : 'grey',
+                            transition: 'all 0.2s',
+                            font: 'inherit',
+                            padding: 0,
+                            '&:hover': { color: colors.primaryGreen },
+                        }}
+                    >
                         FR
+                    </Typography>
+                    <Typography component="span" sx={{ color: 'grey' }}>|</Typography>
+                    <Typography
+                        component="button"
+                        onClick={() => i18n.changeLanguage('en')}
+                        sx={{
+                            border: 'none',
+                            background: 'none',
+                            cursor: 'pointer',
+                            fontWeight: currentLang === 'en' ? 'bold' : 'normal',
+                            color: currentLang === 'en' ? colors.primaryGreen : 'grey',
+                            transition: 'all 0.2s',
+                            font: 'inherit',
+                            padding: 0,
+                            '&:hover': { color: colors.primaryGreen },
+                        }}
+                    >
+                        EN
                     </Typography>
                 </Box>
             </Box>
 
             {/* Icones des réseaux sociaux */}
             <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 2}}>
-                <IconButton sx={{ color: 'white' }}>
+                <IconButton sx={{ color: 'white' }} onClick={() => window.open('https://youtube.com/', '_blank', 'noopener,noreferrer')}>
                     <YouTubeIcon />
                 </IconButton>
-                <IconButton sx={{ color: 'white' }}>
+                <IconButton sx={{ color: 'white' }} onClick={() => window.open('https://facebook.com/', '_blank', 'noopener,noreferrer')}>
                     <FacebookIcon />
                 </IconButton>
-                <IconButton sx={{ color: 'white' }}>
+                <IconButton sx={{ color: 'white' }} onClick={() => window.open('https://x.com/', '_blank', 'noopener,noreferrer')}>
                     <XIcon />
                 </IconButton>
-                <IconButton sx={{ color: 'white' }}>
+                <IconButton sx={{ color: 'white' }} onClick={() => window.open('https://instagram.com/', '_blank', 'noopener,noreferrer')}>
                     <InstagramIcon />
                 </IconButton>
             </Box>
 
             {/* Icone contact */}
-            <IconButton sx={{ color: 'white' }}>
+            <IconButton
+                sx={{ color: 'white' }}
+                onClick={() => navigate("/info#contact")}
+            >
                 <EmailIcon />
             </IconButton>
 

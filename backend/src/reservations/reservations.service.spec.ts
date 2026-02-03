@@ -9,7 +9,7 @@ import {
 import type {
   CreateReservationDto,
   UpdateReservationStatusDto,
-} from 'src/generated';
+} from '../generated';
 
 describe('ReservationsService', () => {
   let service: ReservationsService;
@@ -28,6 +28,7 @@ describe('ReservationsService', () => {
       findUnique: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
+      count: jest.fn(),
     },
   };
 
@@ -43,7 +44,7 @@ describe('ReservationsService', () => {
     }).compile();
 
     service = module.get<ReservationsService>(ReservationsService);
-    prismaService = module.get<PrismaService>(PrismaService);
+    _prismaService = module.get<PrismaService>(PrismaService);
 
     jest.clearAllMocks();
   });
@@ -63,7 +64,7 @@ describe('ReservationsService', () => {
 
     const mockParkDate = {
       id: 1,
-      jour: new Date('2025-12-25'),
+      jour: new Date('2027-12-25'), // Date future
       is_open: true,
       notes: null,
       created_at: new Date('2025-01-01'),
@@ -333,18 +334,16 @@ describe('ReservationsService', () => {
       mockPrismaService.reservation.findMany.mockResolvedValue(
         mockReservations,
       );
+      mockPrismaService.reservation.count.mockResolvedValue(1);
 
       const result = await service.findAll('ADMIN');
 
-      expect(result).toHaveLength(1);
-      expect(result[0]).toBeDefined();
-      expect(mockPrismaService.reservation.findMany).toHaveBeenCalledWith({
-        include: expect.objectContaining({
-          user: expect.any(Object),
-          date: true,
-        }),
-        orderBy: { created_at: 'desc' },
-      });
+      expect(result.data).toHaveLength(1);
+      expect(result.data[0]).toBeDefined();
+      expect(result.pagination.total).toBe(1);
+      expect(result.pagination.page).toBe(1);
+      expect(mockPrismaService.reservation.findMany).toHaveBeenCalled();
+      expect(mockPrismaService.reservation.count).toHaveBeenCalled();
     });
   });
 

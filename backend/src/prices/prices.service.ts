@@ -5,35 +5,34 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import type { CreatePriceDto, UpdatePriceDto } from 'src/generated';
-import {Prisma, PriceType} from "@prisma/client";
+import { Prisma, PriceType } from '@prisma/client';
+import {
+  transformTranslatableFields,
+  type Language,
+} from '../common/translations.util';
+import { PriceMapper } from './mappers/price.mapper';
 
 @Injectable()
 export class PricesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  /**
-   * Helper DRY : Formate la réponse d'un tarif
-   * Convertit les dates en ISO et amount (Decimal) en number
-   */
-  private formatPriceResponse(price: any) {
+  private formatPriceResponse(price: any, lang: Language = 'fr') {
+    const transformed = transformTranslatableFields(price, lang);
     return {
-      ...price,
-      amount: parseFloat(price.amount.toString()),
-      created_at: price.created_at.toISOString(),
-      updated_at: price.updated_at.toISOString(),
+      ...PriceMapper.toDto(transformed),
     };
   }
 
   async findAll(
-      options?: {
-        page?: number;
-        limit?: number;
-        sortBy?: string;
-        amount?: number;
-        priceType?: string;
-      }
+    options?: {
+      page?: number;
+      limit?: number;
+      sortBy?: string;
+      amount?: number;
+      priceType?: string;
+    },
+    lang: Language = 'fr',
   ) {
-
     const page = options?.page || 1;
     const limit = options?.limit || 10;
     const skip = (page - 1) * limit;
@@ -53,14 +52,15 @@ export class PricesService {
     }
 
     // Mapping du tri
-    const orderByMapping: Record<string, Prisma.PriceOrderByWithRelationInput> = {
-      'created_desc': { created_at: 'desc' },
-      'created_asc': { created_at: 'asc' },
-      'amount_desc': { amount: 'desc' },
-      'amount_asc': { amount: 'asc' },
-      'updated_desc': { updated_at: 'desc' },
-      'updated_asc': { updated_at: 'asc' },
-    };
+    const orderByMapping: Record<string, Prisma.PriceOrderByWithRelationInput> =
+      {
+        created_desc: { created_at: 'desc' },
+        created_asc: { created_at: 'asc' },
+        amount_desc: { amount: 'desc' },
+        amount_asc: { amount: 'asc' },
+        updated_desc: { updated_at: 'desc' },
+        updated_asc: { updated_at: 'asc' },
+      };
 
     const sortBy = options?.sortBy || 'created_desc';
     const orderBy = orderByMapping[sortBy] || orderByMapping['created_desc'];
@@ -79,7 +79,7 @@ export class PricesService {
     const totalPages = Math.ceil(total / limit);
 
     return {
-      data: prices.map((price) => this.formatPriceResponse(price)),
+      data: prices.map((price) => this.formatPriceResponse(price, lang)),
       pagination: {
         total,
         page,
@@ -89,7 +89,7 @@ export class PricesService {
     };
   }
 
-  async findOne(id: number) {
+  async findOne(id: number, lang: Language = 'fr') {
     const price = await this.prisma.price.findUnique({
       where: { id },
     });
@@ -98,11 +98,12 @@ export class PricesService {
       throw new NotFoundException(`Tarif avec l'ID ${id} non trouvé`);
     }
 
-    return this.formatPriceResponse(price);
+    return this.formatPriceResponse(price, lang);
   }
 
   async create(createPriceDto: CreatePriceDto) {
-    const { label, type, amount, duration_days } = createPriceDto;
+    const { label, label_en, type, amount, duration_days } =
+      createPriceDto as any;
 
     if (!label || !type || !amount || !duration_days) {
       throw new BadRequestException('Tous les champs sont requis');
@@ -119,13 +120,14 @@ export class PricesService {
     const price = await this.prisma.price.create({
       data: {
         label,
+        label_en: label_en || null,
         type,
         amount,
         duration_days,
       },
     });
 
-    return this.formatPriceResponse(price);
+    return PriceMapper.toDto(transformTranslatableFields(price, 'fr'));
   }
 
   async update(id: number, updatePriceDto: UpdatePriceDto) {
@@ -153,7 +155,7 @@ export class PricesService {
       data: updatePriceDto,
     });
 
-    return this.formatPriceResponse(updatedPrice);
+    return PriceMapper.toDto(transformTranslatableFields(updatedPrice, 'fr'));
   }
 
   async remove(id: number) {

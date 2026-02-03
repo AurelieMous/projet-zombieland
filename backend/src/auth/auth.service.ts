@@ -10,6 +10,7 @@ import { UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
+import { UserMapper } from '../users/mappers/user.mapper';
 
 @Injectable()
 export class AuthService {
@@ -96,9 +97,8 @@ export class AuthService {
       },
     });
 
-    // Retourner l'utilisateur sans le mot de passe
-    const { password: _, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+    // Retourner l'utilisateur sans le mot de passe via le mapper
+    return UserMapper.toDto(user);
   }
 
   async validateUser(email: string, password: string) {
@@ -140,12 +140,13 @@ export class AuthService {
 
     // Vérifier si le compte est actif
     if ((user as any).is_active === false) {
-      throw new UnauthorizedException('Il semble y avoir un problème. Veuillez contacter l\'administrateur.');
+      throw new UnauthorizedException(
+        "Il semble y avoir un problème. Veuillez contacter l'administrateur.",
+      );
     }
 
-    // Retourner user SANS le password
-    const { password: _, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+    // Retourner user SANS le password via le mapper
+    return UserMapper.toDto(user);
   }
 
   async generateJwt(user: any) {
@@ -221,9 +222,8 @@ export class AuthService {
       data: dataToUpdate,
     });
 
-    // Retourner sans le password
-    const { password: _, ...userWithoutPassword } = updatedUser;
-    return userWithoutPassword;
+    // Retourner sans le password via le mapper
+    return UserMapper.toDto(updatedUser);
   }
 
   async deleteAccount(userId: number) {
@@ -237,7 +237,9 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new NotFoundException(`Utilisateur avec l'ID ${userId} introuvable`);
+      throw new NotFoundException(
+        `Utilisateur avec l'ID ${userId} introuvable`,
+      );
     }
 
     // Vérifier s'il y a des réservations

@@ -4,8 +4,10 @@ import { colors } from "../../theme";
 import { CustomBreadcrumbs } from "../../components/common";
 import { HeroSection } from "../../components/hero/HeroSection";
 import { Typography } from "@mui/material";
+import {useTranslation} from "react-i18next";
 
 export const UserDashboard = () => {
+    const { t } = useTranslation();
     const heroImages = [
         '/activities-images/post-apocalyptic-street.jpg',
         '/activities-images/zombie.jpg',
@@ -20,8 +22,9 @@ export const UserDashboard = () => {
                     <Box sx={{ pt: { xs: 2, md: 2 }, mb: { xs: 1, md: 1 } }}>
                         <CustomBreadcrumbs
                             items={[
-                                { label: 'Accueil', path: '/', showOnMobile: true },
-                                { label: 'Mes réservations', showOnMobile: true },
+                                { label: t("auth.account.reservations.breadcrumbs.home"), path: '/', showOnMobile: true },
+                                { label: 'Mon compte', path: '/account',showOnMobile: true },
+                                { label: t("auth.account.reservations.breadcrumbs.reservations"), showOnMobile: true },
                             ]}
                         />
                     </Box>
@@ -32,16 +35,16 @@ export const UserDashboard = () => {
                             fontSize: { xs: '1.8rem', md: '4rem' },
                             color: colors.white,
                             textShadow: `
-              0 0 20px rgba(198, 38, 40, 0.8),
-              0 0 40px rgba(58, 239, 48, 0.4),
-              3px 3px 0 ${colors.primaryRed}
-            `,
+                              0 0 20px rgba(198, 38, 40, 0.8),
+                              0 0 40px rgba(58, 239, 48, 0.4),
+                              3px 3px 0 ${colors.primaryRed}
+                            `,
                             marginBottom: { xs: '8px', md: '12px' },
                             lineHeight: 1,
                             letterSpacing: '2px',
                         }}
                     >
-                        Mes réservations
+                        {t("auth.account.reservations.title")}
                     </Typography>
 
                     <Typography
@@ -53,7 +56,7 @@ export const UserDashboard = () => {
                             mb: { xs: 1.5, md: 3 },
                         }}
                     >
-                        Consultez et gérez toutes vos réservations au parc Zombieland.
+                        {t("auth.account.reservations.description")}
                     </Typography>
                 </Box>
             </HeroSection>
@@ -78,7 +81,6 @@ export const UserDashboard = () => {
                         minHeight: '400px',
                     }}
                 >
-                    {/* Voir pour modifier et remettre les tabs si ajout des réservations restaurants etc */}
                     <ReservationUserList />
                 </Box>
             </Container>

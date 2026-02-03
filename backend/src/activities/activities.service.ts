@@ -5,16 +5,35 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import type { CreateActivityDto, UpdateActivityDto } from 'src/generated';
+import { ActivityMapper } from './mappers/activity.mapper';
+import {
+  transformTranslatableFields,
+  transformTranslatableArray as _transformTranslatableArray,
+  type Language,
+} from '../common/translations.util';
 
 @Injectable()
 export class ActivitiesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(filters?: {
-    search?: string;
-    categoryId?: number;
-    attractionId?: number;
-  }) {
+  /**
+   * Génère un temps d'attente simulé basé sur le thrill_level
+   */
+  private generateWaitTime(thrillLevel: number | null): number {
+    const thrill = thrillLevel ?? 3;
+    const minWait = 5 + (thrill - 1) * 5;
+    const maxWait = Math.floor(25 + (thrill - 1) * 8.75);
+    return Math.floor(Math.random() * (maxWait - minWait + 1)) + minWait;
+  }
+
+  async findAll(
+    filters?: {
+      search?: string;
+      categoryId?: number;
+      attractionId?: number;
+    },
+    lang: Language = 'fr',
+  ) {
     const where: any = {};
 
     // Filtre par recherche (nom ou description)
@@ -55,36 +74,44 @@ export class ActivitiesService {
       },
     });
 
-    return activities.map((activity: any) => ({
-      ...activity,
-      created_at: activity.created_at.toISOString(),
-      updated_at: activity.updated_at.toISOString(),
-      category: {
-        ...activity.category,
-        created_at: activity.category.created_at.toISOString(),
-        updated_at: activity.category.updated_at.toISOString(),
-      },
-      attraction: activity.attraction
-        ? {
-            ...activity.attraction,
-            created_at: activity.attraction.created_at.toISOString(),
-            updated_at: activity.attraction.updated_at.toISOString(),
-          }
-        : null,
-      related_activities: activity.relatedFrom ? activity.relatedFrom.map((rel: any) => ({
-        ...rel.related_activity,
-        created_at: rel.related_activity.created_at.toISOString(),
-        updated_at: rel.related_activity.updated_at.toISOString(),
+    return activities.map((activity: any) => {
+      const transformedActivity = transformTranslatableFields(activity, lang);
+      return {
+        ...ActivityMapper.toDto(transformedActivity),
         category: {
-          ...rel.related_activity.category,
-          created_at: rel.related_activity.category.created_at.toISOString(),
-          updated_at: rel.related_activity.category.updated_at.toISOString(),
+          ...transformTranslatableFields(activity.category, lang),
+          created_at: activity.category.created_at.toISOString(),
+          updated_at: activity.category.updated_at.toISOString(),
         },
-      })) : [],
-    }));
+        attraction: activity.attraction
+          ? {
+              ...transformTranslatableFields(activity.attraction, lang),
+              created_at: activity.attraction.created_at.toISOString(),
+              updated_at: activity.attraction.updated_at.toISOString(),
+            }
+          : null,
+        related_activities: activity.relatedFrom
+          ? activity.relatedFrom.map((rel: any) => ({
+              ...transformTranslatableFields(rel.related_activity, lang),
+              created_at: rel.related_activity.created_at.toISOString(),
+              updated_at: rel.related_activity.updated_at.toISOString(),
+              category: {
+                ...transformTranslatableFields(
+                  rel.related_activity.category,
+                  lang,
+                ),
+                created_at:
+                  rel.related_activity.category.created_at.toISOString(),
+                updated_at:
+                  rel.related_activity.category.updated_at.toISOString(),
+              },
+            }))
+          : [],
+      };
+    });
   }
 
-  async findOne(id: number) {
+  async findOne(id: number, lang: Language = 'fr') {
     if (!id || id <= 0) {
       throw new BadRequestException('ID invalide');
     }
@@ -110,40 +137,63 @@ export class ActivitiesService {
       throw new NotFoundException(`Activité avec l'ID ${id} non trouvée`);
     }
 
-    // Convertir les dates en ISO string
     const activityWithRelations = activity as any;
+    const transformedActivity = transformTranslatableFields(
+      activityWithRelations,
+      lang,
+    );
     return {
-      ...activityWithRelations,
-      created_at: activityWithRelations.created_at.toISOString(),
-      updated_at: activityWithRelations.updated_at.toISOString(),
+      ...ActivityMapper.toDto(transformedActivity),
       category: {
-        ...activityWithRelations.category,
+        ...transformTranslatableFields(activityWithRelations.category, lang),
         created_at: activityWithRelations.category.created_at.toISOString(),
         updated_at: activityWithRelations.category.updated_at.toISOString(),
       },
       attraction: activityWithRelations.attraction
         ? {
-            ...activityWithRelations.attraction,
-            created_at: activityWithRelations.attraction.created_at.toISOString(),
-            updated_at: activityWithRelations.attraction.updated_at.toISOString(),
+            ...transformTranslatableFields(
+              activityWithRelations.attraction,
+              lang,
+            ),
+            created_at:
+              activityWithRelations.attraction.created_at.toISOString(),
+            updated_at:
+              activityWithRelations.attraction.updated_at.toISOString(),
           }
         : null,
-      related_activities: (activityWithRelations.relatedFrom || []).map((rel: any) => ({
-        ...rel.related_activity,
-        created_at: rel.related_activity.created_at.toISOString(),
-        updated_at: rel.related_activity.updated_at.toISOString(),
-        category: {
-          ...rel.related_activity.category,
-          created_at: rel.related_activity.category.created_at.toISOString(),
-          updated_at: rel.related_activity.category.updated_at.toISOString(),
-        },
-      })),
+      related_activities: (activityWithRelations.relatedFrom || []).map(
+        (rel: any) => ({
+          ...transformTranslatableFields(rel.related_activity, lang),
+          created_at: rel.related_activity.created_at.toISOString(),
+          updated_at: rel.related_activity.updated_at.toISOString(),
+          category: {
+            ...transformTranslatableFields(rel.related_activity.category, lang),
+            created_at: rel.related_activity.category.created_at.toISOString(),
+            updated_at: rel.related_activity.category.updated_at.toISOString(),
+          },
+        }),
+      ),
     };
   }
 
-  async create(createActivityDto: CreateActivityDto & { related_activity_ids?: number[] }) {
-    const { name, description, category_id, attraction_id, image_url, thrill_level, duration, min_age, accessibility, is_published, related_activity_ids } = createActivityDto;
-
+  async create(
+    createActivityDto: CreateActivityDto & { related_activity_ids?: number[] },
+  ) {
+    const {
+      name,
+      description,
+      name_en,
+      description_en,
+      category_id,
+      attraction_id,
+      image_url,
+      thrill_level,
+      duration,
+      min_age,
+      accessibility,
+      is_published,
+      related_activity_ids,
+    } = createActivityDto as any;
 
     // Validation des champs requis
     if (!name || !description || !category_id) {
@@ -178,6 +228,8 @@ export class ActivitiesService {
     const activityData: any = {
       name,
       description,
+      name_en: name_en || null,
+      description_en: description_en || null,
       category_id,
       attraction_id: attraction_id ?? null,
       image_url: image_url ?? null,
@@ -190,7 +242,7 @@ export class ActivitiesService {
 
     if (related_activity_ids && related_activity_ids.length > 0) {
       activityData.relatedFrom = {
-        create: related_activity_ids.map(relatedId => ({
+        create: related_activity_ids.map((relatedId) => ({
           related_activity_id: relatedId,
         })),
       };
@@ -213,12 +265,13 @@ export class ActivitiesService {
       } as any,
     });
 
-    // Convertir les dates en ISO string
     const createdActivity = activity as any;
+    const transformedActivity = transformTranslatableFields(
+      createdActivity,
+      'fr',
+    );
     const result = {
-      ...createdActivity,
-      created_at: createdActivity.created_at.toISOString(),
-      updated_at: createdActivity.updated_at.toISOString(),
+      ...ActivityMapper.toDto(transformedActivity),
       category: {
         ...createdActivity.category,
         created_at: createdActivity.category.created_at.toISOString(),
@@ -231,22 +284,27 @@ export class ActivitiesService {
             updated_at: createdActivity.attraction.updated_at.toISOString(),
           }
         : null,
-      related_activities: (createdActivity.relatedFrom || []).map((rel: any) => ({
-        ...rel.related_activity,
-        created_at: rel.related_activity.created_at.toISOString(),
-        updated_at: rel.related_activity.updated_at.toISOString(),
-        category: {
-          ...rel.related_activity.category,
-          created_at: rel.related_activity.category.created_at.toISOString(),
-          updated_at: rel.related_activity.category.updated_at.toISOString(),
-        },
-      })),
+      related_activities: (createdActivity.relatedFrom || []).map(
+        (rel: any) => ({
+          ...rel.related_activity,
+          created_at: rel.related_activity.created_at.toISOString(),
+          updated_at: rel.related_activity.updated_at.toISOString(),
+          category: {
+            ...rel.related_activity.category,
+            created_at: rel.related_activity.category.created_at.toISOString(),
+            updated_at: rel.related_activity.category.updated_at.toISOString(),
+          },
+        }),
+      ),
     };
 
     return result;
   }
 
-  async update(id: number, updateActivityDto: UpdateActivityDto & { related_activity_ids?: number[] }) {
+  async update(
+    id: number,
+    updateActivityDto: UpdateActivityDto & { related_activity_ids?: number[] },
+  ) {
     if (!id || id <= 0) {
       throw new BadRequestException('ID invalide');
     }
@@ -259,7 +317,19 @@ export class ActivitiesService {
       throw new NotFoundException(`Activité avec l'ID ${id} non trouvée`);
     }
 
-    const { name, description, category_id, attraction_id, image_url, thrill_level, duration, min_age, accessibility, is_published, related_activity_ids } = updateActivityDto;
+    const {
+      name,
+      description,
+      category_id,
+      attraction_id,
+      image_url,
+      thrill_level,
+      duration,
+      min_age,
+      accessibility,
+      is_published,
+      related_activity_ids,
+    } = updateActivityDto;
 
     // Si category_id fourni, vérifier qu'elle existe
     if (category_id) {
@@ -310,7 +380,7 @@ export class ActivitiesService {
       // Créer les nouvelles relations
       if (related_activity_ids.length > 0) {
         dataToUpdate.relatedFrom = {
-          create: related_activity_ids.map(relatedId => ({
+          create: related_activity_ids.map((relatedId) => ({
             related_activity_id: relatedId,
           })),
         };
@@ -335,12 +405,13 @@ export class ActivitiesService {
       } as any,
     });
 
-    // Convertir les dates en ISO string
     const updatedActivityData = updatedActivity as any;
+    const transformedActivity = transformTranslatableFields(
+      updatedActivityData,
+      'fr',
+    );
     const result = {
-      ...updatedActivityData,
-      created_at: updatedActivityData.created_at.toISOString(),
-      updated_at: updatedActivityData.updated_at.toISOString(),
+      ...ActivityMapper.toDto(transformedActivity),
       category: {
         ...updatedActivityData.category,
         created_at: updatedActivityData.category.created_at.toISOString(),
@@ -353,16 +424,18 @@ export class ActivitiesService {
             updated_at: updatedActivityData.attraction.updated_at.toISOString(),
           }
         : null,
-      related_activities: (updatedActivityData.relatedFrom || []).map((rel: any) => ({
-        ...rel.related_activity,
-        created_at: rel.related_activity.created_at.toISOString(),
-        updated_at: rel.related_activity.updated_at.toISOString(),
-        category: {
-          ...rel.related_activity.category,
-          created_at: rel.related_activity.category.created_at.toISOString(),
-          updated_at: rel.related_activity.category.updated_at.toISOString(),
-        },
-      })),
+      related_activities: (updatedActivityData.relatedFrom || []).map(
+        (rel: any) => ({
+          ...rel.related_activity,
+          created_at: rel.related_activity.created_at.toISOString(),
+          updated_at: rel.related_activity.updated_at.toISOString(),
+          category: {
+            ...rel.related_activity.category,
+            created_at: rel.related_activity.category.created_at.toISOString(),
+            updated_at: rel.related_activity.category.updated_at.toISOString(),
+          },
+        }),
+      ),
     };
 
     return result;
