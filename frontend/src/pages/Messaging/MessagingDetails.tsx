@@ -103,7 +103,7 @@ export default function MessagingDetails() {
         try {
             // 1. Envoyer le message avec la nouvelle signature
             await createMessage({
-                conversationId: Number(id),
+                conversation_id: Number(id),
                 content: newMessage.trim(),
             });
 

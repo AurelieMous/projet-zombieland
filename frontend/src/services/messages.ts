@@ -2,7 +2,7 @@ import axiosInstance from "./getApi.ts";
 import type {CreateMessageParams} from "../@types/messaging";
 
 export const createMessage = async ({
-                                        conversationId,
+                                        conversation_id,
                                         content,
                                         object
                                     }: CreateMessageParams) => {
@@ -17,15 +17,13 @@ export const createMessage = async ({
     };
 
     // Si c'est un message dans une conversation existante
-    if (conversationId) {
-        payload.conversationId = conversationId;
+    if (conversation_id) {
+        payload.conversationId = conversation_id;
     }
 
     if (object) {
         payload.object = object;
     }
-
-    console.log('Données envoyées:', payload);
 
     try {
         const response = await axiosInstance.post('/messages', payload);

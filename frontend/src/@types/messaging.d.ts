@@ -24,7 +24,7 @@ export interface Conversation {
 }
 
 export interface CreateMessageParams {
-    conversationId?: number;
+    conversation_id?: number;
     content: string;
     object?: string;
 }
