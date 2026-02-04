@@ -45,11 +45,10 @@ export default function VideoBanner() {
                     px: { xs: 2, md: 0 }
                 }}
             >
-                <Typography variant="h1" component="h1" sx={{
+                <Typography variant="h3" component="h1" sx={{
                     pb: 3,
                     color: colors.secondaryGreen,
-                    fontSize: { xs: '1.5rem', md: '2.5rem' },
-                    fontFamily: "'Lexend Deca', sans-serif",
+                    fontSize: { xs: '1.5rem', md: '2.5rem' }
                 }}>
                     {t("home.hero.videoTitle")}
                 </Typography>
