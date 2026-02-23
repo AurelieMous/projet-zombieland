@@ -329,11 +329,3 @@ Après le seeding, vous pouvez vous connecter avec :
 * **Règle métier** : annulation de réservation possible uniquement si la visite est à plus de 10 jours (sauf ADMIN)
 * La documentation complète de l'API est disponible sur **Swagger UI**
 * Les mots de passe sont stockés **hashés** en base de données (bcrypt)
-
-### Variables d'environnement
-
-Créer un fichier `.env` dans le dossier `frontend/` :
-
-```env
-VITE_API_URL=http://localhost:3001/api/v1
-```
