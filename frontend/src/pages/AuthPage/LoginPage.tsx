@@ -45,7 +45,6 @@ export default function LoginPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        //validation finale
         const emailErr = validateEmail;
         const passwordErr = validatePassword;
 
@@ -59,10 +58,8 @@ export default function LoginPage() {
         setLoginError("");
 
         try {
-            // Appel API
             const data = await login(emailInput, password)
 
-            // Stocker dans le context
             setIsLogged(true);
             setUserId(data.user.id);
             setRole(data.user.role)
@@ -70,24 +67,16 @@ export default function LoginPage() {
             setEmail(data.user.email)
             setToken(data.access_token)
 
-            // Stocker dans localStorage pour persistance
             localStorage.setItem("token", data.access_token);
             localStorage.setItem("role", data.user.role)
             localStorage.setItem("pseudo", data.user.pseudo)
             localStorage.setItem("email", data.user.email)
             localStorage.setItem("userId", data.user.id.toString())
 
-            // Redirection selon le rôle ou retour à la page précédente
-            //const from = (location.state as { from?: string } | null)?.from;
-            //navigate(from || (data.user.role === "ADMIN" ? "/admin" : "/"));
-            // Redirection selon le rôle
             navigate("/account");
-
         } catch (error: any) {
-
             const errorMessage = error.response?.data?.message ||
                 t("auth.login.incorrectCredentials");
-
             setLoginError(errorMessage);
         } finally {
             setIsLoading(false);

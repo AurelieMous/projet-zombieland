@@ -11,13 +11,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private readonly prisma: PrismaService,
   ) {
     super({
-      // 1. Comment extraire le token de la requête
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-
-      // 2. Rejeter si token expiré
       ignoreExpiration: false,
-
-      // 3. Secret pour vérifier la signature (avec valeur par défaut)
       secretOrKey: configService.get<string>('JWT_SECRET') || 'default-secret',
     });
   }
@@ -27,19 +22,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const user = await this.prisma.user.findUnique({
       where: { id: payload.sub },
     });
-
     if (!user) {
       throw new UnauthorizedException('Utilisateur introuvable');
     }
-
-    // Vérifier si le compte est actif
     if ((user as any).is_active === false) {
       throw new UnauthorizedException(
         "Il semble y avoir un problème. Veuillez contacter l'administrateur.",
       );
     }
-
-    // Retourner user sans password (sera dans request.user)
     const { password: _, ...userWithoutPassword } = user;
     return userWithoutPassword;
   }

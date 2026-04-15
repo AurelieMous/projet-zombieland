@@ -121,15 +121,10 @@ export function LoginProvider({ children }: LoginProviderProps) {
                 logout();
             }
         };
-
-        // Vérifier immédiatement au montage
         checkTokenExpiration();
-
-        // Puis toutes les 60 secondes
         const interval = setInterval(checkTokenExpiration, 60000);
-
         return () => clearInterval(interval);
-    }, [token]); // Relancer si le token change
+    }, [token]);
 
     const logout = () => {
         setIsLogged(false);

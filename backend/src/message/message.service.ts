@@ -28,6 +28,11 @@ export class MessageService {
 
     let finalConversationId: number;
 
+    // Correction : Contrôle du content
+    if (content.trim()=== "") {
+      throw new BadRequestException('Le contenu du message est requis');
+    }
+
     // CAS 1 : Conversation existante
     if (conversation_id) {
       const hasAccess = await this.conversationService.userHasAccess(
@@ -53,6 +58,7 @@ export class MessageService {
     }
     // CAS 2 : Nouvelle conversation (avec ou sans recipientId)
     else {
+
       if (!object || object.trim().length === 0) {
         throw new BadRequestException(
           "L'objet de la conversation est requis pour créer une nouvelle conversation",
